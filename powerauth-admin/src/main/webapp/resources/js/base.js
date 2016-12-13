@@ -1,4 +1,6 @@
 jQuery(document).ready(function($) {
+
+    hljs.initHighlightingOnLoad();
 	
 	$(".action-remove").click(function (e) {
 		if (!confirm("Are you sure you want to permanently remove this item?")) {

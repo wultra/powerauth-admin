@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import io.getlime.powerauth.soap.CreateApplicationResponse;
 import io.getlime.powerauth.soap.GetApplicationDetailResponse;
 import io.getlime.powerauth.soap.GetApplicationListResponse;
+import io.getlime.powerauth.soap.GetCallbackUrlListResponse;
 import io.getlime.security.soap.client.PowerAuthServiceClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -50,6 +51,25 @@ public class ApplicationController {
     }
 
     /**
+     * Show application detail.
+     *
+     * @param id    Application ID.
+     * @param model Model with passed parameters.
+     * @return "applicationDetail" view.
+     */
+    @RequestMapping(value = "/application/detail/{id}")
+    public String applicationDetail(@PathVariable(value = "id") Long id, Map<String, Object> model) {
+        GetApplicationDetailResponse applicationDetails = client.getApplicationDetail(id);
+        List<GetCallbackUrlListResponse.CallbackUrlList> callbackUrlList = client.getCallbackUrlList(id);
+        model.put("id", applicationDetails.getApplicationId());
+        model.put("name", applicationDetails.getApplicationName());
+        model.put("masterPublicKey", applicationDetails.getMasterPublicKey());
+        model.put("versions", Lists.reverse(applicationDetails.getVersions()));
+        model.put("callbacks", callbackUrlList);
+        return "applicationDetail";
+    }
+
+    /**
      * Create a new application.
      *
      * @param model Model with passed parameters.
@@ -71,6 +91,19 @@ public class ApplicationController {
     public String applicationVersionCreate(@PathVariable Long id, Map<String, Object> model) {
         model.put("applicationId", id);
         return "applicationVersionCreate";
+    }
+
+    /**
+     * Show application callback create form.
+     *
+     * @param id    Application ID.
+     * @param model Model with passed parameters.
+     * @return "callbackCreate" view.
+     */
+    @RequestMapping(value = "/application/detail/{id}/callback/create")
+    public String applicationCreateCallback(@PathVariable(value = "id") Long id, Map<String, Object> model) {
+        model.put("applicationId", id);
+        return "callbackCreate";
     }
 
     /**
@@ -120,20 +153,37 @@ public class ApplicationController {
     }
 
     /**
-     * Show application detail.
+     * Execute the action that creates a new callback on given application.
      *
      * @param id    Application ID.
+     * @param name  Callback URL name
+     * @param callbackUrl Callback URL value
      * @param model Model with passed parameters.
-     * @return "applicationDetail" view.
+     * @return Redirect to application detail (callback URLs are visible there).
      */
-    @RequestMapping(value = "/application/detail/{id}")
-    public String applicationDetail(@PathVariable(value = "id") Long id, Map<String, Object> model) {
-        GetApplicationDetailResponse applicationDetails = client.getApplicationDetail(id);
-        model.put("id", applicationDetails.getApplicationId());
-        model.put("name", applicationDetails.getApplicationName());
-        model.put("masterPublicKey", applicationDetails.getMasterPublicKey());
-        model.put("versions", Lists.reverse(applicationDetails.getVersions()));
-        return "applicationDetail";
+    @RequestMapping(value = "/application/detail/{id}/callback/create/do.submit")
+    public String applicationCreateCallbackAction(
+            @RequestParam(value = "name") String name,
+            @RequestParam(value = "callbackUrl") String callbackUrl,
+            @PathVariable(value = "id") Long id, Map<String, Object> model) {
+        client.createCallbackUrl(id, name, callbackUrl);
+        return "redirect:/application/detail/" + id;
+    }
+
+    /**
+     * Execute the action that removesa callback with given ID.
+     *
+     * @param id    Application ID.
+     * @param callbackId Callback ID.
+     * @param model Model with passed parameters.
+     * @return Redirect to application detail (callback URLs are visible there).
+     */
+    @RequestMapping(value = "/application/detail/{id}/callback/remove/do.submit")
+    public String applicationRemoveCallbackAction(
+            @RequestParam(value = "id") String callbackId,
+            @PathVariable(value = "id") Long id, Map<String, Object> model) {
+        client.removeCallbackUrl(callbackId);
+        return "redirect:/application/detail/" + id;
     }
 
 }

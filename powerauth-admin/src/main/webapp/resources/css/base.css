@@ -7,6 +7,15 @@
     padding-top: 8px;
 }
 
+.panel-heading h3.button-sm {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: normal;
+    width: 75%;
+    padding-top: 6px;
+}
+
 .black {
     color: #000000 !important;
 }
@@ -69,4 +78,10 @@ table.table .btn {
 .brand-logo {
     height: 24px;
     margin: -5px 20px -5px 0;
+}
+
+pre.code, pre.code code {
+    background: #f8f8ff;
+    font-family: monospace;
+    padding: 5px;
 }

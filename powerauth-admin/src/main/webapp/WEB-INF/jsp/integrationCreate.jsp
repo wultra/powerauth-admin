@@ -1,6 +1,6 @@
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <jsp:include page="header.jsp">
     <jsp:param name="pageTitle" value="PowerAuth 2.0 Admin - New Integration"/>
@@ -19,9 +19,10 @@
     </div>
 
     <div class="panel-body">
-        <form class="form-inline" action="${pageContext.request.contextPath}/integration/create/do.submit" method="POST">
+        <form class="form-inline" action="${pageContext.request.contextPath}/integration/create/do.submit"
+              method="POST">
             Integration name <input type="text" name="name" class="form-control">
-            <input type="submit" value="Submit" class="btn btn-success" />
+            <input type="submit" value="Submit" class="btn btn-success"/>
         </form>
     </div>
 
