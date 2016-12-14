@@ -4,7 +4,7 @@ PowerAuth 2.0 Admin is a an web administration console for the [PowerAuth 2.0 Se
 
 ## Deployment Tutorials
 
-- [Deploying PowerAuth 2.0 Admin](https://github.com/lime-company/lime-security-powerauth/wiki/Deploying-PowerAuth-2.0-Admin)
+- [Deploying PowerAuth 2.0 Admin](https://github.com/lime-company/lime-security-powerauth-admin/wiki/Deploying-PowerAuth-2.0-Admin)
 
 ## User Tutorials
 
