@@ -5,7 +5,7 @@ import io.getlime.powerauth.soap.CreateApplicationResponse;
 import io.getlime.powerauth.soap.GetApplicationDetailResponse;
 import io.getlime.powerauth.soap.GetApplicationListResponse;
 import io.getlime.powerauth.soap.GetCallbackUrlListResponse;
-import io.getlime.security.soap.client.PowerAuthServiceClient;
+import io.getlime.security.powerauth.soap.spring.client.PowerAuthServiceClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;

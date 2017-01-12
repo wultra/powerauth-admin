@@ -1,6 +1,6 @@
 package io.getlime.security;
 
-import io.getlime.security.soap.client.PowerAuthServiceClient;
+import io.getlime.security.powerauth.soap.spring.client.PowerAuthServiceClient;
 import org.apache.ws.security.WSConstants;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -16,7 +16,7 @@ import org.springframework.ws.soap.security.wss4j.Wss4jSecurityInterceptor;
  * @author Petr Dvorak
  */
 @Configuration
-@ComponentScan(basePackages = {"io.getlime.rest"})
+@ComponentScan(basePackages = {"io.getlime.security.powerauth"})
 public class PowerAuthWebServiceConfiguration {
 
     @Value("${powerauth.service.url}")

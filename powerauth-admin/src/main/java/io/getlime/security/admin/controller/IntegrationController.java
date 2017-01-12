@@ -2,14 +2,13 @@ package io.getlime.security.admin.controller;
 
 import io.getlime.powerauth.soap.*;
 import io.getlime.security.PowerAuthWebServiceConfiguration;
-import io.getlime.security.soap.client.PowerAuthServiceClient;
+import io.getlime.security.powerauth.soap.spring.client.PowerAuthServiceClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
 import java.util.Map;
 
 /**

@@ -2,7 +2,7 @@ package io.getlime.security.admin.controller;
 
 import com.google.common.io.BaseEncoding;
 import io.getlime.powerauth.soap.*;
-import io.getlime.security.soap.client.PowerAuthServiceClient;
+import io.getlime.security.powerauth.soap.spring.client.PowerAuthServiceClient;
 import io.getlime.security.util.QRUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
