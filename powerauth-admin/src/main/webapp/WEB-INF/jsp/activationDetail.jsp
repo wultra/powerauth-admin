@@ -28,8 +28,14 @@
                 <div class="panel-body gray">
                     <p>
                         Client Activation Code<br>
-                        <strong class="code black"><c:out value="${activationIdShort}"/>-<c:out
-                                value="${activationOtp}"/></strong>
+                        <div class="input-group">
+                            <input id="activation-code" type="text" class="form-control" readonly="readonly" value="<c:out value="${activationIdShort}"/>-<c:out value="${activationOtp}"/>">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default btn-clipboard" type="button" data-clipboard-target="#activation-code" data-clipboard-text="<c:out value="${activationIdShort}"/>-<c:out value="${activationOtp}"/>">
+                                    <span class=" glyphicon glyphicon-copy"></span>
+                                </button>
+                            </span>
+                        </div>
                     </p>
                     <p>
                         Client Activation Code Signature<br>
