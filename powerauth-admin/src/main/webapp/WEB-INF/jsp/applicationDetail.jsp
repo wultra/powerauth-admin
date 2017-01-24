@@ -37,7 +37,7 @@
             <div class="panel-heading">
                 <h3 class="panel-title button-sm pull-left">Application Versions</h3>
                 <a href="${pageContext.request.contextPath}/application/detail/<c:out value="${id}"/>/version/create"
-                   class="btn btn-sm btn-success pull-right">New Version</a>
+                   class="btn btn-sm btn-default pull-right">New Version</a>
                 <div class="clearfix"></div>
             </div>
 
@@ -59,10 +59,10 @@
                         <td>
                             <c:choose>
                                 <c:when test="${item.supported}">
-                                    <span class="green">Yes</span>
+                                    <span>Yes</span>
                                 </c:when>
                                 <c:otherwise>
-                                    <span class="red">No</span>
+                                    <span>No</span>
                                 </c:otherwise>
                             </c:choose>
                         </td>
@@ -74,7 +74,7 @@
                                         <input type="hidden" name="enabled" value="false"/>
                                         <input type="hidden" name="version"
                                                value="<c:out value="${item.applicationVersionId}"/>"/>
-                                        <input type="submit" value="Disable" class="btn btn-sm btn-default w100"/>
+                                        <input type="submit" value="Disable" class="btn btn-sm btn-danger w100"/>
                                     </form>
                                 </c:when>
                                 <c:otherwise>
@@ -99,7 +99,7 @@
             <div class="panel-heading">
                 <h3 class="panel-title button-sm pull-left">Callbacks</h3>
                 <a href="${pageContext.request.contextPath}/application/detail/<c:out value="${id}"/>/callback/create"
-                   class="btn btn-sm btn-success pull-right">Add Callback</a>
+                   class="btn btn-sm btn-default pull-right">Add Callback</a>
                 <div class="clearfix"></div>
             </div>
 

@@ -60,7 +60,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title button pull-left">Integrations</h3>
-                <a href="${pageContext.request.contextPath}/integration/create" class="pull-right btn btn-success">New
+                <a href="${pageContext.request.contextPath}/integration/create" class="pull-right btn btn-default">New
                     Integration</a>
                 <div class="clearfix"></div>
             </div>

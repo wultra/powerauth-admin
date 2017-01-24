@@ -47,7 +47,7 @@
                             </c:forEach>
                         </select>
                         <input type="hidden" name="userId" value="<c:out value="${userId}"/>"/>
-                        <input type="submit" value="Create Activation" class="btn btn-success"/>
+                        <input type="submit" value="Create Activation" class="btn btn-default"/>
                     </div>
                 </form>
             </div>

@@ -34,7 +34,12 @@ public class ApplicationController {
      */
     @RequestMapping(value = "/")
     public String homePage() {
-        return "redirect:/application/list";
+        List<GetApplicationListResponse.Applications> applicationList = client.getApplicationList();
+        if (applicationList.isEmpty()) {
+            return "redirect:/application/list";
+        } else {
+            return "redirect:/activation/list";
+        }
     }
 
     /**

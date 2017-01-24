@@ -29,7 +29,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title button-sm pull-left">Applications</h3>
-                <a href="${pageContext.request.contextPath}/application/create" class="pull-right btn btn-sm btn-success">New
+                <a href="${pageContext.request.contextPath}/application/create" class="pull-right btn btn-sm btn-default">New
                     Application</a>
                 <div class="clearfix"></div>
             </div>
