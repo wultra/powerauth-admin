@@ -26,11 +26,10 @@
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
                 <li>
-                    <a href="${pageContext.request.contextPath}/" style="padding-left: 0;"><img
-                            src="${pageContext.request.contextPath}/resources/images/logo.png" class="brand-logo"></a>
+                    <a href="${pageContext.request.contextPath}/" style="padding-left: 0;">
+                        <img src="${pageContext.request.contextPath}/resources/images/logo.png" class="brand-logo">
+                    </a>
                 </li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
                 <li <c:if test="${fn:startsWith(requestScope['javax.servlet.forward.servlet_path'], '/activation/')}">class="active"</c:if>>
                     <a href="${pageContext.request.contextPath}/activation/list">Activations</a>
                 </li>
@@ -40,6 +39,9 @@
                 <li <c:if test="${fn:startsWith(requestScope['javax.servlet.forward.servlet_path'], '/integration/')}">class="active"</c:if>>
                     <a href="${pageContext.request.contextPath}/integration/list">Integrations</a>
                 </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="${pageContext.request.contextPath}/logout">Logout</a></li>
             </ul>
         </div>
         <!--/.nav-collapse -->

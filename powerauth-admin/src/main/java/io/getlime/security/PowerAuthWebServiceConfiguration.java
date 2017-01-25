@@ -18,9 +18,8 @@ package io.getlime.security;
 
 import io.getlime.security.powerauth.soap.spring.client.PowerAuthServiceClient;
 import org.apache.ws.security.WSConstants;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.ws.client.support.interceptor.ClientInterceptor;
@@ -34,20 +33,14 @@ import javax.net.ssl.*;
  * @author Petr Dvorak
  */
 @Configuration
-@ComponentScan(basePackages = {"io.getlime.security.powerauth"})
 public class PowerAuthWebServiceConfiguration {
 
-    @Value("${powerauth.service.url}")
-    private String powerAuthServiceUrl;
+    private ApplicationConfiguration configuration;
 
-    @Value("${powerauth.service.security.clientToken}")
-    private String clientToken;
-
-    @Value("${powerauth.service.security.clientSecret}")
-    private String clientSecret;
-
-    @Value("${powerauth.service.ssl.acceptInvalidSslCertificate}")
-    private boolean acceptInvalidSslCertificate;
+    @Autowired
+    public PowerAuthWebServiceConfiguration(ApplicationConfiguration configuration) {
+        this.configuration = configuration;
+    }
 
     /**
      * Checks if given client token is the current client token.
@@ -55,10 +48,8 @@ public class PowerAuthWebServiceConfiguration {
      * @return True if the provided client token is the same one as the one being used, false otherwise.
      */
     public boolean isCurrentSecuritySettings(String clientToken) {
-        if (this.clientToken == null) {
-            return false;
-        }
-        return this.clientToken.equals(clientToken);
+        return this.configuration.getClientToken() != null
+                && this.configuration.getClientToken().equals(clientToken);
     }
 
     /**
@@ -69,8 +60,8 @@ public class PowerAuthWebServiceConfiguration {
     public Wss4jSecurityInterceptor securityInterceptor(){
         Wss4jSecurityInterceptor wss4jSecurityInterceptor = new Wss4jSecurityInterceptor();
         wss4jSecurityInterceptor.setSecurementActions("UsernameToken");
-        wss4jSecurityInterceptor.setSecurementUsername(clientToken);
-        wss4jSecurityInterceptor.setSecurementPassword(clientSecret);
+        wss4jSecurityInterceptor.setSecurementUsername(configuration.getClientToken());
+        wss4jSecurityInterceptor.setSecurementPassword(configuration.getClientSecret());
         wss4jSecurityInterceptor.setSecurementPasswordType(WSConstants.PW_TEXT);
         return wss4jSecurityInterceptor;
     }
@@ -96,12 +87,12 @@ public class PowerAuthWebServiceConfiguration {
     @Bean
     public PowerAuthServiceClient powerAuthClient(Jaxb2Marshaller marshaller) {
         PowerAuthServiceClient client = new PowerAuthServiceClient();
-        client.setDefaultUri(powerAuthServiceUrl);
+        client.setDefaultUri(configuration.getPowerAuthServiceUrl());
         client.setMarshaller(marshaller);
         client.setUnmarshaller(marshaller);
 
         // if invalid SSL certificates should be accepted
-        if (acceptInvalidSslCertificate) {
+        if (configuration.isAcceptInvalidSslCertificate()) {
 
             HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
                 @Override
@@ -135,7 +126,7 @@ public class PowerAuthWebServiceConfiguration {
         }
 
         // if there is a configuration with security credentials, add interceptor
-        if (!clientToken.isEmpty()) {
+        if (!configuration.getClientToken().isEmpty()) {
             ClientInterceptor[] interceptors = new ClientInterceptor[] {
                     securityInterceptor()
             };
