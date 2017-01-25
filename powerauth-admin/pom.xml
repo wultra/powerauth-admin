@@ -6,17 +6,19 @@
 	<name>powerauth-admin</name>
 	<description>PowerAuth 2.0 Server Admin Console</description>
 	<artifactId>powerauth-admin</artifactId>
-	<version>0.13.2</version>
+	<version>0.13.3</version>
 	<packaging>war</packaging>
 
 	<parent>
 		<groupId>io.getlime.security</groupId>
 		<artifactId>powerauth-admin-parent</artifactId>
-		<version>0.13.2</version>
+		<version>0.13.3</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<dependencies>
+
+		<!-- Spring Boot -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -31,6 +33,28 @@
 			<artifactId>spring-ws-security</artifactId>
 			<version>2.2.4.RELEASE</version> <!-- 2.3.0 seems a bit buggy, SWS-972 and SWS-972 -->
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-ldap</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.directory.server</groupId>
+			<artifactId>apacheds-server-jndi</artifactId>
+			<version>1.5.5</version>
+		</dependency>
+
+		<!-- PowerAuth Dependencies -->
+		<dependency>
+			<groupId>io.getlime.security</groupId>
+			<artifactId>powerauth-java-client-spring</artifactId>
+			<version>0.13.3</version>
+		</dependency>
+
+		<!-- Other Libraries -->
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
@@ -60,11 +84,6 @@
 			<groupId>com.google.zxing</groupId>
 			<artifactId>javase</artifactId>
 			<version>3.2.1</version>
-		</dependency>
-		<dependency>
-			<groupId>io.getlime.security</groupId>
-			<artifactId>powerauth-java-client-spring</artifactId>
-			<version>0.13.2</version>
 		</dependency>
 	</dependencies>
 

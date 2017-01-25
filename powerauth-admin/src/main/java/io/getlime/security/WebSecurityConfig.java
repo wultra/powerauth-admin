@@ -16,17 +16,12 @@
 
 package io.getlime.security;
 
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.support.SpringBootServletInitializer;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 /**
- * Spring Boot servlet initializer.
+ * Spring Security configuration class.
+ *
+ * @author Petr Dvorak, petr@lime-company.eu
  */
-public class ServletInitializer extends SpringBootServletInitializer {
-
-    @Override
-    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application.sources(PowerauthAdminApplication.class);
-    }
-
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 }
