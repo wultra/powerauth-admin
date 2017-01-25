@@ -40,9 +40,11 @@
                     <a href="${pageContext.request.contextPath}/integration/list">Integrations</a>
                 </li>
             </ul>
-            <ul class="nav navbar-nav navbar-right">
-                <li><a href="${pageContext.request.contextPath}/logout">Logout</a></li>
-            </ul>
+            <c:if test="${pageContext.request.userPrincipal.name != null}">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="${pageContext.request.contextPath}/logout">Logout</a></li>
+                </ul>
+            </c:if>
         </div>
         <!--/.nav-collapse -->
     </div>

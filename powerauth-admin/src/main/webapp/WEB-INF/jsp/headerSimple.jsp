@@ -28,9 +28,11 @@
                 </li>
                 <li class="active"><a href="${pageContext.request.contextPath}/application/list">Applications</a></li>
             </ul>
-            <ul class="nav navbar-nav navbar-right">
-                <li><a href="${pageContext.request.contextPath}/logout">Logout</a></li>
-            </ul>
+            <c:if test="${pageContext.request.userPrincipal.name != null}">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="${pageContext.request.contextPath}/logout">Logout</a></li>
+                </ul>
+            </c:if>
         </div>
     </div>
 </nav>

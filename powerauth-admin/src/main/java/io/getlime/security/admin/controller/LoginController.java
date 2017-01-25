@@ -16,6 +16,8 @@
 
 package io.getlime.security.admin.controller;
 
+import io.getlime.security.ApplicationConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -34,13 +36,26 @@ import javax.servlet.http.HttpServletResponse;
 @Controller
 public class LoginController {
 
+    private ApplicationConfiguration configuration;
+
+    @Autowired
+    public void setConfiguration(ApplicationConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String loginPage() {
+        if (configuration.getSecurityMethod().isEmpty()) {
+            return "redirect:/";
+        }
         return "login";
     }
 
     @RequestMapping(value="/logout", method = RequestMethod.GET)
     public String logoutPage (HttpServletRequest request, HttpServletResponse response) {
+        if (configuration.getSecurityMethod().isEmpty()) {
+            return "redirect:/";
+        }
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null){
             new SecurityContextLogoutHandler().logout(request, response, auth);
