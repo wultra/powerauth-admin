@@ -27,22 +27,21 @@
                 <div class="panel-body gray">
                     <p>
                         Client Activation Code<br>
-                    <div class="input-group">
-                        <input id="activation-code" type="text" class="form-control" readonly="readonly" value="<c:out value="${activationIdShort}"/>-<c:out value="${activationOtp}"/>">
-                        <span class="input-group-btn">
-                                <button class="btn btn-default btn-clipboard" type="button" data-clipboard-target="#activation-code" data-clipboard-text="<c:out value="${activationIdShort}"/>-<c:out value="${activationOtp}"/>">
+                        <div class="input-group">
+                            <input id="activation-code" type="text" class="form-control" readonly="readonly" value="<c:out value="${activationIdShort}"/>-<c:out value="${activationOtp}"/>">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default btn-clipboard" type="button" data-clipboard-text="<c:out value="${activationIdShort}"/>-<c:out value="${activationOtp}"/>">
                                     <span class=" glyphicon glyphicon-copy"></span>
                                 </button>
                             </span>
-                    </div>
+                        </div>
                     </p>
                     <p>
                         Client Activation Code Signature<br>
                         <strong class="code black wrap"><c:out value="${activationSignature}"/></strong>
                     </p>
                     <p>
-                        <img src="<c:out value="${activationQR}"/>" class="w100" alt="Activation QR Code"
-                             style="border: 1px solid #777777"/>
+                        <img src="<c:out value="${activationQR}"/>" class="w100" alt="Activation QR Code" style="border: 1px solid #777777"/>
                     </p>
                 </div>
             </div>
@@ -55,7 +54,14 @@
             <div class="panel-body gray">
                 <p>
                     Activation ID<br>
-                    <strong class="code black"><c:out value="${activationId}"/></strong>
+                    <div class="input-group">
+                        <input type="text" class="form-control code black" readonly="readonly" value="<c:out value="${activationId}"/>"/>
+                        <span class="input-group-btn">
+                            <button class="btn btn-default btn-clipboard" type="button" data-clipboard-text="<c:out value="${activationId}"/>">
+                                <span class=" glyphicon glyphicon-copy"></span>
+                            </button>
+                        </span>
+                    </div>
                 </p>
                 <c:if test="${activationName != null}">
                     <p>
@@ -68,15 +74,17 @@
                         <td>
                             <p>
                                 Created<br>
-                                <span class="black"><fmt:formatDate type="both" dateStyle="short" timeStyle="short"
-                                                                    value="${timestampCreated.toGregorianCalendar().time}"/></span>
+                                <span class="black">
+                                    <fmt:formatDate type="both" dateStyle="short" timeStyle="short" value="${timestampCreated.toGregorianCalendar().time}"/>
+                                </span>
                             </p>
                         </td>
                         <td>
                             <p>
                                 Last Used<br>
-                                <span class="black"><fmt:formatDate type="both" dateStyle="short" timeStyle="short"
-                                                                    value="${timestampLastUsed.toGregorianCalendar().time}"/></span>
+                                <span class="black">
+                                    <fmt:formatDate type="both" dateStyle="short" timeStyle="short" value="${timestampLastUsed.toGregorianCalendar().time}"/>
+                                </span>
                             </p>
                         </td>
                     </tr>
@@ -84,9 +92,11 @@
                         <td>
                             <p>
                                 Application<br>
-                                <span class="black"><a class="black"
-                                                       href="${pageContext.request.contextPath}/application/detail/<c:out value="${applicationId}"/>"><c:out
-                                        value="${applicationName}"/></a></span>
+                                <span class="black">
+                                    <a class="black" href="${pageContext.request.contextPath}/application/detail/<c:out value="${applicationId}"/>">
+                                        <c:out value="${applicationName}"/>
+                                    </a>
+                                </span>
                             </p>
                         </td>
                         <td>
@@ -152,8 +162,7 @@
                                         Result<br>
                                         <span class="black">
                                             <c:choose>
-                                                <c:when test="${item.valid}"><span
-                                                        class="green">OK</span>:</c:when>
+                                                <c:when test="${item.valid}"><span class="green">OK</span>:</c:when>
                                                 <c:otherwise><span class="red">NOK</span>:</c:otherwise>
                                             </c:choose>
                                             <c:out value="${item.note}"/>
