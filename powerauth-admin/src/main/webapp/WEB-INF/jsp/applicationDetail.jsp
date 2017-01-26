@@ -72,8 +72,8 @@
                                     <form action="${pageContext.request.contextPath}/application/detail/<c:out value="${id}"/>/version/update/do.submit"
                                           method="POST">
                                         <input type="hidden" name="enabled" value="false"/>
-                                        <input type="hidden" name="version"
-                                               value="<c:out value="${item.applicationVersionId}"/>"/>
+                                        <input type="hidden" name="version" value="<c:out value="${item.applicationVersionId}"/>"/>
+                                        <input type="hidden" name="${_csrf.parameterName}"   value="${_csrf.token}" />
                                         <input type="submit" value="Disable" class="btn btn-sm btn-danger w100"/>
                                     </form>
                                 </c:when>
@@ -81,8 +81,8 @@
                                     <form action="${pageContext.request.contextPath}/application/detail/<c:out value="${id}"/>/version/update/do.submit"
                                           method="POST">
                                         <input type="hidden" name="enabled" value="true"/>
-                                        <input type="hidden" name="version"
-                                               value="<c:out value="${item.applicationVersionId}"/>"/>
+                                        <input type="hidden" name="version" value="<c:out value="${item.applicationVersionId}"/>"/>
+                                        <input type="hidden" name="${_csrf.parameterName}"   value="${_csrf.token}" />
                                         <input type="submit" value="Enable" class="btn btn-sm btn-default w100"/>
                                     </form>
                                 </c:otherwise>
@@ -126,9 +126,9 @@
                                 <td><c:out value="${item.name}"/></td>
                                 <td><c:out value="${item.callbackUrl}"/></td>
                                 <td>
-                                    <form action="${pageContext.request.contextPath}/application/detail/<c:out value="${id}"/>/callback/remove/do.submit"
-                                          method="POST" class="action-remove">
+                                    <form action="${pageContext.request.contextPath}/application/detail/<c:out value="${id}"/>/callback/remove/do.submit" method="POST" class="action-remove">
                                         <input type="hidden" name="id" value="<c:out value="${item.id}"/>"/>
+                                        <input type="hidden" name="${_csrf.parameterName}"   value="${_csrf.token}" />
                                         <input type="submit" value="Remove" class="btn btn-sm btn-default w100"/>
                                     </form>
                                 </td>

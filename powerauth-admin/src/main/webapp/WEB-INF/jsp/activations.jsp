@@ -17,8 +17,8 @@
             </div>
             <div class="panel-body">
                 <form action="${pageContext.request.contextPath}/activation/list" method="GET" class="form-inline">
-                    Enter a user ID <input class="form-control" type="text" name="userId"
-                                           value="<c:out value="${userId}"/>"/>
+                    Enter a user ID <input class="form-control" type="text" name="userId" value="<c:out value="${userId}"/>"/>
+                    <input type="hidden" name="${_csrf.parameterName}"   value="${_csrf.token}" />
                     <input class="form-field btn btn-success" type="submit" value="Select User"/>
                 </form>
             </div>
@@ -36,8 +36,7 @@
                 <h3 class="panel-title">New Activation</h3>
             </div>
             <div class="panel-body">
-                <form action="${pageContext.request.contextPath}/activation/create?userId=<c:out value="${userId}"/>"
-                      class="form-inline pull-left">
+                <form action="${pageContext.request.contextPath}/activation/create?userId=<c:out value="${userId}"/>" class="form-inline pull-left">
                     <div class="form-group">
                         <select name="applicationId" class="form-control">
                             <c:forEach items="${applications}" var="item">
@@ -47,6 +46,7 @@
                             </c:forEach>
                         </select>
                         <input type="hidden" name="userId" value="<c:out value="${userId}"/>"/>
+                        <input type="hidden" name="${_csrf.parameterName}"   value="${_csrf.token}" />
                         <input type="submit" value="Create Activation" class="btn btn-default"/>
                     </div>
                 </form>
@@ -63,6 +63,7 @@
                             <input type="checkbox" name="showAll"
                                    <c:if test='${showAll}'>checked</c:if> onchange="this.form.submit()"/> Show All
                         </label>
+                        <input type="hidden" name="${_csrf.parameterName}"   value="${_csrf.token}" />
                     </form>
                     <div class="clearfix"></div>
                 </div>

@@ -28,6 +28,7 @@
                             URL <input type="text" name="callbackUrl" class="form-control"/>
                         </div>
                         <div class="col-md-2 text-right"><br/>
+                            <input type="hidden" name="${_csrf.parameterName}"   value="${_csrf.token}" />
                             <input type="submit" value="Submit" class="btn btn-success w100"/>
                         </div>
                     </div>

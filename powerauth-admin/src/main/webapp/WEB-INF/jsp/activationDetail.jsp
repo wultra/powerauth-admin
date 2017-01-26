@@ -10,8 +10,7 @@
 
 <ol class="breadcrumb">
     <li><a class="black" href="${pageContext.request.contextPath}/activation/list">User Selection</a></li>
-    <li><a class="black" href="${pageContext.request.contextPath}/activation/list?userId=<c:out value="${userId}"/>">User
-        "<c:out value="${userId}"/>"</a></li>
+    <li><a class="black" href="${pageContext.request.contextPath}/activation/list?userId=<c:out value="${userId}"/>">User "<c:out value="${userId}"/>"</a></li>
     <li class="active">Activation Detail</li>
 </ol>
 
@@ -28,14 +27,14 @@
                 <div class="panel-body gray">
                     <p>
                         Client Activation Code<br>
-                        <div class="input-group">
-                            <input id="activation-code" type="text" class="form-control" readonly="readonly" value="<c:out value="${activationIdShort}"/>-<c:out value="${activationOtp}"/>">
-                            <span class="input-group-btn">
+                    <div class="input-group">
+                        <input id="activation-code" type="text" class="form-control" readonly="readonly" value="<c:out value="${activationIdShort}"/>-<c:out value="${activationOtp}"/>">
+                        <span class="input-group-btn">
                                 <button class="btn btn-default btn-clipboard" type="button" data-clipboard-target="#activation-code" data-clipboard-text="<c:out value="${activationIdShort}"/>-<c:out value="${activationOtp}"/>">
                                     <span class=" glyphicon glyphicon-copy"></span>
                                 </button>
                             </span>
-                        </div>
+                    </div>
                     </p>
                     <p>
                         Client Activation Code Signature<br>
@@ -137,9 +136,9 @@
                                     </p>
                                     <p>
                                         Date<br>
-                                        <span class="black"><fmt:formatDate type="both" dateStyle="short"
-                                                                            timeStyle="short"
-                                                                            value="${item.timestampCreated.toGregorianCalendar().time}"/></span>
+                                        <span class="black">
+                                            <fmt:formatDate type="both" dateStyle="short" timeStyle="short" value="${item.timestampCreated.toGregorianCalendar().time}"/>
+                                        </span>
                                     </p>
                                     <p>
                                         Value<br>
@@ -152,24 +151,23 @@
                                     <p>
                                         Result<br>
                                         <span class="black">
-													<c:choose>
-                                                        <c:when test="${item.valid}"><span
-                                                                class="green">OK</span>:</c:when>
-                                                        <c:otherwise><span class="red">NOK</span>:</c:otherwise>
-                                                    </c:choose>
-													<c:out value="${item.note}"/>
-												</span>
+                                            <c:choose>
+                                                <c:when test="${item.valid}"><span
+                                                        class="green">OK</span>:</c:when>
+                                                <c:otherwise><span class="red">NOK</span>:</c:otherwise>
+                                            </c:choose>
+                                            <c:out value="${item.note}"/>
+                                        </span>
                                     </p>
                                     <table class="w100">
                                         <tr>
                                             <td>
                                                 Activation<br>
                                                 <span class="black">
-															<jsp:include page="activationStatusSnippet.jsp">
-                                                                <jsp:param value="${item.activationStatus}"
-                                                                           name="status"/>
-                                                            </jsp:include>
-														</span>
+                                                    <jsp:include page="activationStatusSnippet.jsp">
+                                                        <jsp:param value="${item.activationStatus}" name="status"/>
+                                                    </jsp:include>
+                                                </span>
                                             </td>
                                             <td>
                                                 Counter<br>
