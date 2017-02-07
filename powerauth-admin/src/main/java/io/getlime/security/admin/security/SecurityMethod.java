@@ -36,7 +36,7 @@ public class SecurityMethod {
      * @return True in case given method represents LDAP authentication, false otherwise.
      */
     public static boolean isLdap(String securityMethod) {
-        return securityMethod
+        return securityMethod != null && securityMethod
                 .trim()
                 .toLowerCase()
                 .equals(LDAP);
