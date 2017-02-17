@@ -35,7 +35,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private ApplicationConfiguration configuration;
 
     @Autowired
-    public void setConfiguration(ApplicationConfiguration configuration) {
+    public WebSecurityConfig(ApplicationConfiguration configuration) {
         this.configuration = configuration;
     }
 
