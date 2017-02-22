@@ -75,7 +75,7 @@
                             <p>
                                 Created<br>
                                 <span class="black">
-                                    <fmt:formatDate type="both" dateStyle="short" timeStyle="short" value="${timestampCreated.toGregorianCalendar().time}"/>
+                                    <fmt:formatDate type="both" pattern="yyyy/MM/dd hh:mm:ss" value="${timestampCreated.toGregorianCalendar().time}"/>
                                 </span>
                             </p>
                         </td>
@@ -83,7 +83,7 @@
                             <p>
                                 Last Used<br>
                                 <span class="black">
-                                    <fmt:formatDate type="both" dateStyle="short" timeStyle="short" value="${timestampLastUsed.toGregorianCalendar().time}"/>
+                                    <fmt:formatDate type="both" pattern="yyyy/MM/dd hh:mm:ss" value="${timestampLastUsed.toGregorianCalendar().time}"/>
                                 </span>
                             </p>
                         </td>
@@ -126,13 +126,26 @@
             <div class="panel-heading">
                 <h3 class="panel-title">Last Signatures</h3>
             </div>
+            <div class="panel-body">
+                <form method="get" action="${pageContext.request.contextPath}/activation/detail/${activationId}" class="form-inline">
+                    <div class="input-group w100">
+                        <span class="input-group-addon">From</span>
+                        <input type="text" name="fromDate" class="form-control" placeholder="yyyy/MM/dd hh:mm:ss" value="<c:out value="${fromDate}"/>">
+                        <span class="input-group-addon">To</span>
+                        <input type="text" name="toDate" class="form-control" placeholder="yyyy/DD/dd hh:mm:ss" value="<c:out value="${toDate}"/>">
+                        <span class="input-group-btn">
+                            <input type="submit" class="btn btn-default w100" value="Filter" />
+                        </span>
+                    </div>
+                </form>
+            </div>
             <table class="table w100">
                 <tbody>
                 <c:choose>
                     <c:when test="${fn:length(signatures) == 0}">
                         <tr class="code gray text-center">
                             <td colspan="4">
-                                <p class="padder20">No signatures in past 30 days</p>
+                                <p class="padder20">No signatures in the selected interval</p>
                             </td>
                         </tr>
                     </c:when>
@@ -147,7 +160,7 @@
                                     <p>
                                         Date<br>
                                         <span class="black">
-                                            <fmt:formatDate type="both" dateStyle="short" timeStyle="short" value="${item.timestampCreated.toGregorianCalendar().time}"/>
+                                            <fmt:formatDate type="both" pattern="yyyy/MM/dd hh:mm:ss" value="${item.timestampCreated.toGregorianCalendar().time}"/>
                                         </span>
                                     </p>
                                     <p>

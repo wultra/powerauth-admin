@@ -60,8 +60,7 @@
                     <form action="${pageContext.request.contextPath}/activation/list" method="GET" class="pull-right">
                         <input type="hidden" name="userId" value="<c:out value="${userId}"/>"/>
                         <label style="font-weight: normal; margin: 0;">
-                            <input type="checkbox" name="showAll"
-                                   <c:if test='${showAll}'>checked</c:if> onchange="this.form.submit()"/> Show All
+                            <input type="checkbox" name="showAll" <c:if test='${showAll}'>checked</c:if> onchange="this.form.submit()"/> Show All
                         </label>
                         <input type="hidden" name="${_csrf.parameterName}"   value="${_csrf.token}" />
                     </form>
@@ -75,7 +74,7 @@
                         <th>Name</th>
                         <th style="width: 150px;">Application</th>
                         <th style="width: 80px;">Status</th>
-                        <th class="text-right" style="width: 150px;">Last used</th>
+                        <th class="text-right" style="width: 170px;">Last used</th>
                         <th class="text-right" style="width: 130px;">Actions</th>
                     </tr>
                     </thead>
@@ -96,8 +95,9 @@
                                         <jsp:param value="${item.activationStatus}" name="status"/>
                                     </jsp:include>
                                 </td>
-                                <td class="text-right"><fmt:formatDate type="both" dateStyle="short" timeStyle="short"
-                                                                       value="${item.timestampLastUsed.toGregorianCalendar().time}"/></td>
+                                <td class="text-right">
+                                    <fmt:formatDate type="both" pattern="yyyy/MM/dd hh:mm:ss" value="${item.timestampLastUsed.toGregorianCalendar().time}"/>
+                                </td>
                                 <td>
                                     <jsp:include page="activationStatusForms.jsp">
                                         <jsp:param value="${item.activationStatus}" name="status"/>

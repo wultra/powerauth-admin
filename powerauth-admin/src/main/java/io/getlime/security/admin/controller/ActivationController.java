@@ -27,6 +27,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -79,7 +82,40 @@ public class ActivationController {
      * @return "activationDetail" view.
      */
     @RequestMapping(value = "/activation/detail/{id}")
-    public String activationDetail(@PathVariable(value = "id") String id, Map<String, Object> model) {
+    public String activationDetail(
+            @PathVariable(value = "id") String id,
+            @RequestParam(value = "fromDate", required = false) String fromDate,
+            @RequestParam(value = "toDate", required = false) String toDate,
+            Map<String, Object> model) {
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
+        Date startingDate;
+        Date endingDate;
+        try {
+            if (toDate != null) {
+                endingDate = dateFormat.parse(toDate);
+            } else {
+                endingDate = new Date();
+                toDate = dateFormat.format(endingDate);
+            }
+            model.put("toDate", toDate);
+            if (fromDate != null) {
+                startingDate = dateFormat.parse(fromDate);
+            } else {
+                startingDate = new Date(endingDate.getTime() - (30L * 24L * 60L * 60L * 1000L));
+                fromDate = dateFormat.format(startingDate);
+            }
+            model.put("fromDate", fromDate);
+        } catch (ParseException e) {
+            // Date parsing didn't work, OK - clear the values...
+            endingDate = new Date();
+            startingDate = new Date(endingDate.getTime() - (30L * 24L * 60L * 60L * 1000L));
+            fromDate = dateFormat.format(startingDate);
+            toDate = dateFormat.format(endingDate);
+            model.put("fromDate", fromDate);
+            model.put("toDate", toDate);
+        }
+
         GetActivationStatusResponse activation = client.getActivationStatus(id);
         model.put("activationId", activation.getActivationId());
         model.put("activationName", activation.getActivationName());
@@ -92,8 +128,7 @@ public class ActivationController {
         model.put("applicationId", application.getApplicationId());
         model.put("applicationName", application.getApplicationName());
 
-        Date endingDate = new Date();
-        Date startingDate = new Date(endingDate.getTime() - (30L * 24L * 60L * 60L * 1000L));
+
         List<SignatureAuditResponse.Items> auditItems = client.getSignatureAuditLog(activation.getUserId(), application.getApplicationId(), startingDate, endingDate);
         List<SignatureAuditResponse.Items> auditItemsFixed = new ArrayList<>();
         for (SignatureAuditResponse.Items item : auditItems) {
