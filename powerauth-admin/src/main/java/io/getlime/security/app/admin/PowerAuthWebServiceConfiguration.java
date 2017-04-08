@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getlime.security;
+package io.getlime.security.app.admin;
 
 import io.getlime.security.powerauth.soap.spring.client.PowerAuthServiceClient;
 import org.apache.ws.security.WSConstants;

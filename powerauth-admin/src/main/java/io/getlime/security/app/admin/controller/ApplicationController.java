@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getlime.security.admin.controller;
+package io.getlime.security.app.admin.controller;
 
 import com.google.common.collect.Lists;
 import io.getlime.powerauth.soap.CreateApplicationResponse;

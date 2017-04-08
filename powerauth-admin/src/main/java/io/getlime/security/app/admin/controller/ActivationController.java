@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package io.getlime.security.admin.controller;
+package io.getlime.security.app.admin.controller;
 
 import com.google.common.io.BaseEncoding;
+import io.getlime.security.app.admin.util.QRUtil;
 import io.getlime.powerauth.soap.*;
 import io.getlime.security.powerauth.soap.spring.client.PowerAuthServiceClient;
-import io.getlime.security.util.QRUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;

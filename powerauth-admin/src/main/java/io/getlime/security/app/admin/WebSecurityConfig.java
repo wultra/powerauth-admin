@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package io.getlime.security;
+package io.getlime.security.app.admin;
 
-import io.getlime.security.admin.security.SecurityMethod;
+import io.getlime.security.app.admin.security.SecurityMethod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;

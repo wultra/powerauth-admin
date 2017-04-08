@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getlime.security.admin.security;
+package io.getlime.security.app.admin.security;
 
 /**
  * Helper class that determines which security method is used.

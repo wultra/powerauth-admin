@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getlime.security;
+package io.getlime.security.app.admin;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;

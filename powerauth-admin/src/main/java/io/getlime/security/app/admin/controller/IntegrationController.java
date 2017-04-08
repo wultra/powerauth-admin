@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package io.getlime.security.admin.controller;
+package io.getlime.security.app.admin.controller;
 
+import io.getlime.security.app.admin.PowerAuthWebServiceConfiguration;
 import io.getlime.powerauth.soap.*;
-import io.getlime.security.PowerAuthWebServiceConfiguration;
 import io.getlime.security.powerauth.soap.spring.client.PowerAuthServiceClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

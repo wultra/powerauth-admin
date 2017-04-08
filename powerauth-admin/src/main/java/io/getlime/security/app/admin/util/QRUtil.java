@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getlime.security.util;
+package io.getlime.security.app.admin.util;
 
 import com.google.common.io.BaseEncoding;
 import com.google.zxing.BarcodeFormat;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getlime.security;
+package io.getlime.security.app.admin;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
