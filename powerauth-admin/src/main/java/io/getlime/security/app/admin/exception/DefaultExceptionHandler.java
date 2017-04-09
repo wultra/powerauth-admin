@@ -28,7 +28,7 @@ import org.springframework.web.servlet.ModelAndView;
 @ControllerAdvice
 public class DefaultExceptionHandler {
 
-    public static final String DEFAULT_ERROR_VIEW = "error";
+    private static final String DEFAULT_ERROR_VIEW = "error";
 
     /**
      * Show the default error view with the exception detail.
