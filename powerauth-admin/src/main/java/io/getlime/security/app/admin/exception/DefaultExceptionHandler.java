@@ -20,11 +20,9 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-
 /**
  * Controller advice with default exception handler.
+ *
  * @author Petr Dvorak, petr@lime-company.eu
  */
 @ControllerAdvice
@@ -32,8 +30,13 @@ public class DefaultExceptionHandler {
 
     public static final String DEFAULT_ERROR_VIEW = "error";
 
+    /**
+     * Show the default error view with the exception detail.
+     * @param e Exception.
+     * @return Default error model and view instance.
+     */
     @ExceptionHandler(value = {Exception.class, RuntimeException.class})
-    public ModelAndView defaultErrorHandler(HttpServletRequest request, Exception e) {
+    public ModelAndView defaultErrorHandler(Exception e) {
         ModelAndView mav = new ModelAndView(DEFAULT_ERROR_VIEW);
         mav.addObject("stacktrace", e);
         return mav;
