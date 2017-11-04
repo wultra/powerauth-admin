@@ -122,6 +122,7 @@ public class ActivationController {
         model.put("status", activation.getActivationStatus());
         model.put("timestampCreated", activation.getTimestampCreated());
         model.put("timestampLastUsed", activation.getTimestampLastUsed());
+        model.put("activationFingerprint", activation.getDevicePublicKeyFingerprint());
         model.put("userId", activation.getUserId());
 
         GetApplicationDetailResponse application = client.getApplicationDetail(activation.getApplicationId());
