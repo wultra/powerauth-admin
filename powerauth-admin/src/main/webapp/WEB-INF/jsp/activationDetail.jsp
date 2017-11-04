@@ -26,7 +26,7 @@
                 </div>
                 <div class="panel-body gray">
                     <p>
-                        Client Activation Code<br>
+                        Client Activation Code<br/>
                         <div class="input-group">
                             <input id="activation-code" type="text" class="form-control" readonly="readonly" value="<c:out value="${activationIdShort}"/>-<c:out value="${activationOtp}"/>">
                             <span class="input-group-btn">
@@ -42,6 +42,27 @@
                     </p>
                     <p>
                         <img src="<c:out value="${activationQR}"/>" class="w100" alt="Activation QR Code" style="border: 1px solid #777777"/>
+                    </p>
+                </div>
+            </div>
+        </c:if>
+
+        <c:if test="${status == 'OTP_USED'}">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Activation Verification</h3>
+                </div>
+                <div class="panel-body gray">
+                    <p>
+                        Device Public Key Fingerprint<br/>
+                        <div class="input-group">
+                            <input id="activation-fingerprint" type="text" class="form-control" readonly="readonly" value="<c:out value="${activationFingerprint}"/>">
+                            <span class="input-group-btn">
+                                    <button class="btn btn-default btn-clipboard" type="button" data-clipboard-text="<c:out value="${activationFingerprint}"/>">
+                                        <span class=" glyphicon glyphicon-copy"></span>
+                                    </button>
+                                </span>
+                        </div>
                     </p>
                 </div>
             </div>
