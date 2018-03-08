@@ -129,6 +129,19 @@
                             </p>
                         </td>
                     </tr>
+                    <c:if test="${not empty blockedReason}">
+                        <tr>
+                            <td>
+                                &nbsp;
+                            </td>
+                            <td>
+                                Blocked Reason<br>
+                                <span class="orange code">
+                                    <c:out value="${blockedReason}"/>
+                                </span>
+                            </td>
+                        </tr>
+                    </c:if>
                 </table>
             </div>
             <c:if test="${status != 'REMOVED'}">
@@ -224,6 +237,17 @@
                                         Signed Data<br>
                                         <span class="black"><c:out value="${item.dataBase64}"/></span>
                                     </p>
+                                    <c:if test="${not empty item.additionalInfo.entry}">
+                                        <p class="wrap gray">
+                                            Additional Information<br>
+                                            <c:forEach var="entry" items="${item.additionalInfo.entry}">
+                                                <span class="black">
+                                                    <c:out value="${entry.key}"/>: <c:out value="${entry.value}"/>
+                                                </span>
+                                                <br/>
+                                            </c:forEach>
+                                        </p>
+                                    </c:if>
                                 </td>
                             </tr>
                         </c:forEach>
