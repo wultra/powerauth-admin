@@ -144,6 +144,15 @@ public class ActivationController {
         }
         model.put("signatures", auditItemsFixed);
 
+        List<ActivationHistoryResponse.Items> activationHistoryItems = client.getActivationHistory(activation.getActivationId(), startingDate, endingDate);
+        List<ActivationHistoryResponse.Items> trimmedActivationHistoryItems = new ArrayList<>();
+        if (trimmedActivationHistoryItems.size() > 100) {
+            trimmedActivationHistoryItems = activationHistoryItems.subList(0, 100);
+        } else {
+            trimmedActivationHistoryItems = activationHistoryItems;
+        }
+        model.put("history", trimmedActivationHistoryItems);
+
         if (activation.getActivationStatus().equals(ActivationStatus.CREATED)) {
             String activationIdShort = activation.getActivationIdShort();
             String activationOtp = activation.getActivationOTP();
