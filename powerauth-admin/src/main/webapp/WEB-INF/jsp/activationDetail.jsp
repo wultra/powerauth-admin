@@ -244,9 +244,9 @@
                                                 <p class="wrap gray">
                                                     Additional Information<br>
                                                     <c:forEach var="entry" items="${item.additionalInfo.entry}">
-                                                <span class="black">
-                                                    <c:out value="${entry.key}"/>: <c:out value="${entry.value}"/>
-                                                </span>
+                                                        <span class="black">
+                                                            <c:out value="${entry.key}"/>: <c:out value="${entry.value}"/>
+                                                        </span>
                                                         <br/>
                                                     </c:forEach>
                                                 </p>
