@@ -201,7 +201,7 @@ public class ActivationController {
      */
     @RequestMapping(value = "/activation/block/do.submit", method = RequestMethod.POST)
     public String blockActivation(@RequestParam(value = "activationId") String activationId, @RequestParam(value = "redirect") String redirect, Map<String, Object> model) {
-        BlockActivationResponse blockActivation = client.blockActivation(activationId);
+        BlockActivationResponse blockActivation = client.blockActivation(activationId, null);
         if (redirect != null && !redirect.trim().isEmpty()) {
             return "redirect:" + redirect;
         }
