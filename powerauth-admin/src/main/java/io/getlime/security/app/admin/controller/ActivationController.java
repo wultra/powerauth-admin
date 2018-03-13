@@ -120,6 +120,7 @@ public class ActivationController {
         model.put("activationId", activation.getActivationId());
         model.put("activationName", activation.getActivationName());
         model.put("status", activation.getActivationStatus());
+        model.put("blockedReason", activation.getBlockedReason());
         model.put("timestampCreated", activation.getTimestampCreated());
         model.put("timestampLastUsed", activation.getTimestampLastUsed());
         model.put("activationFingerprint", activation.getDevicePublicKeyFingerprint());
