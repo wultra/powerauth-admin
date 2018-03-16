@@ -96,7 +96,7 @@
                             <p>
                                 Created<br>
                                 <span class="black">
-                                    <fmt:formatDate type="both" pattern="yyyy/MM/dd hh:mm:ss" value="${timestampCreated.toGregorianCalendar().time}"/>
+                                    <fmt:formatDate type="both" pattern="yyyy/MM/dd HH:mm:ss" value="${timestampCreated.toGregorianCalendar().time}"/>
                                 </span>
                             </p>
                         </td>
@@ -104,7 +104,7 @@
                             <p>
                                 Last Used<br>
                                 <span class="black">
-                                    <fmt:formatDate type="both" pattern="yyyy/MM/dd hh:mm:ss" value="${timestampLastUsed.toGregorianCalendar().time}"/>
+                                    <fmt:formatDate type="both" pattern="yyyy/MM/dd HH:mm:ss" value="${timestampLastUsed.toGregorianCalendar().time}"/>
                                 </span>
                             </p>
                         </td>
@@ -161,9 +161,9 @@
                 <form method="get" action="${pageContext.request.contextPath}/activation/detail/${activationId}" class="form-inline">
                     <div class="input-group w100">
                         <span class="input-group-addon">From</span>
-                        <input type="text" name="fromDate" class="form-control" placeholder="yyyy/MM/dd hh:mm:ss" value="<c:out value="${fromDate}"/>">
+                        <input type="text" name="fromDate" class="form-control" placeholder="yyyy/MM/dd HH:mm:ss" value="<c:out value="${fromDate}"/>">
                         <span class="input-group-addon">To</span>
-                        <input type="text" name="toDate" class="form-control" placeholder="yyyy/DD/dd hh:mm:ss" value="<c:out value="${toDate}"/>">
+                        <input type="text" name="toDate" class="form-control" placeholder="yyyy/DD/dd HH:mm:ss" value="<c:out value="${toDate}"/>">
                         <span class="input-group-btn">
                             <input type="submit" class="btn btn-default w100" value="Filter" />
                         </span>
@@ -197,7 +197,7 @@
                                             <p>
                                                 Date<br>
                                                 <span class="black">
-                                                    <fmt:formatDate type="both" pattern="yyyy/MM/dd hh:mm:ss" value="${item.timestampCreated.toGregorianCalendar().time}"/>
+                                                    <fmt:formatDate type="both" pattern="yyyy/MM/dd HH:mm:ss" value="${item.timestampCreated.toGregorianCalendar().time}"/>
                                                 </span>
                                             </p>
                                             <p>
@@ -281,7 +281,7 @@
                                             <p>
                                                 Date<br>
                                                 <span class="black">
-                                                    <fmt:formatDate type="both" pattern="yyyy/MM/dd hh:mm:ss" value="${item.timestampCreated.toGregorianCalendar().time}"/>
+                                                    <fmt:formatDate type="both" pattern="yyyy/MM/dd HH:mm:ss" value="${item.timestampCreated.toGregorianCalendar().time}"/>
                                                 </span>
                                             </p>
                                         </td>

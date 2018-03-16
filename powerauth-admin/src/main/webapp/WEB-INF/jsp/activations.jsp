@@ -96,7 +96,7 @@
                                     </jsp:include>
                                 </td>
                                 <td class="text-right">
-                                    <fmt:formatDate type="both" pattern="yyyy/MM/dd hh:mm:ss" value="${item.timestampLastUsed.toGregorianCalendar().time}"/>
+                                    <fmt:formatDate type="both" pattern="yyyy/MM/dd HH:mm:ss" value="${item.timestampLastUsed.toGregorianCalendar().time}"/>
                                 </td>
                                 <td>
                                     <jsp:include page="activationStatusForms.jsp">
