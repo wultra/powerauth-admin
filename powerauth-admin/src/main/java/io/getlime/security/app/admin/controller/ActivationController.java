@@ -88,7 +88,7 @@ public class ActivationController {
             @RequestParam(value = "toDate", required = false) String toDate,
             Map<String, Object> model) {
 
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date startingDate;
         Date endingDate;
         try {
