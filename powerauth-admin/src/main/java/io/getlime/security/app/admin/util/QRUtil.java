@@ -52,7 +52,7 @@ public class QRUtil {
                     qrCodeSize);
             BufferedImage image = MatrixToImageWriter.toBufferedImage(matrix);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(image, "jpg", baos);
+            ImageIO.write(image, "png", baos);
             byte[] bytes = baos.toByteArray();
             return "data:image/png;base64," + BaseEncoding.base64().encode(bytes);
         } catch (WriterException | IOException e) {
