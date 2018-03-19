@@ -288,7 +288,11 @@
                                         <td>
                                             <p>
                                                 Status<br>
-                                                <span class="black"><c:out value="${item.activationStatus}"/></span>
+                                                <span class="black">
+                                                    <jsp:include page="activationStatusSnippet.jsp">
+                                                        <jsp:param value="${item.activationStatus}" name="status"/>
+                                                    </jsp:include>
+                                                </span>
                                             </p>
                                         </td>
                                     </tr>
