@@ -85,3 +85,11 @@ pre.code, pre.code code {
     font-family: monospace;
     padding: 5px;
 }
+
+.nav-tabs {
+    border-bottom: none;
+}
+
+.nav-tabs a {
+    color: #7FC000;
+}
