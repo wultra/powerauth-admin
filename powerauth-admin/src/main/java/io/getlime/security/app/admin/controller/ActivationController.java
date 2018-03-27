@@ -88,7 +88,7 @@ public class ActivationController {
             @RequestParam(value = "toDate", required = false) String toDate,
             Map<String, Object> model) {
 
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date startingDate;
         Date endingDate;
         try {
@@ -120,6 +120,7 @@ public class ActivationController {
         model.put("activationId", activation.getActivationId());
         model.put("activationName", activation.getActivationName());
         model.put("status", activation.getActivationStatus());
+        model.put("blockedReason", activation.getBlockedReason());
         model.put("timestampCreated", activation.getTimestampCreated());
         model.put("timestampLastUsed", activation.getTimestampLastUsed());
         model.put("activationFingerprint", activation.getDevicePublicKeyFingerprint());
@@ -142,6 +143,15 @@ public class ActivationController {
             auditItemsFixed = auditItemsFixed.subList(0, 100);
         }
         model.put("signatures", auditItemsFixed);
+
+        List<ActivationHistoryResponse.Items> activationHistoryItems = client.getActivationHistory(activation.getActivationId(), startingDate, endingDate);
+        List<ActivationHistoryResponse.Items> trimmedActivationHistoryItems = new ArrayList<>();
+        if (trimmedActivationHistoryItems.size() > 100) {
+            trimmedActivationHistoryItems = activationHistoryItems.subList(0, 100);
+        } else {
+            trimmedActivationHistoryItems = activationHistoryItems;
+        }
+        model.put("history", trimmedActivationHistoryItems);
 
         if (activation.getActivationStatus().equals(ActivationStatus.CREATED)) {
             String activationIdShort = activation.getActivationIdShort();
@@ -200,7 +210,7 @@ public class ActivationController {
      */
     @RequestMapping(value = "/activation/block/do.submit", method = RequestMethod.POST)
     public String blockActivation(@RequestParam(value = "activationId") String activationId, @RequestParam(value = "redirect") String redirect, Map<String, Object> model) {
-        BlockActivationResponse blockActivation = client.blockActivation(activationId);
+        BlockActivationResponse blockActivation = client.blockActivation(activationId, null);
         if (redirect != null && !redirect.trim().isEmpty()) {
             return "redirect:" + redirect;
         }

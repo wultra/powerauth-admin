@@ -96,7 +96,7 @@
                             <p>
                                 Created<br>
                                 <span class="black">
-                                    <fmt:formatDate type="both" pattern="yyyy/MM/dd hh:mm:ss" value="${timestampCreated.toGregorianCalendar().time}"/>
+                                    <fmt:formatDate type="both" pattern="yyyy/MM/dd HH:mm:ss" value="${timestampCreated.toGregorianCalendar().time}"/>
                                 </span>
                             </p>
                         </td>
@@ -104,7 +104,7 @@
                             <p>
                                 Last Used<br>
                                 <span class="black">
-                                    <fmt:formatDate type="both" pattern="yyyy/MM/dd hh:mm:ss" value="${timestampLastUsed.toGregorianCalendar().time}"/>
+                                    <fmt:formatDate type="both" pattern="yyyy/MM/dd HH:mm:ss" value="${timestampLastUsed.toGregorianCalendar().time}"/>
                                 </span>
                             </p>
                         </td>
@@ -129,6 +129,19 @@
                             </p>
                         </td>
                     </tr>
+                    <c:if test="${not empty blockedReason}">
+                        <tr>
+                            <td>
+                                &nbsp;
+                            </td>
+                            <td>
+                                Blocked Reason<br>
+                                <span class="orange code">
+                                    <c:out value="${blockedReason}"/>
+                                </span>
+                            </td>
+                        </tr>
+                    </c:if>
                 </table>
             </div>
             <c:if test="${status != 'REMOVED'}">
@@ -144,93 +157,152 @@
 
     <div class="col-md-8">
         <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">Last Signatures</h3>
-            </div>
             <div class="panel-body">
                 <form method="get" action="${pageContext.request.contextPath}/activation/detail/${activationId}" class="form-inline">
                     <div class="input-group w100">
                         <span class="input-group-addon">From</span>
-                        <input type="text" name="fromDate" class="form-control" placeholder="yyyy/MM/dd hh:mm:ss" value="<c:out value="${fromDate}"/>">
+                        <input type="text" name="fromDate" class="form-control" placeholder="yyyy/MM/dd HH:mm:ss" value="<c:out value="${fromDate}"/>">
                         <span class="input-group-addon">To</span>
-                        <input type="text" name="toDate" class="form-control" placeholder="yyyy/DD/dd hh:mm:ss" value="<c:out value="${toDate}"/>">
+                        <input type="text" name="toDate" class="form-control" placeholder="yyyy/DD/dd HH:mm:ss" value="<c:out value="${toDate}"/>">
                         <span class="input-group-btn">
                             <input type="submit" class="btn btn-default w100" value="Filter" />
                         </span>
                     </div>
                 </form>
             </div>
-            <table class="table w100">
-                <tbody>
-                <c:choose>
-                    <c:when test="${fn:length(signatures) == 0}">
-                        <tr class="code gray text-center">
-                            <td colspan="4">
-                                <p class="padder20">No signatures in the selected interval</p>
-                            </td>
-                        </tr>
-                    </c:when>
-                    <c:otherwise>
-                        <c:forEach items="${signatures}" var="item">
-                            <tr class="code">
-                                <td class="gray" style="width: 270px;">
-                                    <p>
-                                        Transaction ID<br>
-                                        <span class="black"><c:out value="${item.id}"/></span>
-                                    </p>
-                                    <p>
-                                        Date<br>
-                                        <span class="black">
-                                            <fmt:formatDate type="both" pattern="yyyy/MM/dd hh:mm:ss" value="${item.timestampCreated.toGregorianCalendar().time}"/>
-                                        </span>
-                                    </p>
-                                    <p>
-                                        Value<br>
-                                        <span class="black"><c:out value="${item.signature}"/></span>
-                                    </p>
-                                    <p>
-                                        Type<br>
-                                        <span class="black"><c:out value="${item.signatureType}"/></span>
-                                    </p>
-                                    <p>
-                                        Result<br>
-                                        <span class="black">
-                                            <c:choose>
-                                                <c:when test="${item.valid}"><span class="green">OK</span>:</c:when>
-                                                <c:otherwise><span class="red">NOK</span>:</c:otherwise>
-                                            </c:choose>
-                                            <c:out value="${item.note}"/>
-                                        </span>
-                                    </p>
-                                    <table class="w100">
-                                        <tr>
-                                            <td>
-                                                Activation<br>
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="#signatures" aria-controls="signatures" role="tab" data-toggle="tab">Last Signatures</a></li>
+                <li role="presentation"><a href="#history" aria-controls="history" role="tab" data-toggle="tab">Activation Changes</a></li>
+            </ul>
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="signatures">
+                    <table class="table w100">
+                        <tbody>
+                        <c:choose>
+                            <c:when test="${fn:length(signatures) == 0}">
+                                <tr class="code gray text-center">
+                                    <td colspan="4">
+                                        <p class="padder20">No signatures in the selected interval</p>
+                                    </td>
+                                </tr>
+                            </c:when>
+                            <c:otherwise>
+                                <c:forEach items="${signatures}" var="item">
+                                    <tr class="code">
+                                        <td class="gray" style="width: 270px;">
+                                            <p>
+                                                Transaction ID<br>
+                                                <span class="black"><c:out value="${item.id}"/></span>
+                                            </p>
+                                            <p>
+                                                Date<br>
+                                                <span class="black">
+                                                    <fmt:formatDate type="both" pattern="yyyy/MM/dd HH:mm:ss" value="${item.timestampCreated.toGregorianCalendar().time}"/>
+                                                </span>
+                                            </p>
+                                            <p>
+                                                Value<br>
+                                                <span class="black"><c:out value="${item.signature}"/></span>
+                                            </p>
+                                            <p>
+                                                Type<br>
+                                                <span class="black"><c:out value="${item.signatureType}"/></span>
+                                            </p>
+                                            <p>
+                                                Result<br>
+                                                <span class="black">
+                                                    <c:choose>
+                                                        <c:when test="${item.valid}"><span class="green">OK</span>:</c:when>
+                                                        <c:otherwise><span class="red">NOK</span>:</c:otherwise>
+                                                    </c:choose>
+                                                    <c:out value="${item.note}"/>
+                                                </span>
+                                            </p>
+                                            <table class="w100">
+                                                <tr>
+                                                    <td>
+                                                        Activation<br>
+                                                        <span class="black">
+                                                            <jsp:include page="activationStatusSnippet.jsp">
+                                                                <jsp:param value="${item.activationStatus}" name="status"/>
+                                                            </jsp:include>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        Counter<br>
+                                                        <span class="black"><c:out value="${item.activationCounter}"/></span>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                        <td>
+                                            <p class="wrap gray">
+                                                Signed Data<br>
+                                                <span class="black"><c:out value="${item.dataBase64}"/></span>
+                                            </p>
+                                            <c:if test="${not empty item.additionalInfo.entry}">
+                                                <p class="wrap gray">
+                                                    Additional Information<br>
+                                                    <c:forEach var="entry" items="${item.additionalInfo.entry}">
+                                                        <span class="black">
+                                                            <c:out value="${entry.key}"/>: <c:out value="${entry.value}"/>
+                                                        </span>
+                                                        <br/>
+                                                    </c:forEach>
+                                                </p>
+                                            </c:if>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                            </c:otherwise>
+                        </c:choose>
+                        </tbody>
+                    </table>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="history">
+                    <table class="table w100">
+                        <tbody>
+                        <c:choose>
+                            <c:when test="${fn:length(history) == 0}">
+                                <tr class="code gray text-center">
+                                    <td colspan="4">
+                                        <p class="padder20">No changes in the selected interval</p>
+                                    </td>
+                                </tr>
+                            </c:when>
+                            <c:otherwise>
+                                <c:forEach items="${history}" var="item">
+                                    <tr class="code">
+                                        <td class="gray" style="width: 270px;">
+                                            <p>
+                                                Change ID<br>
+                                                <span class="black"><c:out value="${item.id}"/></span>
+                                            </p>
+                                            <p>
+                                                Date<br>
+                                                <span class="black">
+                                                    <fmt:formatDate type="both" pattern="yyyy/MM/dd HH:mm:ss" value="${item.timestampCreated.toGregorianCalendar().time}"/>
+                                                </span>
+                                            </p>
+                                        </td>
+                                        <td>
+                                            <p>
+                                                Status<br>
                                                 <span class="black">
                                                     <jsp:include page="activationStatusSnippet.jsp">
                                                         <jsp:param value="${item.activationStatus}" name="status"/>
                                                     </jsp:include>
                                                 </span>
-                                            </td>
-                                            <td>
-                                                Counter<br>
-                                                <span class="black"><c:out value="${item.activationCounter}"/></span>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </td>
-                                <td>
-                                    <p class="wrap gray">
-                                        Signed Data<br>
-                                        <span class="black"><c:out value="${item.dataBase64}"/></span>
-                                    </p>
-                                </td>
-                            </tr>
-                        </c:forEach>
-                    </c:otherwise>
-                </c:choose>
-                </tbody>
-            </table>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                            </c:otherwise>
+                        </c:choose>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 

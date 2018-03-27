@@ -6,13 +6,13 @@
 	<name>powerauth-admin</name>
 	<description>PowerAuth 2.0 Server Admin Console</description>
 	<artifactId>powerauth-admin</artifactId>
-	<version>0.17.0</version>
+	<version>0.18.0</version>
 	<packaging>war</packaging>
 
 	<parent>
 		<groupId>io.getlime.security</groupId>
 		<artifactId>powerauth-admin-parent</artifactId>
-		<version>0.17.0</version>
+		<version>0.18.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -50,21 +50,21 @@
         <dependency>
             <groupId>org.apache.directory.server</groupId>
             <artifactId>apacheds-server-jndi</artifactId>
-            <version>1.5.5</version>
+            <version>1.5.7</version>
         </dependency>
 
 		<!-- PowerAuth Dependencies -->
 		<dependency>
 			<groupId>io.getlime.security</groupId>
 			<artifactId>powerauth-java-client-spring</artifactId>
-			<version>0.17.0</version>
+			<version>0.18.0</version>
 		</dependency>
 
 		<!-- Other Libraries -->
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>23.0</version>
+			<version>24.1-jre</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -77,19 +77,21 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>com.google.zxing</groupId>
 			<artifactId>core</artifactId>
-			<version>3.3.0</version>
+			<version>3.3.2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.zxing</groupId>
 			<artifactId>javase</artifactId>
-			<version>3.3.0</version>
+			<version>3.3.2</version>
+		</dependency>
+
+		<!-- Test libraries -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
