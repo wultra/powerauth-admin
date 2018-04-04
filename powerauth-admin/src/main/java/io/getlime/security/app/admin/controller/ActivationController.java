@@ -91,11 +91,16 @@ public class ActivationController {
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date startingDate;
         Date endingDate;
+        Date currentTimePlusOneSecond;
+        Calendar cal = Calendar.getInstance();
+        // Add one second to avoid filtering out the most recent signatures and activation changes.
+        cal.add(Calendar.SECOND, 1);
+        currentTimePlusOneSecond = cal.getTime();
         try {
             if (toDate != null) {
                 endingDate = dateFormat.parse(toDate);
             } else {
-                endingDate = new Date();
+                endingDate = currentTimePlusOneSecond;
                 toDate = dateFormat.format(endingDate);
             }
             model.put("toDate", toDate);
@@ -108,7 +113,7 @@ public class ActivationController {
             model.put("fromDate", fromDate);
         } catch (ParseException e) {
             // Date parsing didn't work, OK - clear the values...
-            endingDate = new Date();
+            endingDate = currentTimePlusOneSecond;
             startingDate = new Date(endingDate.getTime() - (30L * 24L * 60L * 60L * 1000L));
             fromDate = dateFormat.format(startingDate);
             toDate = dateFormat.format(endingDate);
