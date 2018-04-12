@@ -80,6 +80,15 @@ public class ApplicationConfiguration {
     @Value("${powerauth.admin.security.ldap.managerPassword}")
     private String ldapManagerPassword;
 
+    @Value("${powerauth.admin.service.applicationName}")
+    private String applicationName;
+
+    @Value("${powerauth.admin.service.applicationDisplayName}")
+    private String applicationDisplayName;
+
+    @Value("${powerauth.admin.service.applicationEnvironment}")
+    private String applicationEnvironment;
+
     // Getters and setters
 
     public String getPowerAuthServiceUrl() {
@@ -216,5 +225,29 @@ public class ApplicationConfiguration {
 
     public void setLdapManagerPassword(String ldapManagerPassword) {
         this.ldapManagerPassword = ldapManagerPassword;
+    }
+
+    public String getApplicationName() {
+        return applicationName;
+    }
+
+    public void setApplicationName(String applicationName) {
+        this.applicationName = applicationName;
+    }
+
+    public String getApplicationDisplayName() {
+        return applicationDisplayName;
+    }
+
+    public void setApplicationDisplayName(String applicationDisplayName) {
+        this.applicationDisplayName = applicationDisplayName;
+    }
+
+    public String getApplicationEnvironment() {
+        return applicationEnvironment;
+    }
+
+    public void setApplicationEnvironment(String applicationEnvironment) {
+        this.applicationEnvironment = applicationEnvironment;
     }
 }
