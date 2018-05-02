@@ -17,6 +17,9 @@
 package io.getlime.security.app.admin.controller;
 
 import com.google.common.io.BaseEncoding;
+import io.getlime.security.app.admin.converter.SignatureAuditItemConverter;
+import io.getlime.security.app.admin.converter.SignatureDataConverter;
+import io.getlime.security.app.admin.model.SignatureAuditItem;
 import io.getlime.security.app.admin.util.QRUtil;
 import io.getlime.powerauth.soap.*;
 import io.getlime.security.powerauth.soap.spring.client.PowerAuthServiceClient;
@@ -42,6 +45,8 @@ public class ActivationController {
 
     @Autowired
     private PowerAuthServiceClient client;
+
+    private final SignatureAuditItemConverter signatureAuditItemConverter = new SignatureAuditItemConverter();
 
     /**
      * Return the list of activations for given users.
@@ -137,11 +142,10 @@ public class ActivationController {
 
 
         List<SignatureAuditResponse.Items> auditItems = client.getSignatureAuditLog(activation.getUserId(), application.getApplicationId(), startingDate, endingDate);
-        List<SignatureAuditResponse.Items> auditItemsFixed = new ArrayList<>();
+        List<SignatureAuditItem> auditItemsFixed = new ArrayList<>();
         for (SignatureAuditResponse.Items item : auditItems) {
             if (item.getActivationId().equals(activation.getActivationId())) {
-                item.setDataBase64(new String(BaseEncoding.base64().decode(item.getDataBase64())));
-                auditItemsFixed.add(item);
+                auditItemsFixed.add(signatureAuditItemConverter.fromSignatureAuditResponseItem(item));
             }
         }
         if (auditItemsFixed.size() > 100) {
