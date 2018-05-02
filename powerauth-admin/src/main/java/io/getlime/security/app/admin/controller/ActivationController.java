@@ -47,7 +47,6 @@ public class ActivationController {
     private PowerAuthServiceClient client;
 
     private final SignatureAuditItemConverter signatureAuditItemConverter = new SignatureAuditItemConverter();
-    private final SignatureDataConverter signatureDataConverter = new SignatureDataConverter();
 
     /**
      * Return the list of activations for given users.
@@ -146,10 +145,7 @@ public class ActivationController {
         List<SignatureAuditItem> auditItemsFixed = new ArrayList<>();
         for (SignatureAuditResponse.Items item : auditItems) {
             if (item.getActivationId().equals(activation.getActivationId())) {
-                SignatureAuditItem signatureAuditItem = signatureAuditItemConverter.fromSignatureAuditResponseItem(item);
-                signatureAuditItem.setDataBase64(new String(BaseEncoding.base64().decode(item.getDataBase64())));
-                signatureAuditItem.setSignatureData(signatureDataConverter.fromSignatureDataBase64(signatureAuditItem.getDataBase64()));
-                auditItemsFixed.add(signatureAuditItem);
+                auditItemsFixed.add(signatureAuditItemConverter.fromSignatureAuditResponseItem(item));
             }
         }
         if (auditItemsFixed.size() > 100) {

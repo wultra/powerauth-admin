@@ -239,7 +239,7 @@
                                             <p class="wrap gray">
                                                 Signed Data
                                                 <c:choose>
-                                                    <c:when test="${item.signatureData.recognizedSignature}">
+                                                    <c:when test="${not empty item.signatureData}">
                                                         <span class="glyphicon glyphicon-zoom-in" data-toggle="tooltip" data-html="true" data-placement="top" title="<table><tr><td>Request&nbsp;method:&nbsp;&nbsp;&nbsp;</td><td>${item.signatureData.requestMethod}</td></tr><tr><td>Request&nbsp;URI:</td><td>${item.signatureData.requestURIIdentifier}</td></tr><tr><td>Request&nbsp;body:</td><td>${item.signatureData.requestBody}</td></tr></table>"></span>
                                                     </c:when>
                                                     <c:otherwise>
@@ -248,7 +248,7 @@
                                                 </c:choose>
                                                 <br/>
                                                 <span class="black">
-                                                    <c:out value="${item.dataBase64}"/>
+                                                    <c:out value="${item.data}"/>
                                                 </span>
                                             </p>
                                             <c:if test="${not empty item.additionalInfo.entry}">

@@ -20,7 +20,7 @@ public class SignatureAuditItem {
     private long activationCounter;
     private ActivationStatus activationStatus;
     private KeyValueMap additionalInfo;
-    private String dataBase64;
+    private String data;
     private SignatureType signatureType;
     private String signature;
     private String note;
@@ -84,12 +84,12 @@ public class SignatureAuditItem {
         this.additionalInfo = additionalInfo;
     }
 
-    public String getDataBase64() {
-        return dataBase64;
+    public String getData() {
+        return data;
     }
 
-    public void setDataBase64(String dataBase64) {
-        this.dataBase64 = dataBase64;
+    public void setData(String data) {
+        this.data = data;
     }
 
     public SignatureType getSignatureType() {

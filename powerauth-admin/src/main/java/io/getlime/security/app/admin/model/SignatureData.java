@@ -12,7 +12,6 @@ public class SignatureData {
     private String nonce;
     private String requestBody;
     private String applicationSecret;
-    private boolean recognizedSignature;
 
     public String getRequestMethod() {
         return requestMethod;
@@ -54,11 +53,4 @@ public class SignatureData {
         this.applicationSecret = applicationSecret;
     }
 
-    public boolean isRecognizedSignature() {
-        return recognizedSignature;
-    }
-
-    public void setRecognizedSignature(boolean recognizedSignature) {
-        this.recognizedSignature = recognizedSignature;
-    }
 }
