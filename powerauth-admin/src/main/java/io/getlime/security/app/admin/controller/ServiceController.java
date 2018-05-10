@@ -57,14 +57,14 @@ public class ServiceController {
      * @return System status info.
      */
     @RequestMapping(value = "status", method = RequestMethod.GET)
-    public @ResponseBody ServiceStatusResponse getServiceStatus() throws Exception {
+    public @ResponseBody ServiceStatusResponse getServiceStatus() {
         Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Received getServiceStatus request");
         ServiceStatusResponse response = new ServiceStatusResponse();
         response.setApplicationName(applicationConfiguration.getApplicationName());
         response.setApplicationDisplayName(applicationConfiguration.getApplicationDisplayName());
         response.setApplicationEnvironment(applicationConfiguration.getApplicationEnvironment());
         response.setVersion(buildProperties.getVersion());
-        response.setBuildTime(buildProperties.getTime());
+        response.setBuildTime(Date.from(buildProperties.getTime()));
         response.setTimestamp(new Date());
         Logger.getLogger(this.getClass().getName()).log(Level.FINE, "The getServiceStatus request succeeded");
         return response;

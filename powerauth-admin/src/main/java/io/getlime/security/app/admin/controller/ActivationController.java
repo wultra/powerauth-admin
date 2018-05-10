@@ -83,6 +83,8 @@ public class ActivationController {
      * Get detail of a given activation.
      *
      * @param id    Activation ID.
+     * @param fromDate Optional filter for date from.
+     * @param toDate Optional filter for date to.
      * @param model Model with passed parameters.
      * @return "activationDetail" view.
      */
