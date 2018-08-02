@@ -17,6 +17,9 @@
 package io.getlime.security.app.admin.controller;
 
 import com.google.common.io.BaseEncoding;
+import io.getlime.security.app.admin.converter.SignatureAuditItemConverter;
+import io.getlime.security.app.admin.converter.SignatureDataConverter;
+import io.getlime.security.app.admin.model.SignatureAuditItem;
 import io.getlime.security.app.admin.util.QRUtil;
 import io.getlime.powerauth.soap.*;
 import io.getlime.security.powerauth.soap.spring.client.PowerAuthServiceClient;
@@ -42,6 +45,8 @@ public class ActivationController {
 
     @Autowired
     private PowerAuthServiceClient client;
+
+    private final SignatureAuditItemConverter signatureAuditItemConverter = new SignatureAuditItemConverter();
 
     /**
      * Return the list of activations for given users.
@@ -78,6 +83,8 @@ public class ActivationController {
      * Get detail of a given activation.
      *
      * @param id    Activation ID.
+     * @param fromDate Optional filter for date from.
+     * @param toDate Optional filter for date to.
      * @param model Model with passed parameters.
      * @return "activationDetail" view.
      */
@@ -91,11 +98,16 @@ public class ActivationController {
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date startingDate;
         Date endingDate;
+        Date currentTimePlusOneSecond;
+        Calendar cal = Calendar.getInstance();
+        // Add one second to avoid filtering out the most recent signatures and activation changes.
+        cal.add(Calendar.SECOND, 1);
+        currentTimePlusOneSecond = cal.getTime();
         try {
             if (toDate != null) {
                 endingDate = dateFormat.parse(toDate);
             } else {
-                endingDate = new Date();
+                endingDate = currentTimePlusOneSecond;
                 toDate = dateFormat.format(endingDate);
             }
             model.put("toDate", toDate);
@@ -108,7 +120,7 @@ public class ActivationController {
             model.put("fromDate", fromDate);
         } catch (ParseException e) {
             // Date parsing didn't work, OK - clear the values...
-            endingDate = new Date();
+            endingDate = currentTimePlusOneSecond;
             startingDate = new Date(endingDate.getTime() - (30L * 24L * 60L * 60L * 1000L));
             fromDate = dateFormat.format(startingDate);
             toDate = dateFormat.format(endingDate);
@@ -132,11 +144,10 @@ public class ActivationController {
 
 
         List<SignatureAuditResponse.Items> auditItems = client.getSignatureAuditLog(activation.getUserId(), application.getApplicationId(), startingDate, endingDate);
-        List<SignatureAuditResponse.Items> auditItemsFixed = new ArrayList<>();
+        List<SignatureAuditItem> auditItemsFixed = new ArrayList<>();
         for (SignatureAuditResponse.Items item : auditItems) {
             if (item.getActivationId().equals(activation.getActivationId())) {
-                item.setDataBase64(new String(BaseEncoding.base64().decode(item.getDataBase64())));
-                auditItemsFixed.add(item);
+                auditItemsFixed.add(signatureAuditItemConverter.fromSignatureAuditResponseItem(item));
             }
         }
         if (auditItemsFixed.size() > 100) {

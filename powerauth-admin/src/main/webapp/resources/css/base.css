@@ -93,3 +93,12 @@ pre.code, pre.code code {
 .nav-tabs a {
     color: #7FC000;
 }
+
+.tooltip-inner {
+    text-align: left;
+    max-width: 800px;
+}
+
+.tooltip-inner td {
+    vertical-align: top;
+}

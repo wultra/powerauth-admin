@@ -197,7 +197,7 @@
                                             <p>
                                                 Date<br>
                                                 <span class="black">
-                                                    <fmt:formatDate type="both" pattern="yyyy/MM/dd HH:mm:ss" value="${item.timestampCreated.toGregorianCalendar().time}"/>
+                                                    <fmt:formatDate type="both" pattern="yyyy/MM/dd HH:mm:ss" value="${item.timestampCreated}"/>
                                                 </span>
                                             </p>
                                             <p>
@@ -237,8 +237,19 @@
                                         </td>
                                         <td>
                                             <p class="wrap gray">
-                                                Signed Data<br>
-                                                <span class="black"><c:out value="${item.dataBase64}"/></span>
+                                                Signed Data
+                                                <c:choose>
+                                                    <c:when test="${not empty item.signatureData}">
+                                                        <span class="glyphicon glyphicon-zoom-in" data-toggle="tooltip" data-html="true" data-placement="top" title="<table><tr><td>Request&nbsp;method:&nbsp;&nbsp;&nbsp;</td><td><c:out value="${item.signatureData.requestMethod}"/></td></tr><tr><td>Request&nbsp;URI:</td><td><c:out value="${item.signatureData.requestURIIdentifier}"/></td></tr><tr><td>Request&nbsp;body:</td><td><c:out value="${item.signatureData.requestBody}"/></span></td></tr></table>"></span>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <span class="glyphicon glyphicon-zoom-in" data-toggle="tooltip" data-html="true" data-placement="top" title="Unrecognized signature data"></span>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                                <br/>
+                                                <span class="black">
+                                                    <c:out value="${item.data}"/>
+                                                </span>
                                             </p>
                                             <c:if test="${not empty item.additionalInfo.entry}">
                                                 <p class="wrap gray">
