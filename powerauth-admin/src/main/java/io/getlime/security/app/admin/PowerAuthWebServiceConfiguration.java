@@ -17,7 +17,6 @@
 package io.getlime.security.app.admin;
 
 import io.getlime.security.powerauth.soap.spring.client.PowerAuthServiceClient;
-import org.apache.wss4j.dom.WSConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -62,7 +61,7 @@ public class PowerAuthWebServiceConfiguration {
         wss4jSecurityInterceptor.setSecurementActions("UsernameToken");
         wss4jSecurityInterceptor.setSecurementUsername(configuration.getClientToken());
         wss4jSecurityInterceptor.setSecurementPassword(configuration.getClientSecret());
-        wss4jSecurityInterceptor.setSecurementPasswordType(WSConstants.PW_TEXT);
+        wss4jSecurityInterceptor.setSecurementPasswordType("PasswordText");
         return wss4jSecurityInterceptor;
     }
 
