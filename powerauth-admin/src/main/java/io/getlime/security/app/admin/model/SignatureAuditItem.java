@@ -1,8 +1,8 @@
 package io.getlime.security.app.admin.model;
 
-import io.getlime.powerauth.soap.ActivationStatus;
-import io.getlime.powerauth.soap.KeyValueMap;
-import io.getlime.powerauth.soap.SignatureType;
+import io.getlime.powerauth.soap.v3.ActivationStatus;
+import io.getlime.powerauth.soap.v3.KeyValueMap;
+import io.getlime.powerauth.soap.v3.SignatureType;
 
 import java.util.Date;
 

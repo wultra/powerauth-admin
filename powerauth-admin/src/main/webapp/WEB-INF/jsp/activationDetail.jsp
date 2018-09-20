@@ -28,9 +28,9 @@
                     <p>
                         Client Activation Code<br/>
                         <div class="input-group">
-                            <input id="activation-code" type="text" class="form-control" readonly="readonly" value="<c:out value="${activationIdShort}"/>-<c:out value="${activationOtp}"/>">
+                            <input id="activation-code" type="text" class="form-control" readonly="readonly" value="<c:out value="${activationCode}"/>">
                             <span class="input-group-btn">
-                                <button class="btn btn-default btn-clipboard" type="button" data-clipboard-text="<c:out value="${activationIdShort}"/>-<c:out value="${activationOtp}"/>">
+                                <button class="btn btn-default btn-clipboard" type="button" data-clipboard-text="<c:out value="${activationCode}"/>">
                                     <span class=" glyphicon glyphicon-copy"></span>
                                 </button>
                             </span>
