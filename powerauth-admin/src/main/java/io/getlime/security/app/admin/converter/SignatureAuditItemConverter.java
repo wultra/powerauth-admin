@@ -1,7 +1,7 @@
 package io.getlime.security.app.admin.converter;
 
 import com.google.common.io.BaseEncoding;
-import io.getlime.powerauth.soap.SignatureAuditResponse;
+import io.getlime.powerauth.soap.v3.SignatureAuditResponse;
 import io.getlime.security.app.admin.model.SignatureAuditItem;
 
 /**
