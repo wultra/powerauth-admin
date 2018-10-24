@@ -34,6 +34,7 @@ public class SignatureAuditItemConverter {
         result.setSignature(signatureAuditItem.getSignature());
         result.setNote(signatureAuditItem.getNote());
         result.setValid(signatureAuditItem.isValid());
+        result.setVersion((int) signatureAuditItem.getVersion());
         result.setTimestampCreated(signatureAuditItem.getTimestampCreated().toGregorianCalendar().getTime());
 
         // Special handling for base-64 encoded signature data - data needs to be decoded.
