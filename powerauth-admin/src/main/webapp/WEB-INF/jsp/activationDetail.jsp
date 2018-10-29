@@ -265,7 +265,7 @@
                                                 Signed Data
                                                 <c:choose>
                                                     <c:when test="${not empty item.signatureData}">
-                                                        <span class="glyphicon glyphicon-zoom-in" data-toggle="tooltip" data-html="true" data-placement="top" title="<table><tr><td>Request&nbsp;method:&nbsp;&nbsp;&nbsp;</td><td><c:out value="${item.signatureData.requestMethod}"/></td></tr><tr><td>Request&nbsp;URI:</td><td><c:out value="${item.signatureData.requestURIIdentifier}"/></td></tr><tr><td>Request&nbsp;body:</td><td><c:out value="${item.signatureData.requestBody}"/></span></td></tr></table>"></span>
+                                                        <span class="glyphicon glyphicon-zoom-in" data-toggle="tooltip" data-html="true" data-placement="top" title="<table><tr><td>Request&nbsp;method:&nbsp;&nbsp;&nbsp;</td><td><c:out value="${item.signatureData.requestMethod}"/></td></tr><tr><td>Request&nbsp;URI:</td><td><c:out value="${item.signatureData.requestURIIdentifier}"/></td></tr><tr><td>Request&nbsp;body:</td><td><span class='word-break'><c:out value="${item.signatureData.requestBody}"/></span></td></tr></table>"></span>
                                                     </c:when>
                                                     <c:otherwise>
                                                         <span class="glyphicon glyphicon-zoom-in" data-toggle="tooltip" data-html="true" data-placement="top" title="Unrecognized signature data"></span>
