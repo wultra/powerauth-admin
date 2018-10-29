@@ -72,6 +72,7 @@
                     <tr>
                         <th style="width: 310px;">Activation ID</th>
                         <th>Name</th>
+                        <th style="width: 80px;">Version</th>
                         <th style="width: 150px;">Application</th>
                         <th style="width: 80px;">Status</th>
                         <th class="text-right" style="width: 170px;">Last used</th>
@@ -85,6 +86,16 @@
                                 data-href='${pageContext.request.contextPath}/activation/detail/<c:out value="${item.activationId}"/>'>
                                 <td><c:out value="${item.activationId}"/></td>
                                 <td><c:out value="${item.activationName}"/></td>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${item.version != 0}">
+                                            <c:out value="${item.version}"/>
+                                        </c:when>
+                                        <c:otherwise>
+                                            Unknown
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
                                 <td>
                                     <a class="black"
                                        href='${pageContext.request.contextPath}/application/detail/<c:out value="${item.applicationId}"/>'><c:out

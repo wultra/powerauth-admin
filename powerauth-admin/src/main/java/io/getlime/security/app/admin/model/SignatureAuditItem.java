@@ -25,6 +25,7 @@ public class SignatureAuditItem {
     private String signature;
     private String note;
     private boolean valid;
+    private Integer version;
     private Date timestampCreated;
     private SignatureData signatureData;
 
@@ -122,6 +123,14 @@ public class SignatureAuditItem {
 
     public void setValid(boolean valid) {
         this.valid = valid;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 
     public Date getTimestampCreated() {

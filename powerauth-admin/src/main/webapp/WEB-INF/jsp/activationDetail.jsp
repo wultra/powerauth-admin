@@ -84,13 +84,32 @@
                         </span>
                     </div>
                 </p>
-                <c:if test="${activationName != null}">
-                    <p>
-                        Activation Name<br>
-                        <span class="black"><c:out value="${activationName}"/></span>
-                    </p>
-                </c:if>
                 <table class="w100">
+                    <tr>
+                        <c:if test="${activationName != null}">
+                        <td>
+                            <p>
+                                Activation Name<br>
+                                <span class="black"><c:out value="${activationName}"/></span>
+                            </p>
+                        </td>
+                        </c:if>
+                        <td>
+                            <p>
+                                Version<br>
+                                <span class="black">
+                                    <c:choose>
+                                        <c:when test="${version != 0}">
+                                            <c:out value="${version}"/>
+                                        </c:when>
+                                        <c:otherwise>
+                                            Unknown
+                                        </c:otherwise>
+                                    </c:choose>
+                                </span>
+                            </p>
+                        </td>
+                    </tr>
                     <tr>
                         <td>
                             <p>
@@ -231,6 +250,12 @@
                                                     <td>
                                                         Counter<br>
                                                         <span class="black"><c:out value="${item.activationCounter}"/></span>
+                                                    </td>
+                                                    <td>
+                                                        Version<br>
+                                                        <span class="black">
+                                                            <c:out value="${item.version}"/>
+                                                        </span>
                                                     </td>
                                                 </tr>
                                             </table>
