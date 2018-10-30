@@ -1,7 +1,7 @@
 package io.getlime.security.app.admin.converter;
 
 import com.google.common.io.BaseEncoding;
-import io.getlime.powerauth.soap.SignatureAuditResponse;
+import io.getlime.powerauth.soap.v3.SignatureAuditResponse;
 import io.getlime.security.app.admin.model.SignatureAuditItem;
 
 /**
@@ -34,6 +34,7 @@ public class SignatureAuditItemConverter {
         result.setSignature(signatureAuditItem.getSignature());
         result.setNote(signatureAuditItem.getNote());
         result.setValid(signatureAuditItem.isValid());
+        result.setVersion((int) signatureAuditItem.getVersion());
         result.setTimestampCreated(signatureAuditItem.getTimestampCreated().toGregorianCalendar().getTime());
 
         // Special handling for base-64 encoded signature data - data needs to be decoded.

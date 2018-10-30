@@ -102,3 +102,7 @@ pre.code, pre.code code {
 .tooltip-inner td {
     vertical-align: top;
 }
+
+.tooltip-inner td .word-break {
+    word-break: break-all;
+}

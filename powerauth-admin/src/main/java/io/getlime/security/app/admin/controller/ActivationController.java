@@ -21,7 +21,7 @@ import io.getlime.security.app.admin.converter.SignatureAuditItemConverter;
 import io.getlime.security.app.admin.converter.SignatureDataConverter;
 import io.getlime.security.app.admin.model.SignatureAuditItem;
 import io.getlime.security.app.admin.util.QRUtil;
-import io.getlime.powerauth.soap.*;
+import io.getlime.powerauth.soap.v3.*;
 import io.getlime.security.powerauth.soap.spring.client.PowerAuthServiceClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -137,6 +137,7 @@ public class ActivationController {
         model.put("timestampLastUsed", activation.getTimestampLastUsed());
         model.put("activationFingerprint", activation.getDevicePublicKeyFingerprint());
         model.put("userId", activation.getUserId());
+        model.put("version", activation.getVersion());
 
         GetApplicationDetailResponse application = client.getApplicationDetail(activation.getApplicationId());
         model.put("applicationId", application.getApplicationId());
@@ -165,13 +166,10 @@ public class ActivationController {
         model.put("history", trimmedActivationHistoryItems);
 
         if (activation.getActivationStatus().equals(ActivationStatus.CREATED)) {
-            String activationIdShort = activation.getActivationIdShort();
-            String activationOtp = activation.getActivationOTP();
             String activationSignature = activation.getActivationSignature();
-            model.put("activationIdShort", activationIdShort);
-            model.put("activationOtp", activationOtp);
+            model.put("activationCode", activation.getActivationCode());
             model.put("activationSignature", activationSignature);
-            model.put("activationQR", QRUtil.encode(activationIdShort + "-" + activationOtp + "#" + activationSignature, 400));
+            model.put("activationQR", QRUtil.encode(activation.getActivationCode() + "#" + activationSignature, 400));
         }
 
         return "activationDetail";
@@ -190,9 +188,8 @@ public class ActivationController {
 
         InitActivationResponse response = client.initActivation(userId, applicationId);
 
-        model.put("activationIdShort", response.getActivationIdShort());
+        model.put("activationCode", response.getActivationCode());
         model.put("activationId", response.getActivationId());
-        model.put("activationOTP", response.getActivationOTP());
         model.put("activationSignature", response.getActivationSignature());
 
         return "redirect:/activation/detail/" + response.getActivationId();
