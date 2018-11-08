@@ -24,14 +24,21 @@
 
             <div class="panel-body">
                 <p>Master Public Key</p>
-                <div class="well code wrap"><c:out value="${masterPublicKey}"/></div>
+                <div class="well code wrap">
+                    <c:out value="${masterPublicKey}"/>
+                </div>
+                <div>
+                    <button class="btn btn-default btn-clipboard" type="button" data-clipboard-text="<c:out value="${masterPublicKey}"/>">
+                        <span class=" glyphicon glyphicon-copy"></span>
+                    </button>
+                </div>
             </div>
 
         </div>
 
     </div>
 
-    <div class="col-md-8">
+    <div class="col-md-9">
 
         <div class="panel panel-default">
 
@@ -55,8 +62,18 @@
                 <c:forEach items="${versions}" var="item">
                     <tr class="code">
                         <td><c:out value="${item.applicationVersionName}"/></td>
-                        <td><c:out value="${item.applicationKey}"/></td>
-                        <td><c:out value="${item.applicationSecret}"/></td>
+                        <td class="text-nowrap">
+                            <c:out value="${item.applicationKey}"/>
+                            <button class="btn btn-default btn-clipboard" type="button" data-clipboard-text="<c:out value="${item.applicationKey}"/>">
+                                <span class=" glyphicon glyphicon-copy"></span>
+                            </button>
+                        </td>
+                        <td class="text-nowrap">
+                            <c:out value="${item.applicationSecret}"/>
+                            <button class="btn btn-default btn-clipboard" type="button" data-clipboard-text="<c:out value="${item.applicationSecret}"/>">
+                                <span class=" glyphicon glyphicon-copy"></span>
+                            </button>
+                        </td>
                         <td>
                             <c:choose>
                                 <c:when test="${item.supported}">
