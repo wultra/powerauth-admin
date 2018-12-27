@@ -58,7 +58,8 @@
         <dependency>
             <groupId>org.apache.directory.server</groupId>
             <artifactId>apacheds-server-jndi</artifactId>
-            <version>1.5.7</version>
+            <!-- Do not upgrade, see: https://github.com/wultra/powerauth-admin/issues/28 -->
+            <version>1.5.5</version>
             <exclusions>
                 <exclusion>
                     <artifactId>bcprov-jdk15</artifactId>
