@@ -4,6 +4,8 @@ import com.google.common.io.BaseEncoding;
 import io.getlime.powerauth.soap.v3.SignatureAuditResponse;
 import io.getlime.security.app.admin.model.SignatureAuditItem;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * Converter for signature audit items.
  *
@@ -38,7 +40,7 @@ public class SignatureAuditItemConverter {
         result.setTimestampCreated(signatureAuditItem.getTimestampCreated().toGregorianCalendar().getTime());
 
         // Special handling for base-64 encoded signature data - data needs to be decoded.
-        result.setData(new String(BaseEncoding.base64().decode(signatureAuditItem.getDataBase64())));
+        result.setData(new String(BaseEncoding.base64().decode(signatureAuditItem.getDataBase64()), StandardCharsets.UTF_8));
         // Unstructured signature data is decoded and set as structured signature data.
         result.setSignatureData(signatureDataConverter.fromSignatureDataBase64(result.getData()));
 
