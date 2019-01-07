@@ -212,15 +212,15 @@ public class ActivationController {
      * Block activation.
      *
      * @param activationId Activation ID
-     * @param redirect     Where to redirect user
+     * @param userId       User ID identifying user for redirect to the list of activations
      * @param model        Model with passed parameters.
      * @return Redirect user to given URL or to activation detail, in case 'redirect' is null or empty.
      */
     @RequestMapping(value = "/activation/block/do.submit", method = RequestMethod.POST)
-    public String blockActivation(@RequestParam(value = "activationId") String activationId, @RequestParam(value = "redirect") String redirect, Map<String, Object> model) {
+    public String blockActivation(@RequestParam(value = "activationId") String activationId, @RequestParam(value = "redirectUserId") String userId, Map<String, Object> model) {
         BlockActivationResponse blockActivation = client.blockActivation(activationId, null);
-        if (redirect != null && !redirect.trim().isEmpty()) {
-            return "redirect:" + redirect;
+        if (userId != null && !userId.trim().isEmpty()) {
+            return "redirect:/activation/list?userId=" + userId;
         }
         return "redirect:/activation/detail/" + blockActivation.getActivationId();
     }
@@ -229,15 +229,15 @@ public class ActivationController {
      * Unblock activation.
      *
      * @param activationId Activation ID
-     * @param redirect     Where to redirect user
+     * @param userId       User ID identifying user for redirect to the list of activations
      * @param model        Model with passed parameters.
      * @return Redirect user to given URL or to activation detail, in case 'redirect' is null or empty.
      */
     @RequestMapping(value = "/activation/unblock/do.submit", method = RequestMethod.POST)
-    public String unblockActivation(@RequestParam(value = "activationId") String activationId, @RequestParam(value = "redirect") String redirect, Map<String, Object> model) {
+    public String unblockActivation(@RequestParam(value = "activationId") String activationId, @RequestParam(value = "redirectUserId") String userId, Map<String, Object> model) {
         UnblockActivationResponse unblockActivation = client.unblockActivation(activationId);
-        if (redirect != null && !redirect.trim().isEmpty()) {
-            return "redirect:" + redirect;
+        if (userId != null && !userId.trim().isEmpty()) {
+            return "redirect:/activation/list?userId=" + userId;
         }
         return "redirect:/activation/detail/" + unblockActivation.getActivationId();
     }
@@ -246,15 +246,15 @@ public class ActivationController {
      * Commit activation.
      *
      * @param activationId Activation ID
-     * @param redirect     Where to redirect user
+     *@param userId       User ID identifying user for redirect to the list of activations
      * @param model        Model with passed parameters.
      * @return Redirect user to given URL or to activation detail, in case 'redirect' is null or empty.
      */
     @RequestMapping(value = "/activation/commit/do.submit", method = RequestMethod.POST)
-    public String commitActivation(@RequestParam(value = "activationId") String activationId, @RequestParam(value = "redirect") String redirect, Map<String, Object> model) {
+    public String commitActivation(@RequestParam(value = "activationId") String activationId, @RequestParam(value = "redirectUserId") String userId, Map<String, Object> model) {
         CommitActivationResponse commitActivation = client.commitActivation(activationId);
-        if (redirect != null && !redirect.trim().isEmpty()) {
-            return "redirect:" + redirect;
+        if (userId != null && !userId.trim().isEmpty()) {
+            return "redirect:/activation/list?userId=" + userId;
         }
         return "redirect:/activation/detail/" + commitActivation.getActivationId();
     }
@@ -263,15 +263,15 @@ public class ActivationController {
      * Remove activation.
      *
      * @param activationId Activation ID
-     * @param redirect     Where to redirect user
+     * @param userId       User ID identifying user for redirect to the list of activations
      * @param model        Model with passed parameters.
      * @return Redirect user to given URL or to activation detail, in case 'redirect' is null or empty.
      */
     @RequestMapping(value = "/activation/remove/do.submit", method = RequestMethod.POST)
-    public String removeActivation(@RequestParam(value = "activationId") String activationId, @RequestParam(value = "redirect") String redirect, Map<String, Object> model) {
+    public String removeActivation(@RequestParam(value = "activationId") String activationId, @RequestParam(value = "redirectUserId") String userId, Map<String, Object> model) {
         RemoveActivationResponse removeActivation = client.removeActivation(activationId);
-        if (redirect != null && !redirect.trim().isEmpty()) {
-            return "redirect:" + redirect;
+        if (userId != null && !userId.trim().isEmpty()) {
+            return "redirect:/activation/list?userId=" + userId;
         }
         return "redirect:/activation/detail/" + removeActivation.getActivationId();
     }
