@@ -18,6 +18,8 @@ package io.getlime.security.app.admin.controller;
 
 import io.getlime.security.app.admin.ApplicationConfiguration;
 import io.getlime.security.app.admin.model.ServiceStatusResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.stereotype.Controller;
@@ -26,8 +28,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Class representing controller used for service and maintenance purpose.
@@ -37,6 +37,8 @@ import java.util.logging.Logger;
 @Controller
 @RequestMapping(value = "/api/service")
 public class ServiceController {
+
+    private static final Logger logger = LoggerFactory.getLogger(ServiceController.class);
 
     private final ApplicationConfiguration applicationConfiguration;
     private final BuildProperties buildProperties;
@@ -58,7 +60,7 @@ public class ServiceController {
      */
     @RequestMapping(value = "status", method = RequestMethod.GET)
     public @ResponseBody ServiceStatusResponse getServiceStatus() {
-        Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Received getServiceStatus request");
+        logger.info("Received getServiceStatus request");
         ServiceStatusResponse response = new ServiceStatusResponse();
         response.setApplicationName(applicationConfiguration.getApplicationName());
         response.setApplicationDisplayName(applicationConfiguration.getApplicationDisplayName());
@@ -66,7 +68,7 @@ public class ServiceController {
         response.setVersion(buildProperties.getVersion());
         response.setBuildTime(Date.from(buildProperties.getTime()));
         response.setTimestamp(new Date());
-        Logger.getLogger(this.getClass().getName()).log(Level.FINE, "The getServiceStatus request succeeded");
+        logger.debug("The getServiceStatus request succeeded");
         return response;
     }
 }
