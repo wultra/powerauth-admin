@@ -28,9 +28,9 @@
                     <p>
                         Client Activation Code<br/>
                         <div class="input-group">
-                            <input id="activation-code" type="text" class="form-control" readonly="readonly" value="<c:out value="${activationIdShort}"/>-<c:out value="${activationOtp}"/>">
+                            <input id="activation-code" type="text" class="form-control" readonly="readonly" value="<c:out value="${activationCode}"/>">
                             <span class="input-group-btn">
-                                <button class="btn btn-default btn-clipboard" type="button" data-clipboard-text="<c:out value="${activationIdShort}"/>-<c:out value="${activationOtp}"/>">
+                                <button class="btn btn-default btn-clipboard" type="button" data-clipboard-text="<c:out value="${activationCode}"/>">
                                     <span class=" glyphicon glyphicon-copy"></span>
                                 </button>
                             </span>
@@ -84,13 +84,32 @@
                         </span>
                     </div>
                 </p>
-                <c:if test="${activationName != null}">
-                    <p>
-                        Activation Name<br>
-                        <span class="black"><c:out value="${activationName}"/></span>
-                    </p>
-                </c:if>
                 <table class="w100">
+                    <tr>
+                        <c:if test="${activationName != null}">
+                        <td>
+                            <p>
+                                Activation Name<br>
+                                <span class="black"><c:out value="${activationName}"/></span>
+                            </p>
+                        </td>
+                        </c:if>
+                        <td>
+                            <p>
+                                Version<br>
+                                <span class="black">
+                                    <c:choose>
+                                        <c:when test="${version != 0}">
+                                            <c:out value="${version}"/>
+                                        </c:when>
+                                        <c:otherwise>
+                                            Unknown
+                                        </c:otherwise>
+                                    </c:choose>
+                                </span>
+                            </p>
+                        </td>
+                    </tr>
                     <tr>
                         <td>
                             <p>
@@ -232,6 +251,12 @@
                                                         Counter<br>
                                                         <span class="black"><c:out value="${item.activationCounter}"/></span>
                                                     </td>
+                                                    <td>
+                                                        Version<br>
+                                                        <span class="black">
+                                                            <c:out value="${item.version}"/>
+                                                        </span>
+                                                    </td>
                                                 </tr>
                                             </table>
                                         </td>
@@ -240,7 +265,7 @@
                                                 Signed Data
                                                 <c:choose>
                                                     <c:when test="${not empty item.signatureData}">
-                                                        <span class="glyphicon glyphicon-zoom-in" data-toggle="tooltip" data-html="true" data-placement="top" title="<table><tr><td>Request&nbsp;method:&nbsp;&nbsp;&nbsp;</td><td><c:out value="${item.signatureData.requestMethod}"/></td></tr><tr><td>Request&nbsp;URI:</td><td><c:out value="${item.signatureData.requestURIIdentifier}"/></td></tr><tr><td>Request&nbsp;body:</td><td><c:out value="${item.signatureData.requestBody}"/></span></td></tr></table>"></span>
+                                                        <span class="glyphicon glyphicon-zoom-in" data-toggle="tooltip" data-html="true" data-placement="top" title="<table><tr><td>Request&nbsp;method:&nbsp;&nbsp;&nbsp;</td><td><c:out value="${item.signatureData.requestMethod}"/></td></tr><tr><td>Request&nbsp;URI:</td><td><c:out value="${item.signatureData.requestURIIdentifier}"/></td></tr><tr><td>Request&nbsp;body:</td><td><span class='word-break'><c:out value="${item.signatureData.requestBody}"/></span></td></tr></table>"></span>
                                                     </c:when>
                                                     <c:otherwise>
                                                         <span class="glyphicon glyphicon-zoom-in" data-toggle="tooltip" data-html="true" data-placement="top" title="Unrecognized signature data"></span>

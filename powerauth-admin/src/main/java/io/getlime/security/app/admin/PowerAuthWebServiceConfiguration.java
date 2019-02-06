@@ -17,13 +17,13 @@
 package io.getlime.security.app.admin;
 
 import io.getlime.security.powerauth.soap.spring.client.PowerAuthServiceClient;
-import org.apache.ws.security.WSConstants;
+import org.apache.wss4j.dom.WSConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.ws.client.support.interceptor.ClientInterceptor;
-import org.springframework.ws.soap.security.wss4j.Wss4jSecurityInterceptor;
+import org.springframework.ws.soap.security.wss4j2.Wss4jSecurityInterceptor;
 
 import javax.net.ssl.*;
 
@@ -74,7 +74,7 @@ public class PowerAuthWebServiceConfiguration {
     @Bean
     public Jaxb2Marshaller marshaller() {
         Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
-        marshaller.setContextPath("io.getlime.powerauth.soap");
+        marshaller.setContextPath("io.getlime.powerauth.soap.v3");
         return marshaller;
     }
 
@@ -94,12 +94,7 @@ public class PowerAuthWebServiceConfiguration {
         // if invalid SSL certificates should be accepted
         if (configuration.isAcceptInvalidSslCertificate()) {
 
-            HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
-                @Override
-                public boolean verify(String hostname, SSLSession session) {
-                    return true;
-                }
-            });
+            HttpsURLConnection.setDefaultHostnameVerifier((hostname, session) -> true);
 
             TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
 

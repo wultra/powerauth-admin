@@ -17,10 +17,10 @@
 package io.getlime.security.app.admin.controller;
 
 import com.google.common.collect.Lists;
-import io.getlime.powerauth.soap.CreateApplicationResponse;
-import io.getlime.powerauth.soap.GetApplicationDetailResponse;
-import io.getlime.powerauth.soap.GetApplicationListResponse;
-import io.getlime.powerauth.soap.GetCallbackUrlListResponse;
+import io.getlime.powerauth.soap.v3.CreateApplicationResponse;
+import io.getlime.powerauth.soap.v3.GetApplicationDetailResponse;
+import io.getlime.powerauth.soap.v3.GetApplicationListResponse;
+import io.getlime.powerauth.soap.v3.GetCallbackUrlListResponse;
 import io.getlime.security.powerauth.soap.spring.client.PowerAuthServiceClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

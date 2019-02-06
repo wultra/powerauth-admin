@@ -7,7 +7,7 @@
         <form action="${pageContext.request.contextPath}/activation/remove/do.submit" method="POST"
               class="pull-right action-remove">
             <input type="hidden" name="activationId" value="<c:out value="${param.activationId}"/>"/>
-            <input type="hidden" name="redirect" value="<c:out value="${param.redirect}"/>"/>
+            <input type="hidden" name="redirectUserId" value="<c:out value="${param.redirectUserId}"/>"/>
             <input type="hidden" name="${_csrf.parameterName}"   value="${_csrf.token}" />
             <input class="btn btn-danger" type="submit" value="Remove">
         </form>
@@ -16,13 +16,13 @@
         <form action="${pageContext.request.contextPath}/activation/remove/do.submit" method="POST"
               class="pull-right action-remove">
             <input type="hidden" name="activationId" value="<c:out value="${param.activationId}"/>"/>
-            <input type="hidden" name="redirect" value="<c:out value="${param.redirect}"/>"/>
+            <input type="hidden" name="redirectUserId" value="<c:out value="${param.redirectUserId}"/>"/>
             <input type="hidden" name="${_csrf.parameterName}"   value="${_csrf.token}" />
             <input class="btn btn-danger" type="submit" value="Remove">
         </form>
         <form action="${pageContext.request.contextPath}/activation/commit/do.submit" method="POST" class="pull-right">
             <input type="hidden" name="activationId" value="<c:out value="${param.activationId}"/>"/>
-            <input type="hidden" name="redirect" value="<c:out value="${param.redirect}"/>"/>
+            <input type="hidden" name="redirectUserId" value="<c:out value="${param.redirectUserId}"/>"/>
             <input type="hidden" name="${_csrf.parameterName}"   value="${_csrf.token}" />
             <input class="btn btn-success" type="submit" value="Commit">
         </form>
@@ -31,13 +31,13 @@
         <form action="${pageContext.request.contextPath}/activation/remove/do.submit" method="POST"
               class="pull-right action-remove">
             <input type="hidden" name="activationId" value="<c:out value="${param.activationId}"/>"/>
-            <input type="hidden" name="redirect" value="<c:out value="${param.redirect}"/>"/>
+            <input type="hidden" name="redirectUserId" value="<c:out value="${param.redirectUserId}"/>"/>
             <input type="hidden" name="${_csrf.parameterName}"   value="${_csrf.token}" />
             <input class="btn btn-danger" type="submit" value="Remove">
         </form>
         <form action="${pageContext.request.contextPath}/activation/block/do.submit" method="POST" class="pull-right">
             <input type="hidden" name="activationId" value="<c:out value="${param.activationId}"/>"/>
-            <input type="hidden" name="redirect" value="<c:out value="${param.redirect}"/>"/>
+            <input type="hidden" name="redirectUserId" value="<c:out value="${param.redirectUserId}"/>"/>
             <input type="hidden" name="${_csrf.parameterName}"   value="${_csrf.token}" />
             <input class="btn btn-warning" type="submit" value="Block">
         </form>
@@ -46,13 +46,13 @@
         <form action="${pageContext.request.contextPath}/activation/remove/do.submit" method="POST"
               class="pull-right action-remove">
             <input type="hidden" name="activationId" value="<c:out value="${param.activationId}"/>"/>
-            <input type="hidden" name="redirect" value="<c:out value="${param.redirect}"/>"/>
+            <input type="hidden" name="redirectUserId" value="<c:out value="${param.redirectUserId}"/>"/>
             <input type="hidden" name="${_csrf.parameterName}"   value="${_csrf.token}" />
             <input class="btn btn-default" type="submit" value="Remove">
         </form>
         <form action="${pageContext.request.contextPath}/activation/unblock/do.submit" method="POST" class="pull-right">
             <input type="hidden" name="activationId" value="<c:out value="${param.activationId}"/>"/>
-            <input type="hidden" name="redirect" value="<c:out value="${param.redirect}"/>"/>
+            <input type="hidden" name="redirectUserId" value="<c:out value="${param.redirectUserId}"/>"/>
             <input type="hidden" name="${_csrf.parameterName}"   value="${_csrf.token}" />
             <input class="btn btn-danger" type="submit" value="Unblock">
         </form>

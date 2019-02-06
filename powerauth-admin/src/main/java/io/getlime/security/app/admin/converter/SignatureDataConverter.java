@@ -2,9 +2,10 @@ package io.getlime.security.app.admin.converter;
 
 import com.google.common.io.BaseEncoding;
 import io.getlime.security.app.admin.model.SignatureData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Converter for signature data.
@@ -12,6 +13,8 @@ import java.util.logging.Logger;
  * @author Roman Strobl, roman.strobl@lime-company.eu
  */
 public class SignatureDataConverter {
+
+    private static final Logger logger = LoggerFactory.getLogger(SignatureDataConverter.class);
 
     /**
      * Convert unstructured signature data to structured signature data.
@@ -29,13 +32,13 @@ public class SignatureDataConverter {
         try {
             SignatureData signatureData = new SignatureData();
             signatureData.setRequestMethod(normalizeTextForHTML(parts[0]));
-            signatureData.setRequestURIIdentifier(normalizeTextForHTML(new String(BaseEncoding.base64().decode(parts[1]))));
-            signatureData.setNonce(normalizeTextForHTML(new String(BaseEncoding.base64().decode(parts[2]))));
-            signatureData.setRequestBody(normalizeTextForHTML(new String(BaseEncoding.base64().decode(parts[3]))));
-            signatureData.setApplicationSecret(normalizeTextForHTML(new String(BaseEncoding.base64().decode(parts[4]))));
+            signatureData.setRequestURIIdentifier(normalizeTextForHTML(new String(BaseEncoding.base64().decode(parts[1]), StandardCharsets.UTF_8)));
+            signatureData.setNonce(normalizeTextForHTML(new String(BaseEncoding.base64().decode(parts[2]), StandardCharsets.UTF_8)));
+            signatureData.setRequestBody(normalizeTextForHTML(new String(BaseEncoding.base64().decode(parts[3]), StandardCharsets.UTF_8)));
+            signatureData.setApplicationSecret(normalizeTextForHTML(new String(BaseEncoding.base64().decode(parts[4]), StandardCharsets.UTF_8)));
             return signatureData;
         } catch (IllegalArgumentException ex) {
-            Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Invalid signature data: "+signatureDataBase64);
+            logger.warn("Invalid signature data: {}", signatureDataBase64);
             return null;
         }
     }

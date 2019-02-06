@@ -1,10 +1,10 @@
-# PowerAuth Admin
+# PowerAuth Admin Documentation
 
 PowerAuth Admin is a an web administration console for the [PowerAuth Server](https://github.com/wultra/powerauth-server). It allows an easy application setup, an activation management and integration configurations.
 
-## Documentation
+## Deployment Tutorials
 
-For the most recent documentation and tutorials, please visit [PowerAuth Admin Documentation](./docs/Home.md).
+- [Deploying PowerAuth Admin](./Deploying-PowerAuth-Admin.md)
 
 ## License
 
