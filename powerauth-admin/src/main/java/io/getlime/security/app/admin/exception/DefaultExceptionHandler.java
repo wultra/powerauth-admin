@@ -16,6 +16,8 @@
 
 package io.getlime.security.app.admin.exception;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
@@ -23,12 +25,13 @@ import org.springframework.web.servlet.ModelAndView;
 /**
  * Controller advice with default exception handler.
  *
- * @author Petr Dvorak, petr@lime-company.eu
+ * @author Petr Dvorak, petr@wultra.com
  */
 @ControllerAdvice
 public class DefaultExceptionHandler {
 
     private static final String DEFAULT_ERROR_VIEW = "error";
+    private static final Logger logger = LoggerFactory.getLogger(DefaultExceptionHandler.class);
 
     /**
      * Show the default error view with the exception detail.
@@ -38,6 +41,7 @@ public class DefaultExceptionHandler {
     @ExceptionHandler(value = {Exception.class, RuntimeException.class})
     public ModelAndView defaultErrorHandler(Exception e) {
         ModelAndView mav = new ModelAndView(DEFAULT_ERROR_VIEW);
+        logger.error("Error occurred: {}", e.getMessage(), e);
         mav.addObject("stacktrace", e);
         return mav;
     }
