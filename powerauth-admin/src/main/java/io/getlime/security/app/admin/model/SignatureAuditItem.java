@@ -9,7 +9,7 @@ import java.util.Date;
 /**
  * Signature audit item.
  *
- * @author Roman Strobl, roman.strobl@lime-company.eu
+ * @author Roman Strobl, roman.strobl@wultra.com
  */
 public class SignatureAuditItem {
 
