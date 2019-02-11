@@ -23,8 +23,8 @@
 	<url>http://powerauth.com/</url>
 
 	<organization>
-		<name>Lime - HighTech Solutions Inc.</name>
-		<url>http://getlime.io/</url>
+		<name>Wultra s.r.o.</name>
+		<url>http://wultra.com/</url>
 	</organization>
 
 	<licenses>
@@ -37,7 +37,7 @@
 	<developers>
 		<developer>
 			<name>Petr Dvorak</name>
-			<email>petr@lime-company.eu</email>
+			<email>petr@wultra.com</email>
 			<roles>
 				<role>developer</role>
 			</roles>
@@ -45,14 +45,14 @@
 	</developers>
 
 	<scm>
-		<connection>scm:git:https://github.com/lime-company/lime-security-powerauth-admin.git</connection>
-		<developerConnection>scm:git:https://github.com/lime-company/lime-security-powerauth-admin.git</developerConnection>
-		<url>https://github.com/lime-company/lime-security-powerauth-admin</url>
+		<connection>scm:git:https://github.com/wultra/powerauth-admin.git</connection>
+		<developerConnection>scm:git:https://github.com/wultra/powerauth-admin.git</developerConnection>
+		<url>https://github.com/wultra/powerauth-admin</url>
 	</scm>
 
 	<issueManagement>
 		<system>Github</system>
-		<url>https://github.com/lime-company/lime-security-powerauth-admin/issues</url>
+		<url>https://github.com/wultra/powerauth-admin/issues</url>
 	</issueManagement>
 
 	<modules>

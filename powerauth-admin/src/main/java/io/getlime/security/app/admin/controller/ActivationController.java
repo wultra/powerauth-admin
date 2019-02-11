@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Lime - HighTech Solutions s.r.o.
+ * Copyright 2017 Wultra s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,7 @@
 
 package io.getlime.security.app.admin.controller;
 
-import com.google.common.io.BaseEncoding;
 import io.getlime.security.app.admin.converter.SignatureAuditItemConverter;
-import io.getlime.security.app.admin.converter.SignatureDataConverter;
 import io.getlime.security.app.admin.model.SignatureAuditItem;
 import io.getlime.security.app.admin.util.QRUtil;
 import io.getlime.powerauth.soap.v3.*;

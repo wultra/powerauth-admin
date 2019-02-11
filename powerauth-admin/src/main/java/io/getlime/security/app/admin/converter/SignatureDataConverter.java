@@ -10,7 +10,7 @@ import java.nio.charset.StandardCharsets;
 /**
  * Converter for signature data.
  *
- * @author Roman Strobl, roman.strobl@lime-company.eu
+ * @author Roman Strobl, roman.strobl@wultra.com
  */
 public class SignatureDataConverter {
 
