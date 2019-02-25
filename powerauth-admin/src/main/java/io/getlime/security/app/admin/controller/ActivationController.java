@@ -18,6 +18,7 @@ package io.getlime.security.app.admin.controller;
 
 import io.getlime.security.app.admin.converter.SignatureAuditItemConverter;
 import io.getlime.security.app.admin.model.SignatureAuditItem;
+import io.getlime.security.app.admin.service.LdapQueryService;
 import io.getlime.security.app.admin.util.QRUtil;
 import io.getlime.powerauth.soap.v3.*;
 import io.getlime.security.powerauth.soap.spring.client.PowerAuthServiceClient;
@@ -41,8 +42,14 @@ import java.util.*;
 @Controller
 public class ActivationController {
 
+    private final PowerAuthServiceClient client;
+    private final LdapQueryService ldapService;
+
     @Autowired
-    private PowerAuthServiceClient client;
+    public ActivationController(PowerAuthServiceClient client, LdapQueryService ldapService) {
+        this.client = client;
+        this.ldapService = ldapService;
+    }
 
     private final SignatureAuditItemConverter signatureAuditItemConverter = new SignatureAuditItemConverter();
 
@@ -216,7 +223,7 @@ public class ActivationController {
      */
     @RequestMapping(value = "/activation/block/do.submit", method = RequestMethod.POST)
     public String blockActivation(@RequestParam(value = "activationId") String activationId, @RequestParam(value = "redirectUserId") String userId, Map<String, Object> model) {
-        BlockActivationResponse blockActivation = client.blockActivation(activationId, null);
+        BlockActivationResponse blockActivation = client.blockActivation(activationId, null, ldapService.getLdapUsername());
         if (userId != null && !userId.trim().isEmpty()) {
             return "redirect:/activation/list?userId=" + userId;
         }
@@ -233,7 +240,7 @@ public class ActivationController {
      */
     @RequestMapping(value = "/activation/unblock/do.submit", method = RequestMethod.POST)
     public String unblockActivation(@RequestParam(value = "activationId") String activationId, @RequestParam(value = "redirectUserId") String userId, Map<String, Object> model) {
-        UnblockActivationResponse unblockActivation = client.unblockActivation(activationId);
+        UnblockActivationResponse unblockActivation = client.unblockActivation(activationId, ldapService.getLdapUsername());
         if (userId != null && !userId.trim().isEmpty()) {
             return "redirect:/activation/list?userId=" + userId;
         }
