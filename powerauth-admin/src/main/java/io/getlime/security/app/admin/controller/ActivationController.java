@@ -18,7 +18,7 @@ package io.getlime.security.app.admin.controller;
 
 import io.getlime.security.app.admin.converter.SignatureAuditItemConverter;
 import io.getlime.security.app.admin.model.SignatureAuditItem;
-import io.getlime.security.app.admin.service.LdapQueryService;
+import io.getlime.security.app.admin.service.LdapDetailsService;
 import io.getlime.security.app.admin.util.QRUtil;
 import io.getlime.powerauth.soap.v3.*;
 import io.getlime.security.powerauth.soap.spring.client.PowerAuthServiceClient;
@@ -43,10 +43,10 @@ import java.util.*;
 public class ActivationController {
 
     private final PowerAuthServiceClient client;
-    private final LdapQueryService ldapService;
+    private final LdapDetailsService ldapService;
 
     @Autowired
-    public ActivationController(PowerAuthServiceClient client, LdapQueryService ldapService) {
+    public ActivationController(PowerAuthServiceClient client, LdapDetailsService ldapService) {
         this.client = client;
         this.ldapService = ldapService;
     }
