@@ -24,21 +24,21 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 /**
- * Service for querying LDAP authentication details.
+ * Service for obtaining LDAP authentication details.
  *
  * @author Roman Strobl, roman.strobl@wultra.com
  */
 @Service
-public class LdapQueryService {
+public class LdapDetailsService {
 
     private final ApplicationConfiguration configuration;
 
     /**
-     * LDAP query service constructor.
+     * LDAP details service constructor.
      * @param configuration Application configuration.
      */
     @Autowired
-    public LdapQueryService(ApplicationConfiguration configuration) {
+    public LdapDetailsService(ApplicationConfiguration configuration) {
         this.configuration = configuration;
     }
 
