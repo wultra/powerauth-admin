@@ -56,16 +56,8 @@
             <artifactId>spring-security-ldap</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.directory.server</groupId>
-            <artifactId>apacheds-server-jndi</artifactId>
-            <!-- Do not upgrade, see: https://github.com/wultra/powerauth-admin/issues/28 -->
-            <version>1.5.5</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>bcprov-jdk15</artifactId>
-                    <groupId>bouncycastle</groupId>
-                </exclusion>
-            </exclusions>
+            <groupId>com.unboundid</groupId>
+            <artifactId>unboundid-ldapsdk</artifactId>
         </dependency>
 
         <!-- PowerAuth Dependencies -->

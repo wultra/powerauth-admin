@@ -16,7 +16,7 @@
 
 package io.getlime.security.app.admin.controller;
 
-import io.getlime.security.app.admin.ApplicationConfiguration;
+import io.getlime.security.app.admin.configuration.ApplicationConfiguration;
 import io.getlime.security.app.admin.model.ServiceStatusResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

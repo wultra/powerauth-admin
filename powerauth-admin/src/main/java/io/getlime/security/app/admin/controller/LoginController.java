@@ -16,7 +16,7 @@
 
 package io.getlime.security.app.admin.controller;
 
-import io.getlime.security.app.admin.ApplicationConfiguration;
+import io.getlime.security.app.admin.configuration.ApplicationConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

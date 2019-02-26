@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getlime.security.app.admin;
+package io.getlime.security.app.admin.configuration;
 
 import io.getlime.security.app.admin.security.SecurityMethod;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +55,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
         if (SecurityMethod.isLdap(configuration.getSecurityMethod())) {
 
             LdapAuthenticationProviderConfigurer<AuthenticationManagerBuilder> ldapAuthentication = auth.ldapAuthentication();
