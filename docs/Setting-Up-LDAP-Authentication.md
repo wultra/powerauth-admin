@@ -31,6 +31,7 @@ dn: uid=admin,ou=people,dc=powerauth,dc=com
 objectclass: top
 objectclass: person
 objectclass: organizationalPerson
+objectclass: inetOrgPerson
 cn: PowerAuth Admin
 sn: admin
 uid: admin
@@ -38,7 +39,7 @@ userPassword: admin
 
 dn: cn=admins,ou=groups,dc=powerauth,dc=com
 objectclass: top
-objectclass: groupOfNames
+objectclass: groupOfUniqueNames
 cn: admins
 ou: admin
 uniqueMember: uid=admin,ou=people,dc=powerauth,dc=com
