@@ -331,6 +331,36 @@
                                                 </span>
                                             </p>
                                         </td>
+                                        <c:choose>
+                                            <c:when test="${not empty item.blockedReason}">
+                                                <td>
+                                                    Blocked Reason<br>
+                                                    <span class="orange code">
+                                                        <c:out value="${item.blockedReason}"/>
+                                                    </span>
+                                                </td>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <td>
+                                                    &nbsp;
+                                                </td>
+                                            </c:otherwise>
+                                        </c:choose>
+                                        <c:choose>
+                                            <c:when test="${not empty item.externalUserId}">
+                                                <td>
+                                                    Changed By<br>
+                                                    <span class="orange code">
+                                                        <c:out value="${item.externalUserId}"/>
+                                                    </span>
+                                                </td>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <td>
+                                                    &nbsp;
+                                                </td>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </tr>
                                 </c:forEach>
                             </c:otherwise>

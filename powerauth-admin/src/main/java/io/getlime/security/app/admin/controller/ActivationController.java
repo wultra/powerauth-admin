@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.security.Principal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -41,8 +42,12 @@ import java.util.*;
 @Controller
 public class ActivationController {
 
+    private final PowerAuthServiceClient client;
+
     @Autowired
-    private PowerAuthServiceClient client;
+    public ActivationController(PowerAuthServiceClient client) {
+        this.client = client;
+    }
 
     private final SignatureAuditItemConverter signatureAuditItemConverter = new SignatureAuditItemConverter();
 
@@ -215,8 +220,9 @@ public class ActivationController {
      * @return Redirect user to given URL or to activation detail, in case 'redirect' is null or empty.
      */
     @RequestMapping(value = "/activation/block/do.submit", method = RequestMethod.POST)
-    public String blockActivation(@RequestParam(value = "activationId") String activationId, @RequestParam(value = "redirectUserId") String userId, Map<String, Object> model) {
-        BlockActivationResponse blockActivation = client.blockActivation(activationId, null);
+    public String blockActivation(@RequestParam(value = "activationId") String activationId, @RequestParam(value = "redirectUserId") String userId, Map<String, Object> model, Principal principal) {
+        String username = extractUsername(principal);
+        BlockActivationResponse blockActivation = client.blockActivation(activationId, null, username);
         if (userId != null && !userId.trim().isEmpty()) {
             return "redirect:/activation/list?userId=" + userId;
         }
@@ -232,8 +238,9 @@ public class ActivationController {
      * @return Redirect user to given URL or to activation detail, in case 'redirect' is null or empty.
      */
     @RequestMapping(value = "/activation/unblock/do.submit", method = RequestMethod.POST)
-    public String unblockActivation(@RequestParam(value = "activationId") String activationId, @RequestParam(value = "redirectUserId") String userId, Map<String, Object> model) {
-        UnblockActivationResponse unblockActivation = client.unblockActivation(activationId);
+    public String unblockActivation(@RequestParam(value = "activationId") String activationId, @RequestParam(value = "redirectUserId") String userId, Map<String, Object> model, Principal principal) {
+        String username = extractUsername(principal);
+        UnblockActivationResponse unblockActivation = client.unblockActivation(activationId, username);
         if (userId != null && !userId.trim().isEmpty()) {
             return "redirect:/activation/list?userId=" + userId;
         }
@@ -272,6 +279,18 @@ public class ActivationController {
             return "redirect:/activation/list?userId=" + userId;
         }
         return "redirect:/activation/detail/" + removeActivation.getActivationId();
+    }
+
+    /**
+     * Extract username from principal.
+     * @param principal Principal.
+     * @return Extracted username or null for principal without authentication.
+     */
+    private String extractUsername(Principal principal) {
+        if (principal == null || "anonymous".equals(principal.getName())) {
+            return null;
+        }
+        return principal.getName();
     }
 
 }
