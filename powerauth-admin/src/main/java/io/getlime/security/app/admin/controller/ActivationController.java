@@ -54,13 +54,15 @@ public class ActivationController {
     /**
      * Return the list of activations for given users.
      *
-     * @param userId  User ID to lookup the activations for.
-     * @param showAll Indicates if activations in REMOVED state should be returned.
-     * @param model   Model with passed parameters.
+     * @param userId User ID to lookup the activations for.
+     * @param showAllActivations Indicates if activations in REMOVED state should be returned.
+     * @param showAllRecoveryCodes Indicates if recovery codes in REVOKED state should be returned.
+     * @param model Model with passed parameters.
      * @return "activations" view.
      */
     @RequestMapping(value = "/activation/list")
-    public String activationList(@RequestParam(value = "userId", required = false) String userId, @RequestParam(value = "showAll", required = false) Boolean showAll, Map<String, Object> model) {
+    public String activationList(@RequestParam(value = "userId", required = false) String userId, @RequestParam(value = "showAllActivations", required = false) Boolean showAllActivations,
+                                 @RequestParam(value = "showAllRecoveryCodes", required = false) Boolean showAllRecoveryCodes, Map<String, Object> model) {
         if (userId != null) {
             List<GetActivationListForUserResponse.Activations> activationList = client.getActivationListForUser(userId);
             Collections.sort(activationList, new Comparator<GetActivationListForUserResponse.Activations>() {
@@ -74,10 +76,14 @@ public class ActivationController {
 
             model.put("activations", activationList);
             model.put("userId", userId);
-            model.put("showAll", showAll);
+            model.put("showAllActivations", showAllActivations);
+            model.put("showAllRecoveryCodes", showAllRecoveryCodes);
 
             List<GetApplicationListResponse.Applications> applications = client.getApplicationList();
             model.put("applications", applications);
+
+            LookupRecoveryCodesResponse response = client.lookupRecoveryCodes(userId, null, null, null, null);
+            model.put("recoveryCodes", response.getRecoveryCodes());
         }
         return "activations";
     }
@@ -146,6 +152,8 @@ public class ActivationController {
         model.put("applicationId", application.getApplicationId());
         model.put("applicationName", application.getApplicationName());
 
+        LookupRecoveryCodesResponse response = client.lookupRecoveryCodes(activation.getUserId(), activation.getActivationId(), activation.getApplicationId(), null, null);
+        model.put("recoveryCodes", response.getRecoveryCodes());
 
         List<SignatureAuditResponse.Items> auditItems = client.getSignatureAuditLog(activation.getUserId(), application.getApplicationId(), startingDate, endingDate);
         List<SignatureAuditItem> auditItemsFixed = new ArrayList<>();
@@ -286,7 +294,28 @@ public class ActivationController {
         if (userId != null && !userId.trim().isEmpty()) {
             return "redirect:/activation/list?userId=" + userId;
         }
-        return "redirect:/activation/detail/" + removeActivation.getActivationId();
+        return "redirect:/activation/detail/" + removeActivation.getActivationId() + "#versions";
+    }
+
+    /**
+     * Revoke recovery code.
+     * @param recoveryCodeId Recovery code ID.
+     * @param activationId Activation ID.
+     * @param userId User ID.
+     * @param model Request model.
+     * @return Redirect user to given URL or to activation detail - recovery tab, in case 'redirect' is null or empty.
+     */
+    @RequestMapping(value = "/activation/recovery/revoke/do.submit", method = RequestMethod.POST)
+    public String revokeRecoveryCode(@RequestParam(value = "recoveryCodeId") Long recoveryCodeId, @RequestParam(value = "activationId", required = false) String activationId,
+                                     @RequestParam(value = "userId", required = false) String userId, Map<String, Object> model) {
+        List<Long> recoveryCodeIds = new ArrayList<>();
+        recoveryCodeIds.add(recoveryCodeId);
+        client.revokeRecoveryCodes(recoveryCodeIds);
+        if (activationId != null) {
+            return "redirect:/activation/detail/" + activationId + "#recovery";
+        } else {
+            return "redirect:/activation/list?userId=" + userId;
+        }
     }
 
     /**

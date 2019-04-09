@@ -172,10 +172,53 @@
                 </div>
             </c:if>
         </div>
+
+        <c:if test="${not empty recoveryCodes}">
+            <c:forEach items="${recoveryCodes}" var="item">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Recovery Code</h3>
+                    </div>
+                    <div class="panel-body gray">
+                        <table class="w100">
+                            <tr>
+                                <td>
+                                    <p>
+                                        Activation Code<br>
+                                        <span class="black"><c:out value="${item.recoveryCodeMasked}"/></span>
+                                        </a>
+                                    </p>
+                                </td>
+                                <td>
+                                    <p>
+                                        Status<br>
+                                        <jsp:include page="recoveryCodeStatusSnippet.jsp">
+                                            <jsp:param value="${item.status}" name="status"/>
+                                        </jsp:include>
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <c:if test="${item.status != 'REVOKED'}">
+                        <div class="panel-footer">
+                            <form action="${pageContext.request.contextPath}/activation/recovery/revoke/do.submit"
+                                  method="POST" class="pull-right action-revoke">
+                                    <input type="hidden" name="activationId" value="<c:out value="${item.activationId}"/>"/>
+                                    <input type="hidden" name="recoveryCodeId" value="<c:out value="${item.recoveryCodeId}"/>"/>
+                                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                    <input type="submit" value="Revoke" class="btn btn-danger"/>
+                            </form>
+                            <div class="clearfix"></div>
+                        </div>
+                    </c:if>
+                </div>
+            </c:forEach>
+        </c:if>
     </div>
 
     <div class="col-md-8">
-        <div class="panel panel-default">
+        <div id="panel-with-tabs" class="panel panel-default">
             <div class="panel-body">
                 <form method="get" action="${pageContext.request.contextPath}/activation/detail/${activationId}" class="form-inline">
                     <div class="input-group w100">
@@ -189,12 +232,12 @@
                     </div>
                 </form>
             </div>
-            <ul class="nav nav-tabs" role="tablist">
-                <li role="presentation" class="active"><a href="#signatures" aria-controls="signatures" role="tab" data-toggle="tab">Last Signatures</a></li>
-                <li role="presentation"><a href="#history" aria-controls="history" role="tab" data-toggle="tab">Activation Changes</a></li>
+            <ul class="nav nav-tabs" id="nav-tab" role="tablist">
+                <li role="presentation"><a href="#signatures" id="tabs-signatures" aria-controls="signatures" role="tab" data-toggle="tab">Last Signatures</a></li>
+                <li role="presentation"><a href="#history" id="tabs-history" aria-controls="history" role="tab" data-toggle="tab">Activation Changes</a></li>
             </ul>
-            <div class="tab-content">
-                <div role="tabpanel" class="tab-pane active" id="signatures">
+            <div id="tab-content" class="tab-content">
+                <div role="tabpanel" class="tab-pane" id="signatures" aria-labelledby="tabs-signatures">
                     <table class="table w100">
                         <tbody>
                         <c:choose>
@@ -295,7 +338,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div role="tabpanel" class="tab-pane" id="history">
+                <div role="tabpanel" class="tab-pane" id="history" aria-labelledby="tabs-history">
                     <table class="table w100">
                         <tbody>
                         <c:choose>
@@ -375,3 +418,23 @@
 </div>
 
 <jsp:include page="footer.jsp"/>
+
+
+<script>
+    $(document).ready(function (event) {
+        // Choose tab by location hash
+        if (!window.location.hash) {
+            $('a[href="#signatures"]').tab('show');
+        } else {
+            $('a[href="'+window.location.hash+'"]').tab('show');
+        }
+        // Change location hash on click
+        $('.nav-tabs a').on('shown.bs.tab', function (e) {
+            if (history.pushState) {
+                history.pushState(null, null, e.target.hash);
+            } else {
+                window.location.hash = e.target.hash;
+            }
+        });
+    });
+</script>
