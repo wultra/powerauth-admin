@@ -15,32 +15,14 @@
 
 <div class="row">
 
-    <div class="col-md-3">
+    <div class="col-md-12">
         <div class="panel panel-default">
 
             <div class="panel-heading">
                 <h3 class="panel-title">Application #<c:out value="${id}"/>: <c:out value="${name}"/></h3>
             </div>
 
-            <div class="panel-body">
-                <p>Master Public Key</p>
-                <div class="well code wrap">
-                    <c:out value="${masterPublicKey}"/>
-                </div>
-                <div>
-                    <button class="btn btn-default btn-clipboard" type="button" data-clipboard-text="<c:out value="${masterPublicKey}"/>">
-                        <span class=" glyphicon glyphicon-copy"></span>
-                    </button>
-                </div>
-            </div>
-
-        </div>
-
-    </div>
-
-    <div class="col-md-9">
-
-        <div id="panel-with-tabs" class="panel panel-default">
+            <div id="panel-with-tabs" class="panel panel-default">
             <ul class="nav nav-tabs" id="nav-tab" role="tablist">
                 <li role="presentation"><a href="#versions" id="tabs-versions" aria-controls="versions" role="tab" data-toggle="tab">Mobile App Config</a></li>
                 <li role="presentation"><a href="#callbacks" id="tabs-callbacks" aria-controls="callbacks" role="tab" data-toggle="tab">Callbacks</a></li>
@@ -50,6 +32,21 @@
                 <div role="tabpanel" class="tab-pane" id="versions" aria-labelledby="tabs-versions">
                     <table class="table w100">
                         <tbody>
+                        <tr>
+                            <td>
+                                <div class="panel-body col-md-12">
+                                    <h3 class="panel-title pull-left">Master Public Key</h3>
+                                    <div class="well code wrap" style="margin-top: 25px; margin-bottom: 5px">
+                                        <c:out value="${masterPublicKey}"/>
+                                    </div>
+                                    <div>
+                                        <button class="btn btn-default btn-clipboard" type="button" data-clipboard-text="<c:out value="${masterPublicKey}"/>">
+                                            <span class=" glyphicon glyphicon-copy"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
                         <tr>
                             <td>
                                 <div class="panel-heading">
@@ -99,7 +96,7 @@
                                                             <input type="hidden" name="enabled" value="false"/>
                                                             <input type="hidden" name="version" value="<c:out value="${item.applicationVersionId}"/>"/>
                                                             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                                                            <input type="submit" value="Disable" class="btn btn-sm btn-danger w100"/>
+                                                            <input type="submit" value="Disable" class="btn btn-sm btn-danger pull-right"/>
                                                         </form>
                                                     </c:when>
                                                     <c:otherwise>
@@ -107,7 +104,7 @@
                                                             <input type="hidden" name="enabled" value="true"/>
                                                             <input type="hidden" name="version" value="<c:out value="${item.applicationVersionId}"/>"/>
                                                             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                                                            <input type="submit" value="Enable" class="btn btn-sm btn-default w100"/>
+                                                            <input type="submit" value="Enable" class="btn btn-sm btn-default pull-right"/>
                                                         </form>
                                                     </c:otherwise>
                                                 </c:choose>
@@ -159,7 +156,7 @@
                                                         <form action="${pageContext.request.contextPath}/application/detail/<c:out value="${id}"/>/callback/remove/do.submit" method="POST" class="action-remove">
                                                             <input type="hidden" name="id" value="<c:out value="${item.id}"/>"/>
                                                             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                                                            <input type="submit" value="Remove" class="btn btn-sm btn-default w100"/>
+                                                            <input type="submit" value="Remove" class="btn btn-sm btn-default pull-right"/>
                                                         </form>
                                                     </td>
                                                 </tr>
@@ -175,7 +172,8 @@
                 </div>
 
                 <div role="tabpanel" class="tab-pane" id="recovery" aria-labelledby="tabs-recovery">
-                    <table class="table w100">
+                    <form action="${pageContext.request.contextPath}/application/detail/<c:out value="${id}"/>/recovery/update/do.submit" method="POST" class="action-update">
+                    <table class="table w100" style="margin-bottom: 0px">
                         <tbody>
                         <tr>
                             <td>
@@ -183,7 +181,6 @@
                                     <h3 class="panel-title">Activation Recovery</h3>
                                 </div>
 
-                                <form action="${pageContext.request.contextPath}/application/detail/<c:out value="${id}"/>/recovery/update/do.submit" method="POST" class="action-update">
                                     <div class="panel-body">
                                         <p><input type="checkbox" name="activationRecoveryEnabled" <c:if test="${activationRecoveryEnabled}">checked</c:if>/>&nbsp;Activation Recovery Enabled</p>
                                         <c:if test="${activationRecoveryEnabled}">
@@ -203,7 +200,7 @@
                                                     </div>
                                                 </c:if>
 
-                                                <p><b>Postcard Printing Center Public Key</b></p>
+                                                <p><b>Recovery Postcard Printing Center Public Key</b></p>
                                                 <i>This public key represents Postcard printing center during key exchange with PowerAuth server.</i>
                                                 <div>
                                                     <textarea class="form-control noresize well code wrap w100" style="resize: none; margin-bottom: 5px" rows="1" name="remotePostcardPublicKeyBase64"><c:out value="${remotePostcardPublicKeyBase64}"/></textarea>
@@ -212,16 +209,19 @@
                                         </c:if>
                                         <input type="hidden" name="applicationId" value="<c:out value="${id}"/>"/>
                                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                                        <input type="submit" value="Update Settings" class="btn btn-default"/>
                                     </div>
-                                </form>
                             </td>
                         </tr>
                         </tbody>
                     </table>
 
+                    <input type="submit" value="Update Settings" class="btn btn-primary" style="margin-left: 22px; margin-bottom: 22px"/>
+                    </form>
+
                 </div>
             </div>
+
+        </div>
 
         </div>
 
