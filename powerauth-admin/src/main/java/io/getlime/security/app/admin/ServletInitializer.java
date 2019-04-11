@@ -26,7 +26,7 @@ public class ServletInitializer extends SpringBootServletInitializer {
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application.sources(PowerauthAdminApplication.class);
+        return application.sources(PowerAuthAdminApplication.class);
     }
 
 }
