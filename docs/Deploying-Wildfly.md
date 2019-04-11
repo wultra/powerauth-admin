@@ -21,13 +21,17 @@ PowerAuth admin contains the following configuration in `jboss-deployment-struct
 </jboss-deployment-structure>
 ```
 
+The deployment descriptor requires configuration of module `com.wultra.powerauth.admin.conf` module in `modules/system/layers/base/com/wultra/powerauth/admin/conf/main`.
+
 ## JBoss Module for PowerAuth Admin Configuration
 
-You need to configure the `com.wultra.powerauth.admin.conf` module in `modules/system/layers/base/com/wultra/powerauth/admin/conf/main`.
+Create a new module in `PATH_TO_JBOSS/modules/system/layers/base/com/wultra/powerauth/admin/conf/main`.
+
+The files described below should be added into this folder.
 
 ### Main Module Configuration
 
-The `module.xml` configuration adds resources from module to classpath:
+The `module.xml` configuration is used for module registration. It also adds resources from the module folder to classpath:
 ```
 <?xml version="1.0" encoding="UTF-8"?>
 <module xmlns="urn:jboss:module:1.3" name="com.wultra.powerauth.admin.conf">
@@ -39,7 +43,7 @@ The `module.xml` configuration adds resources from module to classpath:
 
 ### Logging Configuration
 
-The `logback.xml` file configures logging, for example:
+Use the `logback.xml` file to configure logging, for example:
 ```
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="30 seconds">
@@ -85,7 +89,7 @@ powerauth.admin.service.applicationEnvironment=TEST
 
 ## Enabling External Application Configuration 
 
-In order to enabled external configuration for the `application.properties` configuration file, set the following environment property before starting JBoss:
+In order to enable external configuration for the `application.properties` configuration file, set the following environment property before starting JBoss:
 
 ```
 SPRING_CONFIG_LOCATION=classpath:/application.properties,classpath:/application-ext.properties
