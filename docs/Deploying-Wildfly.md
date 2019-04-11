@@ -21,7 +21,7 @@ PowerAuth admin contains the following configuration in `jboss-deployment-struct
 </jboss-deployment-structure>
 ```
 
-The deployment descriptor requires configuration of module `com.wultra.powerauth.admin.conf` module in `modules/system/layers/base/com/wultra/powerauth/admin/conf/main`.
+The deployment descriptor requires configuration of the `com.wultra.powerauth.admin.conf` module.
 
 ## JBoss Module for PowerAuth Admin Configuration
 
