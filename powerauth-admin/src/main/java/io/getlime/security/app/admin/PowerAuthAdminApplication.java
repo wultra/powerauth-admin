@@ -18,12 +18,13 @@ package io.getlime.security.app.admin;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.PropertySource;
 
 /**
  * Spring Boot application main class
  */
 @SpringBootApplication
-public class PowerauthAdminApplication {
+public class PowerAuthAdminApplication {
 
     /**
      * Spring boot - main method
@@ -31,6 +32,6 @@ public class PowerauthAdminApplication {
      * @param args Arguments
      */
     public static void main(String[] args) {
-        SpringApplication.run(PowerauthAdminApplication.class, args);
+        SpringApplication.run(PowerAuthAdminApplication.class, args);
     }
 }
