@@ -63,7 +63,7 @@ Use the `logback.xml` file to configure logging, for example:
                 </rollingPolicy>
                 <encoder>
                         <charset>UTF-8</charset>
-                        <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+                        <pattern>%d{ISO8601} [%thread] %-5level %logger{36} - %msg%n</pattern>
                 </encoder>
         </appender>
 
