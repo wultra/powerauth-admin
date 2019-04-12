@@ -2,7 +2,7 @@
 
 ## JBoss Deployment Descriptor 
 
-PowerAuth admin contains the following configuration in `jboss-deployment-structure.xml` file for JBoss:
+PowerAuth Admin contains the following configuration in `jboss-deployment-structure.xml` file for JBoss:
 
 ```
 <?xml version="1.0"?>
