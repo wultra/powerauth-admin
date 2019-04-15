@@ -86,3 +86,5 @@ powerauth.service.url=http://[host]:[port]/powerauth-java-server/soap
 # Application Service Configuration
 powerauth.admin.service.applicationEnvironment=TEST
 ```
+
+PowerAuth Admin Spring application uses the `ext` Spring profile which activates overriding of default properties by `application-ext.properties`.
