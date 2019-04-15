@@ -17,6 +17,7 @@
 package io.getlime.security.app.admin.configuration;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
@@ -26,6 +27,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Petr Dvorak, petr@wultra.com
  */
 @Configuration
+@ConfigurationProperties("ext")
 @ComponentScan(basePackages = {"io.getlime.security.powerauth"})
 public class ApplicationConfiguration {
 

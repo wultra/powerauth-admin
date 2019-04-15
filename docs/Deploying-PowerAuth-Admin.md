@@ -55,7 +55,7 @@ To deploy PowerAuth Admin to Apache Tomcat, simply copy the WAR file in your `we
 
 *__Important note: Since PowerAuth Admin is a very simple application with direct access to the PowerAuth Server SOAP services, it must not be under any circumstances published publicly and must be constrained to the in-house closed infrastructure.__*
 
-## Deploying PowerAuth Admin outside the container
+## Deploying PowerAuth Admin Outside the Container
 
 You can also execute WAR file directly using the following command:
 
@@ -66,3 +66,7 @@ java -jar powerauth-admin.war
 _Note: You can overwrite the port using `-Dserver.port=8090` parameter to avoid port conflicts._
 
 *__Important note: Since PowerAuth Admin is a very simple application with direct access to the PowerAuth Server SOAP services, it must not be under any circumstances published publicly and must be constrained to the in-house closed infrastructure.__*
+
+## Deploying PowerAuth Admin On JBoss / Wildfly
+
+Follow the extra instructions in chapter [Deploying PowerAuth Admin on JBoss / Wildfly](./Deploying-Wildfly.md).

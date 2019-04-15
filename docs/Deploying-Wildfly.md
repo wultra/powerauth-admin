@@ -2,7 +2,7 @@
 
 ## JBoss Deployment Descriptor 
 
-PowerAuth admin contains the following configuration in `jboss-deployment-structure.xml` file for JBoss:
+PowerAuth Admin contains the following configuration in `jboss-deployment-structure.xml` file for JBoss:
 
 ```
 <?xml version="1.0"?>
@@ -87,12 +87,4 @@ powerauth.service.url=http://[host]:[port]/powerauth-java-server/soap
 powerauth.admin.service.applicationEnvironment=TEST
 ```
 
-## Enabling External Application Configuration 
-
-In order to enable external configuration for the `application.properties` configuration file, set the following environment property before starting JBoss:
-
-```
-SPRING_CONFIG_LOCATION=classpath:/application.properties,classpath:/application-ext.properties
-```
-
-The properties configured in the `application-ext.properties` file take precedence over default configuration. Changes in this file are applied after application restart.
+PowerAuth Admin Spring application uses the `ext` Spring profile which activates overriding of default properties by `application-ext.properties`.
