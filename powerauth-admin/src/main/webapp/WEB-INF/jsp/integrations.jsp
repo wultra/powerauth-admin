@@ -50,7 +50,7 @@
                 <form class="form-inline" action="${pageContext.request.contextPath}/integration/create/do.submit"
                       method="POST">
                     Integration name <input type="text" name="name" class="form-control">
-                    <input type="hidden" name="${_csrf.parameterName}"   value="${_csrf.token}" />
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                     <input type="submit" value="Submit" class="btn btn-success"/>
                 </form>
             </div>
@@ -82,7 +82,7 @@
                             <form action="${pageContext.request.contextPath}/integration/remove/do.submit" method="POST"
                                   class="pull-right action-remove">
                                 <input type="hidden" name="integrationId" value="<c:out value="${item.id}"/>"/>
-                                <input type="hidden" name="${_csrf.parameterName}"   value="${_csrf.token}" />
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                                 <input class="btn btn-danger" type="submit" value="Remove">
                             </form>
                         </td>

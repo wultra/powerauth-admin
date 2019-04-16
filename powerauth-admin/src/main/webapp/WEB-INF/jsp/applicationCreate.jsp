@@ -22,7 +22,7 @@
     <div class="panel-body">
         <form class="form-inline" action="${pageContext.request.contextPath}/application/create/do.submit" method="POST">
             Application name <input type="text" name="name" class="form-control">
-            <input type="hidden" name="${_csrf.parameterName}"   value="${_csrf.token}" />
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
             <input type="submit" value="Submit" class="btn btn-success"/>
         </form>
     </div>

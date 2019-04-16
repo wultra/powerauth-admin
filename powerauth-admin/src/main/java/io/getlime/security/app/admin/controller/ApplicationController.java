@@ -17,10 +17,7 @@
 package io.getlime.security.app.admin.controller;
 
 import com.google.common.collect.Lists;
-import io.getlime.powerauth.soap.v3.CreateApplicationResponse;
-import io.getlime.powerauth.soap.v3.GetApplicationDetailResponse;
-import io.getlime.powerauth.soap.v3.GetApplicationListResponse;
-import io.getlime.powerauth.soap.v3.GetCallbackUrlListResponse;
+import io.getlime.powerauth.soap.v3.*;
 import io.getlime.security.powerauth.soap.spring.client.PowerAuthServiceClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -81,10 +78,15 @@ public class ApplicationController {
     @RequestMapping(value = "/application/detail/{id}")
     public String applicationDetail(@PathVariable(value = "id") Long id, Map<String, Object> model) {
         GetApplicationDetailResponse applicationDetails = client.getApplicationDetail(id);
+        GetRecoveryConfigResponse recoveryConfig = client.getRecoveryConfig(id);
         List<GetCallbackUrlListResponse.CallbackUrlList> callbackUrlList = client.getCallbackUrlList(id);
         model.put("id", applicationDetails.getApplicationId());
         model.put("name", applicationDetails.getApplicationName());
         model.put("masterPublicKey", applicationDetails.getMasterPublicKey());
+        model.put("activationRecoveryEnabled", recoveryConfig.isActivationRecoveryEnabled());
+        model.put("recoveryPostcardEnabled", recoveryConfig.isRecoveryPostcardEnabled());
+        model.put("postcardPublicKey", recoveryConfig.getPostcardPublicKeyBase64());
+        model.put("remotePostcardPublicKeyBase64", recoveryConfig.getRemotePostcardPublicKeyBase64());
         model.put("versions", Lists.reverse(applicationDetails.getVersions()));
         model.put("callbacks", callbackUrlList);
         return "applicationDetail";
@@ -180,7 +182,7 @@ public class ApplicationController {
      * @param name  Callback URL name
      * @param callbackUrl Callback URL value
      * @param model Model with passed parameters.
-     * @return Redirect to application detail (callback URLs are visible there).
+     * @return Redirect to application detail, callbacks tab.
      */
     @RequestMapping(value = "/application/detail/{id}/callback/create/do.submit")
     public String applicationCreateCallbackAction(
@@ -188,23 +190,48 @@ public class ApplicationController {
             @RequestParam(value = "callbackUrl") String callbackUrl,
             @PathVariable(value = "id") Long id, Map<String, Object> model) {
         client.createCallbackUrl(id, name, callbackUrl);
-        return "redirect:/application/detail/" + id;
+        return "redirect:/application/detail/" + id + "#callbacks";
     }
 
     /**
-     * Execute the action that removesa callback with given ID.
+     * Execute the action that removes a callback with given ID.
      *
      * @param id    Application ID.
      * @param callbackId Callback ID.
      * @param model Model with passed parameters.
-     * @return Redirect to application detail (callback URLs are visible there).
+     * @return Redirect to application detail, callbacks tab.
      */
     @RequestMapping(value = "/application/detail/{id}/callback/remove/do.submit")
     public String applicationRemoveCallbackAction(
             @RequestParam(value = "id") String callbackId,
             @PathVariable(value = "id") Long id, Map<String, Object> model) {
         client.removeCallbackUrl(callbackId);
-        return "redirect:/application/detail/" + id;
+        return "redirect:/application/detail/" + id + "#callbacks";
     }
+
+    /**
+     * Update recovery configuration.
+     * @param activationRecoveryEnabled Whether activation recovery is enabled.
+     * @param recoveryPostcardEnabled Whether recovery postcard is enabled.
+     * @param remotePostcardPublicKeyBase64 Base64 encoded printing center public key.
+     * @param id Application ID.
+     * @param model Request model.
+     * @return Redirect to application detail, recovery tab.
+     */
+    @RequestMapping(value = "/application/detail/{id}/recovery/update/do.submit")
+    public String applicationUpdateRecoveryConfigAction(
+            @RequestParam(value = "activationRecoveryEnabled", required = false) boolean activationRecoveryEnabled,
+            @RequestParam(value = "recoveryPostcardEnabled", required = false) boolean recoveryPostcardEnabled,
+            @RequestParam(value = "remotePostcardPublicKeyBase64", required = false) String remotePostcardPublicKeyBase64,
+            @PathVariable(value = "id") Long id,
+            Map<String, Object> model) {
+        if (!activationRecoveryEnabled && recoveryPostcardEnabled) {
+            // Turn off recovery postcard in case activation recovery is disabled
+            recoveryPostcardEnabled = false;
+        }
+        client.updateRecoveryConfig(id, activationRecoveryEnabled, recoveryPostcardEnabled, remotePostcardPublicKeyBase64);
+        return "redirect:/application/detail/" + id + "#recovery";
+    }
+
 
 }

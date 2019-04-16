@@ -51,7 +51,7 @@
                     <input type="text" id="username" name="username" class="form-control" placeholder="Username" required autofocus />
                     <label for="inputPassword" class="sr-only">Password</label>
                     <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required />
-                    <input type="hidden" name="${_csrf.parameterName}"   value="${_csrf.token}" />
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                     <button class="btn btn-success btn-block" type="submit">Log in</button>
                 </form>
             </div>

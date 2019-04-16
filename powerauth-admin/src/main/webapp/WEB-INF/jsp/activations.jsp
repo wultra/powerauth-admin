@@ -18,7 +18,7 @@
             <div class="panel-body">
                 <form action="${pageContext.request.contextPath}/activation/list" method="GET" class="form-inline">
                     Enter a user ID <input class="form-control" type="text" name="userId" value="<c:out value="${userId}"/>"/>
-                    <input type="hidden" name="${_csrf.parameterName}"   value="${_csrf.token}" />
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                     <input class="form-field btn btn-success" type="submit" value="Select User"/>
                 </form>
             </div>
@@ -46,23 +46,23 @@
                             </c:forEach>
                         </select>
                         <input type="hidden" name="userId" value="<c:out value="${userId}"/>"/>
-                        <input type="hidden" name="${_csrf.parameterName}"   value="${_csrf.token}" />
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                         <input type="submit" value="Create Activation" class="btn btn-default"/>
                     </div>
                 </form>
             </div>
         </div>
 
-        <c:if test="${fn:length(activations) > 0}">
+        <c:if test="${not empty activations}">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title pull-left">Activations</h3>
                     <form action="${pageContext.request.contextPath}/activation/list" method="GET" class="pull-right">
                         <input type="hidden" name="userId" value="<c:out value="${userId}"/>"/>
                         <label style="font-weight: normal; margin: 0;">
-                            <input type="checkbox" name="showAll" <c:if test='${showAll}'>checked</c:if> onchange="this.form.submit()"/> Show All
+                            <input type="checkbox" name="showAllActivations" <c:if test='${showAllActivations}'>checked</c:if> onchange="this.form.submit()"/> Show All
                         </label>
-                        <input type="hidden" name="${_csrf.parameterName}"   value="${_csrf.token}" />
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                     </form>
                     <div class="clearfix"></div>
                 </div>
@@ -75,13 +75,13 @@
                         <th style="width: 80px;">Version</th>
                         <th style="width: 150px;">Application</th>
                         <th style="width: 80px;">Status</th>
-                        <th class="text-right" style="width: 170px;">Last used</th>
+                        <th style="width: 170px;">Last used</th>
                         <th class="text-right" style="width: 130px;">Actions</th>
                     </tr>
                     </thead>
                     <tbody>
                     <c:forEach items="${activations}" var="item">
-                        <c:if test="${(showAll == true) || (item.activationStatus == 'CREATED') || (item.activationStatus == 'ACTIVE') || (item.activationStatus == 'OTP_USED') || (item.activationStatus == 'BLOCKED')}">
+                        <c:if test="${(showAllActivations == true) || (item.activationStatus == 'CREATED') || (item.activationStatus == 'ACTIVE') || (item.activationStatus == 'OTP_USED') || (item.activationStatus == 'BLOCKED')}">
                             <tr class="code clickable-row"
                                 data-href='${pageContext.request.contextPath}/activation/detail/<c:out value="${item.activationId}"/>'>
                                 <td><c:out value="${item.activationId}"/></td>
@@ -123,6 +123,115 @@
                 </table>
             </div>
         </c:if>
+
+        <c:if test="${not empty recoveryCodes}">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title pull-left">Recovery Codes</h3>
+                    <form action="${pageContext.request.contextPath}/activation/list" method="GET" class="pull-right">
+                        <input type="hidden" name="userId" value="<c:out value="${userId}"/>"/>
+                        <label style="font-weight: normal; margin: 0;">
+                            <input type="checkbox" name="showAllRecoveryCodes" <c:if test='${showAllRecoveryCodes}'>checked</c:if> onchange="this.form.submit()"/> Show All
+                        </label>
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                    </form>
+                    <div class="clearfix"></div>
+                </div>
+
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th style="width: 310px;">Activation ID</th>
+                        <th>Activation Code</th>
+                        <th style="width: 80px;">Type</th>
+                        <th style="width: 150px;">Application</th>
+                        <th style="width: 80px;">Status</th>
+                        <th style="width: 170px;">Current PUK Index</th>
+                        <th class="text-right" style="width: 130px;">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <c:forEach items="${recoveryCodes}" var="item">
+                        <c:if test="${(showAllRecoveryCodes == true) || (item.status == 'CREATED') || (item.status == 'ACTIVE') || (item.status == 'BLOCKED')}">
+                            <c:choose>
+                                <c:when test="${not empty item.activationId}">
+                                    <tr class="code clickable-row" data-href='${pageContext.request.contextPath}/activation/detail/<c:out value="${item.activationId}"/>#versions'>
+                                </c:when>
+                                <c:otherwise>
+                                    <tr class="code">
+                                </c:otherwise>
+                            </c:choose>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${not empty item.activationId}">
+                                            <c:out value="${item.activationId}"/></td>
+                                        </c:when>
+                                        <c:otherwise>
+                                            *
+                                        </c:otherwise>
+                                    </c:choose>
+                                <td><c:out value="${item.recoveryCodeMasked}"/></td>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${not empty item.activationId}">
+                                            Activation
+                                        </c:when>
+                                        <c:otherwise>
+                                            Postcard
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
+                                <td>
+                                    <a class="black"
+                                       href='${pageContext.request.contextPath}/application/detail/<c:out value="${item.applicationId}"/>#versions'>
+                                        <c:forEach items="${applications}" var="application">
+                                            <c:if test="${application.id == item.applicationId}">
+                                                <c:out value="${application.applicationName}"/>
+                                            </c:if>
+                                        </c:forEach>
+                                    </a>
+                                </td>
+                                <td>
+                                    <jsp:include page="recoveryCodeStatusSnippet.jsp">
+                                        <jsp:param value="${item.status}" name="status"/>
+                                    </jsp:include>
+                                </td>
+                            <td>
+                                <c:set var="firstValidPuk" value="0"/>
+                                <c:forEach items="${item.puks}" var="puk">
+                                    <c:if test="${firstValidPuk == 0 and puk.status == 'VALID'}">
+                                        <c:set var="firstValidPuk" value="${puk.pukIndex}"/>
+                                    </c:if>
+                                </c:forEach>
+                                <c:choose>
+                                    <c:when test="${firstValidPuk > 0}">
+                                        <c:out value="${firstValidPuk}"/> of <c:out value="${item.puks.size()}"/>
+                                    </c:when>
+                                    <c:otherwise>
+                                        Not Available
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
+                                <td>
+                                    <c:if test="${item.status != 'REVOKED'}">
+                                        <form action="${pageContext.request.contextPath}/activation/recovery/revoke/do.submit"
+                                              method="POST" class="pull-right">
+                                            <input type="hidden" name="userId" value="<c:out value="${item.userId}"/>"/>
+                                            <input type="hidden" name="recoveryCodeId"
+                                                   value="<c:out value="${item.recoveryCodeId}"/>"/>
+                                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                            <input type="submit" value="Revoke" class="btn btn-xs btn-danger"/>
+                                        </form>
+                                    </c:if>
+                                </td>
+                            </tr>
+                        </c:if>
+                    </c:forEach>
+                    </tbody>
+                </table>
+            </div>
+        </c:if>
+
     </c:otherwise>
 </c:choose>
 
