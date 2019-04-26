@@ -55,7 +55,7 @@ To deploy PowerAuth Admin to Apache Tomcat, simply copy the WAR file in your `we
 
 *__Important note: Since PowerAuth Admin is a very simple application with direct access to the PowerAuth Server SOAP services, it must not be under any circumstances published publicly and must be constrained to the in-house closed infrastructure.__*
 
-## Deploying PowerAuth Admin Outside the Container
+## Deploying PowerAuth Admin outside the container
 
 You can also execute WAR file directly using the following command:
 
