@@ -203,7 +203,7 @@
                                                 <p><b>Recovery Postcard Printing Center Public Key</b></p>
                                                 <i>This public key represents Postcard printing center during key exchange with PowerAuth server.</i>
                                                 <div>
-                                                    <textarea class="form-control noresize well code wrap w100" style="resize: none; margin-bottom: 5px" rows="1" name="remotePostcardPublicKeyBase64"><c:out value="${remotePostcardPublicKeyBase64}"/></textarea>
+                                                    <textarea class="form-control noresize well code wrap w100" style="resize: none; margin-bottom: 5px" rows="1" name="remotePostcardPublicKey"><c:out value="${remotePostcardPublicKey}"/></textarea>
                                                 </div>
                                             </c:if>
                                         </c:if>
