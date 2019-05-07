@@ -85,8 +85,8 @@ public class ApplicationController {
         model.put("masterPublicKey", applicationDetails.getMasterPublicKey());
         model.put("activationRecoveryEnabled", recoveryConfig.isActivationRecoveryEnabled());
         model.put("recoveryPostcardEnabled", recoveryConfig.isRecoveryPostcardEnabled());
-        model.put("postcardPublicKey", recoveryConfig.getPostcardPublicKeyBase64());
-        model.put("remotePostcardPublicKeyBase64", recoveryConfig.getRemotePostcardPublicKeyBase64());
+        model.put("postcardPublicKey", recoveryConfig.getPostcardPublicKey());
+        model.put("remotePostcardPublicKey", recoveryConfig.getRemotePostcardPublicKey());
         model.put("versions", Lists.reverse(applicationDetails.getVersions()));
         model.put("callbacks", callbackUrlList);
         return "applicationDetail";
@@ -213,7 +213,7 @@ public class ApplicationController {
      * Update recovery configuration.
      * @param activationRecoveryEnabled Whether activation recovery is enabled.
      * @param recoveryPostcardEnabled Whether recovery postcard is enabled.
-     * @param remotePostcardPublicKeyBase64 Base64 encoded printing center public key.
+     * @param remotePostcardPublicKey Base64 encoded printing center public key.
      * @param id Application ID.
      * @param model Request model.
      * @return Redirect to application detail, recovery tab.
@@ -222,14 +222,14 @@ public class ApplicationController {
     public String applicationUpdateRecoveryConfigAction(
             @RequestParam(value = "activationRecoveryEnabled", required = false) boolean activationRecoveryEnabled,
             @RequestParam(value = "recoveryPostcardEnabled", required = false) boolean recoveryPostcardEnabled,
-            @RequestParam(value = "remotePostcardPublicKeyBase64", required = false) String remotePostcardPublicKeyBase64,
+            @RequestParam(value = "remotePostcardPublicKey", required = false) String remotePostcardPublicKey,
             @PathVariable(value = "id") Long id,
             Map<String, Object> model) {
         if (!activationRecoveryEnabled && recoveryPostcardEnabled) {
             // Turn off recovery postcard in case activation recovery is disabled
             recoveryPostcardEnabled = false;
         }
-        client.updateRecoveryConfig(id, activationRecoveryEnabled, recoveryPostcardEnabled, remotePostcardPublicKeyBase64);
+        client.updateRecoveryConfig(id, activationRecoveryEnabled, recoveryPostcardEnabled, remotePostcardPublicKey);
         return "redirect:/application/detail/" + id + "#recovery";
     }
 
