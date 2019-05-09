@@ -205,6 +205,8 @@
                                                 <div>
                                                     <textarea class="form-control noresize well code wrap w100" style="resize: none; margin-bottom: 5px" rows="1" name="remotePostcardPublicKey"><c:out value="${remotePostcardPublicKey}"/></textarea>
                                                 </div>
+
+                                                <p><input type="checkbox" name="allowMultipleRecoveryCodes" <c:if test="${allowMultipleRecoveryCodes}">checked</c:if>/>&nbsp;Allow Multiple Recovery Codes for User</p>
                                             </c:if>
                                         </c:if>
                                         <input type="hidden" name="applicationId" value="<c:out value="${id}"/>"/>
