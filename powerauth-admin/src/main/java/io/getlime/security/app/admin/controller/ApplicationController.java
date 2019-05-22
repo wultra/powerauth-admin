@@ -25,7 +25,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
@@ -37,8 +40,12 @@ import java.util.Map;
 @Controller
 public class ApplicationController {
 
+    private final PowerAuthServiceClient client;
+
     @Autowired
-    private PowerAuthServiceClient client;
+    public ApplicationController(PowerAuthServiceClient client) {
+        this.client = client;
+    }
 
     /**
      * Redirect '/' URL to the list of application.
@@ -96,11 +103,10 @@ public class ApplicationController {
     /**
      * Create a new application.
      *
-     * @param model Model with passed parameters.
      * @return "applicationCreate" view.
      */
     @RequestMapping(value = "/application/create")
-    public String applicationCreate(Map<String, Object> model) {
+    public String applicationCreate() {
         return "applicationCreate";
     }
 
@@ -137,7 +143,11 @@ public class ApplicationController {
      * @return Redirect to the new application details.
      */
     @RequestMapping(value = "/application/create/do.submit", method = RequestMethod.POST)
-    public String applicationCreateAction(@RequestParam String name) {
+    public String applicationCreateAction(@RequestParam String name, RedirectAttributes redirectAttributes) {
+        if (name == null || name.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Application name must not be empty.");
+            return "redirect:/application/create";
+        }
         CreateApplicationResponse application = client.createApplication(name);
         return "redirect:/application/detail/" + application.getApplicationId();
     }
@@ -150,7 +160,11 @@ public class ApplicationController {
      * @return Redirect to application detail (application versions are visible there).
      */
     @RequestMapping(value = "/application/detail/{applicationId}/version/create/do.submit", method = RequestMethod.POST)
-    public String applicationVersionCreateAction(@PathVariable Long applicationId, @RequestParam String name) {
+    public String applicationVersionCreateAction(@PathVariable Long applicationId, @RequestParam String name, RedirectAttributes redirectAttributes) {
+        if (name == null || name.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Application version name must not be empty.");
+            return "redirect:/application/detail/" + applicationId + "/version/create";
+        }
         client.createApplicationVersion(applicationId, name);
         return "redirect:/application/detail/" + applicationId;
     }
@@ -182,14 +196,31 @@ public class ApplicationController {
      * @param id    Application ID.
      * @param name  Callback URL name
      * @param callbackUrl Callback URL value
-     * @param model Model with passed parameters.
      * @return Redirect to application detail, callbacks tab.
      */
     @RequestMapping(value = "/application/detail/{id}/callback/create/do.submit")
     public String applicationCreateCallbackAction(
             @RequestParam(value = "name") String name,
             @RequestParam(value = "callbackUrl") String callbackUrl,
-            @PathVariable(value = "id") Long id, Map<String, Object> model) {
+            @PathVariable(value = "id") Long id, RedirectAttributes redirectAttributes) {
+        String error = null;
+        if (name == null || name.isEmpty()) {
+            error = "Application version name must not be empty.";
+        } else if (callbackUrl == null || callbackUrl.isEmpty()) {
+            error = "Callback URL must not be empty.";
+        } else {
+            try {
+                new URL(callbackUrl);
+            } catch (MalformedURLException e) {
+                error = "Callback URL is not in a valid format";
+            }
+        }
+        if (error != null) {
+            redirectAttributes.addFlashAttribute("error", error);
+            redirectAttributes.addFlashAttribute("name", name);
+            redirectAttributes.addFlashAttribute("callbackUrl", callbackUrl);
+            return "redirect:/application/detail/" + id + "/callback/create";
+        }
         client.createCallbackUrl(id, name, callbackUrl);
         return "redirect:/application/detail/" + id + "#callbacks";
     }
@@ -199,13 +230,12 @@ public class ApplicationController {
      *
      * @param id    Application ID.
      * @param callbackId Callback ID.
-     * @param model Model with passed parameters.
      * @return Redirect to application detail, callbacks tab.
      */
     @RequestMapping(value = "/application/detail/{id}/callback/remove/do.submit")
     public String applicationRemoveCallbackAction(
             @RequestParam(value = "id") String callbackId,
-            @PathVariable(value = "id") Long id, Map<String, Object> model) {
+            @PathVariable(value = "id") Long id) {
         client.removeCallbackUrl(callbackId);
         return "redirect:/application/detail/" + id + "#callbacks";
     }
@@ -217,7 +247,6 @@ public class ApplicationController {
      * @param allowMultipleRecoveryCodes Whether multiple recovery codes are allowed per user.
      * @param remotePostcardPublicKey Base64 encoded printing center public key.
      * @param id Application ID.
-     * @param model Request model.
      * @return Redirect to application detail, recovery tab.
      */
     @RequestMapping(value = "/application/detail/{id}/recovery/update/do.submit")
@@ -226,8 +255,7 @@ public class ApplicationController {
             @RequestParam(value = "recoveryPostcardEnabled", required = false) boolean recoveryPostcardEnabled,
             @RequestParam(value = "allowMultipleRecoveryCodes", required = false) boolean allowMultipleRecoveryCodes,
             @RequestParam(value = "remotePostcardPublicKey", required = false) String remotePostcardPublicKey,
-            @PathVariable(value = "id") Long id,
-            Map<String, Object> model) {
+            @PathVariable(value = "id") Long id) {
         if (!activationRecoveryEnabled && recoveryPostcardEnabled) {
             // Turn off recovery postcard in case activation recovery is disabled
             recoveryPostcardEnabled = false;

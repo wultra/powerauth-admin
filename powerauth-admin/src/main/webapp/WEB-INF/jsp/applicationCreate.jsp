@@ -20,10 +20,15 @@
     </div>
 
     <div class="panel-body">
+
+
         <form class="form-inline" action="${pageContext.request.contextPath}/application/create/do.submit" method="POST">
             Application name <input type="text" name="name" class="form-control">
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
             <input type="submit" value="Submit" class="btn btn-success"/>
+            <c:if test="${not empty error}">
+                <span style="color: #c0007f; margin-left: 10px;"><c:out value="${error}"/></span>
+            </c:if>
         </form>
     </div>
 
