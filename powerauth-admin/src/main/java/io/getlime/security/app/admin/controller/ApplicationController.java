@@ -205,7 +205,7 @@ public class ApplicationController {
             @PathVariable(value = "id") Long id, RedirectAttributes redirectAttributes) {
         String error = null;
         if (name == null || name.trim().isEmpty()) {
-            error = "Application version name must not be empty.";
+            error = "Callback name must not be empty.";
         } else if (callbackUrl == null || callbackUrl.trim().isEmpty()) {
             error = "Callback URL must not be empty.";
         } else {
