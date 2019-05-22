@@ -144,7 +144,7 @@ public class ApplicationController {
      */
     @RequestMapping(value = "/application/create/do.submit", method = RequestMethod.POST)
     public String applicationCreateAction(@RequestParam String name, RedirectAttributes redirectAttributes) {
-        if (name == null || name.isEmpty()) {
+        if (name == null || name.trim().isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Application name must not be empty.");
             return "redirect:/application/create";
         }
@@ -161,7 +161,7 @@ public class ApplicationController {
      */
     @RequestMapping(value = "/application/detail/{applicationId}/version/create/do.submit", method = RequestMethod.POST)
     public String applicationVersionCreateAction(@PathVariable Long applicationId, @RequestParam String name, RedirectAttributes redirectAttributes) {
-        if (name == null || name.isEmpty()) {
+        if (name == null || name.trim().isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Application version name must not be empty.");
             return "redirect:/application/detail/" + applicationId + "/version/create";
         }
@@ -204,9 +204,9 @@ public class ApplicationController {
             @RequestParam(value = "callbackUrl") String callbackUrl,
             @PathVariable(value = "id") Long id, RedirectAttributes redirectAttributes) {
         String error = null;
-        if (name == null || name.isEmpty()) {
+        if (name == null || name.trim().isEmpty()) {
             error = "Application version name must not be empty.";
-        } else if (callbackUrl == null || callbackUrl.isEmpty()) {
+        } else if (callbackUrl == null || callbackUrl.trim().isEmpty()) {
             error = "Callback URL must not be empty.";
         } else {
             try {
