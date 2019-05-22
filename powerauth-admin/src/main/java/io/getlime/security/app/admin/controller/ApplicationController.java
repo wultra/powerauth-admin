@@ -85,6 +85,7 @@ public class ApplicationController {
         model.put("masterPublicKey", applicationDetails.getMasterPublicKey());
         model.put("activationRecoveryEnabled", recoveryConfig.isActivationRecoveryEnabled());
         model.put("recoveryPostcardEnabled", recoveryConfig.isRecoveryPostcardEnabled());
+        model.put("allowMultipleRecoveryCodes", recoveryConfig.isAllowMultipleRecoveryCodes());
         model.put("postcardPublicKey", recoveryConfig.getPostcardPublicKey());
         model.put("remotePostcardPublicKey", recoveryConfig.getRemotePostcardPublicKey());
         model.put("versions", Lists.reverse(applicationDetails.getVersions()));
@@ -213,6 +214,7 @@ public class ApplicationController {
      * Update recovery configuration.
      * @param activationRecoveryEnabled Whether activation recovery is enabled.
      * @param recoveryPostcardEnabled Whether recovery postcard is enabled.
+     * @param allowMultipleRecoveryCodes Whether multiple recovery codes are allowed per user.
      * @param remotePostcardPublicKey Base64 encoded printing center public key.
      * @param id Application ID.
      * @param model Request model.
@@ -222,6 +224,7 @@ public class ApplicationController {
     public String applicationUpdateRecoveryConfigAction(
             @RequestParam(value = "activationRecoveryEnabled", required = false) boolean activationRecoveryEnabled,
             @RequestParam(value = "recoveryPostcardEnabled", required = false) boolean recoveryPostcardEnabled,
+            @RequestParam(value = "allowMultipleRecoveryCodes", required = false) boolean allowMultipleRecoveryCodes,
             @RequestParam(value = "remotePostcardPublicKey", required = false) String remotePostcardPublicKey,
             @PathVariable(value = "id") Long id,
             Map<String, Object> model) {
@@ -229,7 +232,7 @@ public class ApplicationController {
             // Turn off recovery postcard in case activation recovery is disabled
             recoveryPostcardEnabled = false;
         }
-        client.updateRecoveryConfig(id, activationRecoveryEnabled, recoveryPostcardEnabled, remotePostcardPublicKey);
+        client.updateRecoveryConfig(id, activationRecoveryEnabled, recoveryPostcardEnabled, allowMultipleRecoveryCodes, remotePostcardPublicKey);
         return "redirect:/application/detail/" + id + "#recovery";
     }
 
