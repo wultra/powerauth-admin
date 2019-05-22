@@ -279,6 +279,9 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
+                                                            <label for="allowMultipleRecoveryCodes" style="font-weight: normal; margin: 0;">
+                                                                <input type="checkbox" id="allowMultipleRecoveryCodes" name="allowMultipleRecoveryCodes" <c:if test="${allowMultipleRecoveryCodes}">checked</c:if>/>&nbsp;Allow Multiple Recovery Codes for User
+                                                            </label>
                                                         </c:if>
                                                     </c:if>
                                                     <input type="hidden" name="applicationId" value="<c:out value="${id}"/>"/>
