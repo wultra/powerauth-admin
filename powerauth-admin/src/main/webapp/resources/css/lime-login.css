@@ -18,14 +18,14 @@
     left: 0;
     padding-top: 120px;
     padding-bottom: 120px;
-    background-color: rgba(0, 24, 64, 0.8);
+    background-color: rgba(5, 55, 81, 0.8);
 }
 
 .form-panel {
     max-width: 330px;
     margin: 0 auto;
-    border-radius: 4px;
-    background-color: rgba(0, 0, 0, 0.33);
+    border-radius: 8px;
+    background-color: rgba(0, 0, 0, 1);
 }
 
 .form-panel .alert .close {
@@ -33,7 +33,11 @@
 }
 
 .form-logo {
-    width: 228px;
+    width: 140px;
+}
+
+.form-logo-wrapper {
+    margin-top: 10px;
     margin-bottom: 20px;
     margin-right: 20px;
 }

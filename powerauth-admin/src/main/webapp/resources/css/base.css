@@ -25,7 +25,7 @@
 }
 
 .green {
-    color: #7FC000 !important;
+    color: #096799 !important;
 }
 
 .orange {
@@ -69,7 +69,7 @@ thead th {
     border-bottom: none !important;
 }
 
-table.table .btn {
+table.table .btn.btn-table {
     padding: 2px 4px 1px 4px;
     font-size: 10px;
     margin-right: -3px;
