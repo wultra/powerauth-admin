@@ -83,7 +83,16 @@
                                                         <tbody>
                                                         <c:forEach items="${versions}" var="item">
                                                             <tr class="code">
-                                                                <td><c:out value="${item.applicationVersionName}"/></td>
+                                                                <td title="<c:out value="${item.applicationVersionName}"/>">
+                                                                    <c:choose>
+                                                                        <c:when test="${item.applicationVersionName.length() > 13}">
+                                                                            <c:out value="${fn:substring(item.applicationVersionName, 0, 10)}"/>...
+                                                                        </c:when>
+                                                                        <c:otherwise>
+                                                                            <c:out value="${item.applicationVersionName}"/>
+                                                                        </c:otherwise>
+                                                                    </c:choose>
+                                                                </td>
                                                                 <td class="text-nowrap">
                                                                     <c:out value="${item.applicationKey}"/>
                                                                     <button class="btn btn-default btn-table btn-clipboard" type="button" data-clipboard-text="<c:out value="${item.applicationKey}"/>">
