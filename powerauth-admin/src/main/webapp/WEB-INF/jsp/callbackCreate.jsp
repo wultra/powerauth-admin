@@ -9,7 +9,7 @@
 
 <ol class="breadcrumb">
     <li><a class="black" href="${pageContext.request.contextPath}/application/list">Applications</a></li>
-    <li><a class="black" href="${pageContext.request.contextPath}/application/detail/<c:out value="${applicationId}"/>">Application Detail</a></li>
+    <li><a class="black" href="${pageContext.request.contextPath}/application/detail/<c:out value="${applicationId}"/>#callbacks">Application Detail</a></li>
     <li class="active">New Callback</li>
 </ol>
 
