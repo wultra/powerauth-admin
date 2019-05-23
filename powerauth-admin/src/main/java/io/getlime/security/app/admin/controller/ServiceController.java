@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Lime - HighTech Solutions s.r.o.
+ * Copyright 2017 Wultra s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package io.getlime.security.app.admin.controller;
 
-import io.getlime.security.app.admin.ApplicationConfiguration;
+import io.getlime.security.app.admin.configuration.ApplicationConfiguration;
 import io.getlime.security.app.admin.model.ServiceStatusResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +32,7 @@ import java.util.Date;
 /**
  * Class representing controller used for service and maintenance purpose.
  *
- * @author Roman Strobl, roman.strobl@lime-company.eu
+ * @author Roman Strobl, roman.strobl@wultra.com
  */
 @Controller
 @RequestMapping(value = "/api/service")

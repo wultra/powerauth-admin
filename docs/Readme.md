@@ -5,6 +5,9 @@ PowerAuth Admin is a an web administration console for the [PowerAuth Server](ht
 ## Deployment Tutorials
 
 - [Deploying PowerAuth Admin](./Deploying-PowerAuth-Admin.md)
+- [Setting Up LDAP Authentication](./Setting-Up-LDAP-Authentication.md)
+- [Deploying PowerAuth Admin on JBoss/Wildfly](./Deploying-Wildfly.md)
+- [Configuration of Activation Recovery](./Activation-Recovery.md)
 
 ## License
 

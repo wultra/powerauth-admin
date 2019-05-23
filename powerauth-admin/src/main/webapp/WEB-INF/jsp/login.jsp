@@ -44,14 +44,17 @@
 
             <div class="form-panel">
                 <form class="form-signin" action="${pageContext.request.contextPath}/login" method="post" >
-                    <div class="text-center">
+                    <div class="text-center form-logo-wrapper">
                         <img src="${pageContext.request.contextPath}/resources/images/logo.png" class="form-logo"/>
                     </div>
+                    <p class="text-center lead" style="color: gray;">
+                        Please sign in
+                    </p>
                     <label for="username" class="sr-only">Username</label>
                     <input type="text" id="username" name="username" class="form-control" placeholder="Username" required autofocus />
                     <label for="inputPassword" class="sr-only">Password</label>
                     <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required />
-                    <input type="hidden" name="${_csrf.parameterName}"   value="${_csrf.token}" />
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                     <button class="btn btn-success btn-block" type="submit">Log in</button>
                 </form>
             </div>

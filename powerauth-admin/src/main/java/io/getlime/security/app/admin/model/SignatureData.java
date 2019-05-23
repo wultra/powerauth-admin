@@ -3,7 +3,7 @@ package io.getlime.security.app.admin.model;
 /**
  * Structured data used in signatures.
  *
- * @author Roman Strobl, roman.strobl@lime-company.eu
+ * @author Roman Strobl, roman.strobl@wultra.com
  */
 public class SignatureData {
 

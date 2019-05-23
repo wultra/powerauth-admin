@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Lime - HighTech Solutions s.r.o.
+ * Copyright 2017 Wultra s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,7 @@
 
 package io.getlime.security.app.admin.controller;
 
-import com.google.common.io.BaseEncoding;
 import io.getlime.security.app.admin.converter.SignatureAuditItemConverter;
-import io.getlime.security.app.admin.converter.SignatureDataConverter;
 import io.getlime.security.app.admin.model.SignatureAuditItem;
 import io.getlime.security.app.admin.util.QRUtil;
 import io.getlime.powerauth.soap.v3.*;
@@ -30,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.security.Principal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -43,21 +42,27 @@ import java.util.*;
 @Controller
 public class ActivationController {
 
+    private final PowerAuthServiceClient client;
+
     @Autowired
-    private PowerAuthServiceClient client;
+    public ActivationController(PowerAuthServiceClient client) {
+        this.client = client;
+    }
 
     private final SignatureAuditItemConverter signatureAuditItemConverter = new SignatureAuditItemConverter();
 
     /**
      * Return the list of activations for given users.
      *
-     * @param userId  User ID to lookup the activations for.
-     * @param showAll Indicates if activations in REMOVED state should be returned.
-     * @param model   Model with passed parameters.
+     * @param userId User ID to lookup the activations for.
+     * @param showAllActivations Indicates if activations in REMOVED state should be returned.
+     * @param showAllRecoveryCodes Indicates if recovery codes in REVOKED state should be returned.
+     * @param model Model with passed parameters.
      * @return "activations" view.
      */
     @RequestMapping(value = "/activation/list")
-    public String activationList(@RequestParam(value = "userId", required = false) String userId, @RequestParam(value = "showAll", required = false) Boolean showAll, Map<String, Object> model) {
+    public String activationList(@RequestParam(value = "userId", required = false) String userId, @RequestParam(value = "showAllActivations", required = false) Boolean showAllActivations,
+                                 @RequestParam(value = "showAllRecoveryCodes", required = false) Boolean showAllRecoveryCodes, Map<String, Object> model) {
         if (userId != null) {
             List<GetActivationListForUserResponse.Activations> activationList = client.getActivationListForUser(userId);
             Collections.sort(activationList, new Comparator<GetActivationListForUserResponse.Activations>() {
@@ -71,10 +76,14 @@ public class ActivationController {
 
             model.put("activations", activationList);
             model.put("userId", userId);
-            model.put("showAll", showAll);
+            model.put("showAllActivations", showAllActivations);
+            model.put("showAllRecoveryCodes", showAllRecoveryCodes);
 
             List<GetApplicationListResponse.Applications> applications = client.getApplicationList();
             model.put("applications", applications);
+
+            LookupRecoveryCodesResponse response = client.lookupRecoveryCodes(userId, null, null, null, null);
+            model.put("recoveryCodes", response.getRecoveryCodes());
         }
         return "activations";
     }
@@ -143,6 +152,8 @@ public class ActivationController {
         model.put("applicationId", application.getApplicationId());
         model.put("applicationName", application.getApplicationName());
 
+        LookupRecoveryCodesResponse response = client.lookupRecoveryCodes(activation.getUserId(), activation.getActivationId(), activation.getApplicationId(), null, null);
+        model.put("recoveryCodes", response.getRecoveryCodes());
 
         List<SignatureAuditResponse.Items> auditItems = client.getSignatureAuditLog(activation.getUserId(), application.getApplicationId(), startingDate, endingDate);
         List<SignatureAuditItem> auditItemsFixed = new ArrayList<>();
@@ -200,11 +211,13 @@ public class ActivationController {
      *
      * @param activationId Activation ID.
      * @param model        Model with passed parameters.
+     * @param principal    Principal entity.
      * @return Redirect the user to activation detail.
      */
     @RequestMapping(value = "/activation/create/do.submit", method = RequestMethod.POST)
-    public String activationCreateCommitAction(@RequestParam(value = "activationId") String activationId, Map<String, Object> model) {
-        CommitActivationResponse commitActivation = client.commitActivation(activationId);
+    public String activationCreateCommitAction(@RequestParam(value = "activationId") String activationId, Map<String, Object> model, Principal principal) {
+        String username = extractUsername(principal);
+        CommitActivationResponse commitActivation = client.commitActivation(activationId, username);
         return "redirect:/activation/detail/" + commitActivation.getActivationId();
     }
 
@@ -214,11 +227,13 @@ public class ActivationController {
      * @param activationId Activation ID
      * @param userId       User ID identifying user for redirect to the list of activations
      * @param model        Model with passed parameters.
+     * @param principal    Principal entity.
      * @return Redirect user to given URL or to activation detail, in case 'redirect' is null or empty.
      */
     @RequestMapping(value = "/activation/block/do.submit", method = RequestMethod.POST)
-    public String blockActivation(@RequestParam(value = "activationId") String activationId, @RequestParam(value = "redirectUserId") String userId, Map<String, Object> model) {
-        BlockActivationResponse blockActivation = client.blockActivation(activationId, null);
+    public String blockActivation(@RequestParam(value = "activationId") String activationId, @RequestParam(value = "redirectUserId") String userId, Map<String, Object> model, Principal principal) {
+        String username = extractUsername(principal);
+        BlockActivationResponse blockActivation = client.blockActivation(activationId, null, username);
         if (userId != null && !userId.trim().isEmpty()) {
             return "redirect:/activation/list?userId=" + userId;
         }
@@ -231,11 +246,13 @@ public class ActivationController {
      * @param activationId Activation ID
      * @param userId       User ID identifying user for redirect to the list of activations
      * @param model        Model with passed parameters.
+     * @param principal    Principal entity.
      * @return Redirect user to given URL or to activation detail, in case 'redirect' is null or empty.
      */
     @RequestMapping(value = "/activation/unblock/do.submit", method = RequestMethod.POST)
-    public String unblockActivation(@RequestParam(value = "activationId") String activationId, @RequestParam(value = "redirectUserId") String userId, Map<String, Object> model) {
-        UnblockActivationResponse unblockActivation = client.unblockActivation(activationId);
+    public String unblockActivation(@RequestParam(value = "activationId") String activationId, @RequestParam(value = "redirectUserId") String userId, Map<String, Object> model, Principal principal) {
+        String username = extractUsername(principal);
+        UnblockActivationResponse unblockActivation = client.unblockActivation(activationId, username);
         if (userId != null && !userId.trim().isEmpty()) {
             return "redirect:/activation/list?userId=" + userId;
         }
@@ -246,13 +263,15 @@ public class ActivationController {
      * Commit activation.
      *
      * @param activationId Activation ID
-     *@param userId       User ID identifying user for redirect to the list of activations
+     * @param userId       User ID identifying user for redirect to the list of activations
      * @param model        Model with passed parameters.
+     * @param principal    Principal entity.
      * @return Redirect user to given URL or to activation detail, in case 'redirect' is null or empty.
      */
     @RequestMapping(value = "/activation/commit/do.submit", method = RequestMethod.POST)
-    public String commitActivation(@RequestParam(value = "activationId") String activationId, @RequestParam(value = "redirectUserId") String userId, Map<String, Object> model) {
-        CommitActivationResponse commitActivation = client.commitActivation(activationId);
+    public String commitActivation(@RequestParam(value = "activationId") String activationId, @RequestParam(value = "redirectUserId") String userId, Map<String, Object> model, Principal principal) {
+        String username = extractUsername(principal);
+        CommitActivationResponse commitActivation = client.commitActivation(activationId, username);
         if (userId != null && !userId.trim().isEmpty()) {
             return "redirect:/activation/list?userId=" + userId;
         }
@@ -265,15 +284,50 @@ public class ActivationController {
      * @param activationId Activation ID
      * @param userId       User ID identifying user for redirect to the list of activations
      * @param model        Model with passed parameters.
+     * @param principal    Principal entity.
      * @return Redirect user to given URL or to activation detail, in case 'redirect' is null or empty.
      */
     @RequestMapping(value = "/activation/remove/do.submit", method = RequestMethod.POST)
-    public String removeActivation(@RequestParam(value = "activationId") String activationId, @RequestParam(value = "redirectUserId") String userId, Map<String, Object> model) {
-        RemoveActivationResponse removeActivation = client.removeActivation(activationId);
+    public String removeActivation(@RequestParam(value = "activationId") String activationId, @RequestParam(value = "redirectUserId") String userId, Map<String, Object> model, Principal principal) {
+        String username = extractUsername(principal);
+        RemoveActivationResponse removeActivation = client.removeActivation(activationId, username);
         if (userId != null && !userId.trim().isEmpty()) {
             return "redirect:/activation/list?userId=" + userId;
         }
-        return "redirect:/activation/detail/" + removeActivation.getActivationId();
+        return "redirect:/activation/detail/" + removeActivation.getActivationId() + "#versions";
+    }
+
+    /**
+     * Revoke recovery code.
+     * @param recoveryCodeId Recovery code ID.
+     * @param activationId Activation ID.
+     * @param userId User ID.
+     * @param model Request model.
+     * @return Redirect user to given URL or to activation detail - recovery tab, in case 'redirect' is null or empty.
+     */
+    @RequestMapping(value = "/activation/recovery/revoke/do.submit", method = RequestMethod.POST)
+    public String revokeRecoveryCode(@RequestParam(value = "recoveryCodeId") Long recoveryCodeId, @RequestParam(value = "activationId", required = false) String activationId,
+                                     @RequestParam(value = "userId", required = false) String userId, Map<String, Object> model) {
+        List<Long> recoveryCodeIds = new ArrayList<>();
+        recoveryCodeIds.add(recoveryCodeId);
+        client.revokeRecoveryCodes(recoveryCodeIds);
+        if (activationId != null) {
+            return "redirect:/activation/detail/" + activationId + "#recovery";
+        } else {
+            return "redirect:/activation/list?userId=" + userId;
+        }
+    }
+
+    /**
+     * Extract username from principal.
+     * @param principal Principal entity.
+     * @return Extracted username or null for principal without authentication.
+     */
+    private String extractUsername(Principal principal) {
+        if (principal == null || "anonymous".equals(principal.getName())) {
+            return null;
+        }
+        return principal.getName();
     }
 
 }

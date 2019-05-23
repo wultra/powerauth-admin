@@ -9,7 +9,7 @@
 
 <ol class="breadcrumb">
     <li><a class="black" href="${pageContext.request.contextPath}/application/list">Applications</a></li>
-    <li><a class="black" href="${pageContext.request.contextPath}/application/detail/<c:out value="${applicationId}"/>">Application Detail</a></li>
+    <li><a class="black" href="${pageContext.request.contextPath}/application/detail/<c:out value="${applicationId}"/>#callbacks">Application Detail</a></li>
     <li class="active">New Callback</li>
 </ol>
 
@@ -20,17 +20,28 @@
                 <h3 class="panel-title">New Callback</h3>
             </div>
             <div class="panel-body">
-                <form class="form" method="POST" action="${pageContext.request.contextPath}/application/detail/<c:out value="${applicationId}"/>/callback/create/do.submit">
-                    <div class="row">
-                        <div class="col-md-3">
-                            Name <input type="text" name="name" class="form-control"/>
+                <form class="form-horizontal" method="POST" action="${pageContext.request.contextPath}/application/detail/<c:out value="${applicationId}"/>/callback/create/do.submit">
+                    <div class="form-group">
+                        <label for="name" class="col-sm-3 control-label">Callback Name</label>
+                        <div class="col-sm-9">
+                            <input type="text" id="name" name="name" class="form-control" value="${name}"/>
                         </div>
-                        <div class="col-md-7">
-                            URL <input type="text" name="callbackUrl" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="callbackUrl" class="col-sm-3 control-label">Callback URL</label>
+                        <div class="col-sm-9">
+                            <input type="text" id="callbackUrl" name="callbackUrl" class="form-control" value="${callbackUrl}"/>
                         </div>
-                        <div class="col-md-2 text-right"><br/>
-                            <input type="hidden" name="${_csrf.parameterName}"   value="${_csrf.token}" />
-                            <input type="submit" value="Submit" class="btn btn-success w100"/>
+                    </div>
+                    <div class="form-group text-right">
+                        <div class="col-sm-9">
+                            <c:if test="${not empty error}">
+                                <span style="color: #c0007f; margin-left: 10px;"><c:out value="${error}"/></span>
+                            </c:if>
+                        </div>
+                        <div class="col-sm-3">
+                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                            <input type="submit" value="Submit" class="btn btn-success"/>
                         </div>
                     </div>
                 </form>
