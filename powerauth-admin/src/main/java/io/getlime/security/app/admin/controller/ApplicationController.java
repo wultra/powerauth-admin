@@ -140,6 +140,7 @@ public class ApplicationController {
      * Execute the application create action by calling the SOAP service.
      *
      * @param name Application name.
+     * @param redirectAttributes Redirect attributes.
      * @return Redirect to the new application details.
      */
     @RequestMapping(value = "/application/create/do.submit", method = RequestMethod.POST)
@@ -155,8 +156,9 @@ public class ApplicationController {
     /**
      * Execute the application version create action by calling the SOAP service.
      *
-     * @param applicationId Application ID.
-     * @param name          Version name.
+     * @param applicationId      Application ID.
+     * @param name               Version name.
+     * @param redirectAttributes Redirect attributes.
      * @return Redirect to application detail (application versions are visible there).
      */
     @RequestMapping(value = "/application/detail/{applicationId}/version/create/do.submit", method = RequestMethod.POST)
@@ -194,8 +196,9 @@ public class ApplicationController {
      * Execute the action that creates a new callback on given application.
      *
      * @param id    Application ID.
-     * @param name  Callback URL name
-     * @param callbackUrl Callback URL value
+     * @param name  Callback URL name.
+     * @param callbackUrl Callback URL value.
+     * @param redirectAttributes Redirect attributes.
      * @return Redirect to application detail, callbacks tab.
      */
     @RequestMapping(value = "/application/detail/{id}/callback/create/do.submit")
