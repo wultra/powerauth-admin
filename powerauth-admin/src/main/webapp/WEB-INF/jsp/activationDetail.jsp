@@ -422,6 +422,14 @@
 
 <script>
     $(document).ready(function (event) {
+        // Disable HTML sanitizer for signature data tooltip
+        const whiteList = $.fn.tooltip.Constructor.DEFAULTS.whiteList;
+        whiteList.table = [];
+        whiteList.tr = [];
+        whiteList.td = [];
+        whiteList.tbody = [];
+        whiteList.thead = [];
+        whiteList.span = ['class'];
         // Choose tab by location hash
         if (!window.location.hash) {
             $('a[href="#signatures"]').tab('show');
