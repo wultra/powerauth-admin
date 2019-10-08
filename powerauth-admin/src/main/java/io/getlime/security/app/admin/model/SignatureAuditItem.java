@@ -22,6 +22,7 @@ public class SignatureAuditItem {
     private KeyValueMap additionalInfo;
     private String data;
     private SignatureType signatureType;
+    private String signatureVersion;
     private String signature;
     private String note;
     private boolean valid;
@@ -99,6 +100,14 @@ public class SignatureAuditItem {
 
     public void setSignatureType(SignatureType signatureType) {
         this.signatureType = signatureType;
+    }
+
+    public String getSignatureVersion() {
+        return signatureVersion;
+    }
+
+    public void setSignatureVersion(String signatureVersion) {
+        this.signatureVersion = signatureVersion;
     }
 
     public String getSignature() {

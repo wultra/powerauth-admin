@@ -33,6 +33,7 @@ public class SignatureAuditItemConverter {
         result.setActivationStatus(signatureAuditItem.getActivationStatus());
         result.setAdditionalInfo(signatureAuditItem.getAdditionalInfo());
         result.setSignatureType(signatureAuditItem.getSignatureType());
+        result.setSignatureVersion(signatureAuditItem.getSignatureVersion());
         result.setSignature(signatureAuditItem.getSignature());
         result.setNote(signatureAuditItem.getNote());
         result.setValid(signatureAuditItem.isValid());
