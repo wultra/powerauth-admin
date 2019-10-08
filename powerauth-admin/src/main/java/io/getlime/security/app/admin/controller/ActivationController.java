@@ -169,7 +169,7 @@ public class ActivationController {
 
         List<ActivationHistoryResponse.Items> activationHistoryItems = client.getActivationHistory(activation.getActivationId(), startingDate, endingDate);
         List<ActivationHistoryResponse.Items> trimmedActivationHistoryItems = new ArrayList<>();
-        if (trimmedActivationHistoryItems.size() > 100) {
+        if (activationHistoryItems.size() > 100) {
             trimmedActivationHistoryItems = activationHistoryItems.subList(0, 100);
         } else {
             trimmedActivationHistoryItems = activationHistoryItems;
