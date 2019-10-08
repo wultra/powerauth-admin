@@ -297,7 +297,14 @@
                                                     <td>
                                                         Version<br>
                                                         <span class="black">
-                                                            <c:out value="${item.version}"/>
+                                                            <c:choose>
+                                                                <c:when test="${not empty item.signatureVersion}">
+                                                                    <c:out value="${item.version}"/> (<c:out value="${item.signatureVersion}"/>)
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <c:out value="${item.version}"/>
+                                                                </c:otherwise>
+                                                            </c:choose>
                                                         </span>
                                                     </td>
                                                 </tr>
