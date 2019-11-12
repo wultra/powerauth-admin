@@ -297,7 +297,14 @@
                                                     <td>
                                                         Version<br>
                                                         <span class="black">
-                                                            <c:out value="${item.version}"/>
+                                                            <c:choose>
+                                                                <c:when test="${not empty item.signatureVersion}">
+                                                                    <c:out value="${item.version}"/> (<c:out value="${item.signatureVersion}"/>)
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <c:out value="${item.version}"/>
+                                                                </c:otherwise>
+                                                            </c:choose>
                                                         </span>
                                                     </td>
                                                 </tr>
@@ -422,6 +429,14 @@
 
 <script>
     $(document).ready(function (event) {
+        // Disable HTML sanitizer for signature data tooltip
+        const whiteList = $.fn.tooltip.Constructor.DEFAULTS.whiteList;
+        whiteList.table = [];
+        whiteList.tr = [];
+        whiteList.td = [];
+        whiteList.tbody = [];
+        whiteList.thead = [];
+        whiteList.span = ['class'];
         // Choose tab by location hash
         if (!window.location.hash) {
             $('a[href="#signatures"]').tab('show');
