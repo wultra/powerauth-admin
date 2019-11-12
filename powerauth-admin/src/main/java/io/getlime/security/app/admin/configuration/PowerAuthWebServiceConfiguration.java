@@ -33,12 +33,12 @@ import javax.net.ssl.*;
  * @author Petr Dvorak
  */
 @Configuration
-public class PowerAuthWebServiceConfig {
+public class PowerAuthWebServiceConfiguration {
 
     private ApplicationConfiguration configuration;
 
     @Autowired
-    public PowerAuthWebServiceConfig(ApplicationConfiguration configuration) {
+    public PowerAuthWebServiceConfiguration(ApplicationConfiguration configuration) {
         this.configuration = configuration;
     }
 

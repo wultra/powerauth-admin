@@ -16,7 +16,7 @@
 
 package io.getlime.security.app.admin.controller;
 
-import io.getlime.security.app.admin.configuration.PowerAuthWebServiceConfig;
+import io.getlime.security.app.admin.configuration.PowerAuthWebServiceConfiguration;
 import io.getlime.powerauth.soap.v3.*;
 import io.getlime.security.powerauth.soap.spring.client.PowerAuthServiceClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +39,7 @@ public class IntegrationController {
     private PowerAuthServiceClient client;
 
     @Autowired
-    private PowerAuthWebServiceConfig configuration;
+    private PowerAuthWebServiceConfiguration configuration;
 
     /**
      * Show list of integrations.
