@@ -43,7 +43,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         if (!configuration.getSecurityMethod().isEmpty()) {
             http.authorizeRequests()
-                    .antMatchers("/resources/**", "/api/service/**").permitAll()
+                    .antMatchers("/resources/**", "/api/service/**", "/actuator/**").permitAll()
                     .anyRequest().fullyAuthenticated()
                     .and()
                     .formLogin().loginPage("/login").permitAll()
