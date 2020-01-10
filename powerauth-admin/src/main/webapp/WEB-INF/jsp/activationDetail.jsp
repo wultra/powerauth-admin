@@ -148,12 +148,36 @@
                             </p>
                         </td>
                     </tr>
-                    <c:if test="${not empty blockedReason}">
                         <tr>
                             <td>
-                                &nbsp;
+                                Platform<br>
+                                <c:choose>
+                                    <c:when test="${platform == 'IOS'}">
+                                        <span class="black">iOS</span>
+                                    </c:when>
+                                    <c:when test="${platform == 'ANDROID'}">
+                                        <span class="black">Android</span>
+                                    </c:when>
+                                    <c:when test="${platform == 'HW'}">
+                                        <span class="black">Hardware Token</span>
+                                    </c:when>
+                                    <c:when test="${platform == 'UNKNOWN'}">
+                                        <span class="black">Unknown</span>
+                                    </c:when>
+                                </c:choose>
                             </td>
+                            <c:if test="${deviceInfo != null}">
                             <td>
+                                User Device Information<br>
+                                <span class="black">
+                                    <c:out value="${deviceInfo}"/>
+                                </span>
+                            </td>
+                            </c:if>
+                        </tr>
+                    <c:if test="${not empty blockedReason}">
+                        <tr>
+                            <td colspan="2">
                                 Blocked Reason<br>
                                 <span class="orange code">
                                     <c:out value="${blockedReason}"/>
