@@ -152,18 +152,21 @@
                             <td>
                                 Platform<br>
                                 <c:choose>
-                                    <c:when test="${platform == 'IOS'}">
+                                    <c:when test="${platform == 'ios'}">
                                         <span class="black">iOS</span>
                                     </c:when>
-                                    <c:when test="${platform == 'ANDROID'}">
+                                    <c:when test="${platform == 'android'}">
                                         <span class="black">Android</span>
                                     </c:when>
-                                    <c:when test="${platform == 'HW'}">
+                                    <c:when test="${platform == 'hw'}">
                                         <span class="black">Hardware Token</span>
                                     </c:when>
-                                    <c:when test="${platform == 'UNKNOWN'}">
+                                    <c:when test="${platform == 'unknown'}">
                                         <span class="black">Unknown</span>
                                     </c:when>
+                                    <c:otherwise>
+                                        <span class="black">${platform}</span>
+                                    </c:otherwise>
                                 </c:choose>
                             </td>
                             <c:if test="${deviceInfo != null}">
