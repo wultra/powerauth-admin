@@ -411,7 +411,15 @@
                                         <c:choose>
                                             <c:when test="${not empty item.blockedReason}">
                                                 <td>
-                                                    Blocked Reason<br>
+                                                    <c:choose>
+                                                        <c:when test="${item.activationStatus == 'BLOCKED'}">
+                                                            Blocked Reason
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            Event Reason
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                    <br>
                                                     <span class="orange code">
                                                         <c:out value="${item.blockedReason}"/>
                                                     </span>
