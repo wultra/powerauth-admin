@@ -147,6 +147,8 @@ public class ActivationController {
         model.put("activationFingerprint", activation.getDevicePublicKeyFingerprint());
         model.put("userId", activation.getUserId());
         model.put("version", activation.getVersion());
+        model.put("platform", activation.getPlatform());
+        model.put("deviceInfo", activation.getDeviceInfo());
 
         GetApplicationDetailResponse application = client.getApplicationDetail(activation.getApplicationId());
         model.put("applicationId", application.getApplicationId());

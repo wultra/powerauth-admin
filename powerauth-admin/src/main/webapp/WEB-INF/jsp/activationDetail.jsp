@@ -148,12 +148,39 @@
                             </p>
                         </td>
                     </tr>
-                    <c:if test="${not empty blockedReason}">
                         <tr>
                             <td>
-                                &nbsp;
+                                Platform<br>
+                                <c:choose>
+                                    <c:when test="${platform == 'ios'}">
+                                        <span class="black">iOS</span>
+                                    </c:when>
+                                    <c:when test="${platform == 'android'}">
+                                        <span class="black">Android</span>
+                                    </c:when>
+                                    <c:when test="${platform == 'hw'}">
+                                        <span class="black">Hardware Token</span>
+                                    </c:when>
+                                    <c:when test="${platform == 'unknown'}">
+                                        <span class="black">Unknown</span>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <span class="black">${platform}</span>
+                                    </c:otherwise>
+                                </c:choose>
                             </td>
+                            <c:if test="${deviceInfo != null}">
                             <td>
+                                User Device Information<br>
+                                <span class="black">
+                                    <c:out value="${deviceInfo}"/>
+                                </span>
+                            </td>
+                            </c:if>
+                        </tr>
+                    <c:if test="${not empty blockedReason}">
+                        <tr>
+                            <td colspan="2">
                                 Blocked Reason<br>
                                 <span class="orange code">
                                     <c:out value="${blockedReason}"/>
@@ -384,7 +411,15 @@
                                         <c:choose>
                                             <c:when test="${not empty item.blockedReason}">
                                                 <td>
-                                                    Blocked Reason<br>
+                                                    <c:choose>
+                                                        <c:when test="${item.activationStatus == 'BLOCKED'}">
+                                                            Blocked Reason
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            Event Reason
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                    <br>
                                                     <span class="orange code">
                                                         <c:out value="${item.blockedReason}"/>
                                                     </span>
