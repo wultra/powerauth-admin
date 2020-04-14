@@ -6,8 +6,8 @@
     <c:when test="${param.status == 'CREATED'}">
         <span class="green code">CREATED</span>
     </c:when>
-    <c:when test="${param.status == 'OTP_USED'}">
-        <span class="green code">OTP_USED</span>
+    <c:when test="${param.status == 'PENDING_COMMIT'}">
+        <span class="green code">PENDING_COMMIT</span>
     </c:when>
     <c:when test="${param.status == 'ACTIVE'}">
         <span class="green code">ACTIVE</span>

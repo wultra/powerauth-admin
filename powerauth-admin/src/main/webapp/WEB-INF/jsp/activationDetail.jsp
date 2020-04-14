@@ -47,7 +47,7 @@
             </div>
         </c:if>
 
-        <c:if test="${status == 'OTP_USED'}">
+        <c:if test="${status == 'PENDING_COMMIT'}">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">Activation Verification</h3>
