@@ -12,7 +12,7 @@
             <input class="btn btn-danger btn-table" type="submit" value="Remove">
         </form>
     </c:when>
-    <c:when test="${param.status == 'OTP_USED'}">
+    <c:when test="${param.status == 'PENDING_COMMIT'}">
         <form action="${pageContext.request.contextPath}/activation/remove/do.submit" method="POST"
               class="pull-right action-remove">
             <input type="hidden" name="activationId" value="<c:out value="${param.activationId}"/>"/>
