@@ -6,13 +6,13 @@
     <name>powerauth-admin</name>
     <description>PowerAuth 2.0 Server Admin Console</description>
     <artifactId>powerauth-admin</artifactId>
-    <version>0.24.0-SNAPSHOT</version>
+    <version>0.24.0</version>
     <packaging>war</packaging>
 
     <parent>
         <groupId>io.getlime.security</groupId>
         <artifactId>powerauth-admin-parent</artifactId>
-        <version>0.24.0-SNAPSHOT</version>
+        <version>0.24.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -68,7 +68,7 @@
         <dependency>
             <groupId>io.getlime.security</groupId>
             <artifactId>powerauth-java-client-spring</artifactId>
-            <version>0.24.0-SNAPSHOT</version>
+            <version>0.24.0</version>
         </dependency>
 
         <!-- Other Libraries -->
