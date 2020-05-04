@@ -48,7 +48,7 @@
                                 </option>
                             </c:forEach>
                         </select>
-                        <select name="activationOtpValidation" class="form-control" onchange="if (this.selectedIndex > 0) document.getElementById('activationOtp').className='otp-displayed'; else document.getElementById('activationOtp').className='otp-hidden';">
+                        <select name="activationOtpValidation" class="form-control" onchange="if (this.selectedIndex > 0) document.getElementById('activationOtp').className='otp-displayed form-control'; else document.getElementById('activationOtp').className='otp-hidden';">
                             <option value="NONE">Do not use OTP</option>
                             <option value="ON_KEY_EXCHANGE">OTP on key exchange</option>
                             <option value="ON_COMMIT">OTP on activation commit</option>
