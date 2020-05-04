@@ -30,7 +30,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.ws.soap.client.SoapFaultClientException;
 
-import javax.servlet.http.HttpSession;
 import java.security.Principal;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -46,12 +45,10 @@ import java.util.*;
 public class ActivationController {
 
     private final PowerAuthServiceClient client;
-    private final HttpSession httpSession;
 
     @Autowired
-    public ActivationController(PowerAuthServiceClient client, HttpSession httpSession) {
+    public ActivationController(PowerAuthServiceClient client) {
         this.client = client;
-        this.httpSession = httpSession;
     }
 
     private final SignatureAuditItemConverter signatureAuditItemConverter = new SignatureAuditItemConverter();
@@ -154,12 +151,10 @@ public class ActivationController {
         model.put("version", activation.getVersion());
         model.put("platform", activation.getPlatform());
         model.put("deviceInfo", activation.getDeviceInfo());
-        model.put("showOtpInput", false);
-        if (activation.getActivationStatus() == ActivationStatus.PENDING_COMMIT) {
-            Boolean requestOtpOnCommit = (Boolean) httpSession.getAttribute("requestOtpOnCommit");
-            if (requestOtpOnCommit != null && requestOtpOnCommit) {
-                model.put("showOtpInput", true);
-            }
+        if (activation.getActivationStatus() == ActivationStatus.PENDING_COMMIT && activation.getActivationOtpValidation() == ActivationOtpValidation.ON_COMMIT) {
+            model.put("showOtpInput", true);
+        } else {
+            model.put("showOtpInput", false);
         }
 
         GetApplicationDetailResponse application = client.getApplicationDetail(activation.getApplicationId());
@@ -246,9 +241,6 @@ public class ActivationController {
         model.put("activationCode", response.getActivationCode());
         model.put("activationId", response.getActivationId());
         model.put("activationSignature", response.getActivationSignature());
-        if (requestOtpOnCommit) {
-            httpSession.setAttribute("requestOtpOnCommit", Boolean.TRUE);
-        }
 
         return "redirect:/activation/detail/" + response.getActivationId();
     }
@@ -333,7 +325,6 @@ public class ActivationController {
         }
         try {
             CommitActivationResponse commitActivation = client.commitActivation(request);
-            httpSession.removeAttribute("requestOtpOnCommit");
             if (userId != null && !userId.trim().isEmpty()) {
                 return "redirect:/activation/list?userId=" + userId;
             }
