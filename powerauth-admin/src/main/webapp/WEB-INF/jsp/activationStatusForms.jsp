@@ -2,6 +2,10 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
+<c:if test="${not empty error}">
+    <div style="color: #c0007f; margin-bottom: 5px; text-align: center"><c:out value="${error}"/></div>
+</c:if>
+
 <c:choose>
     <c:when test="${param.status == 'CREATED'}">
         <form action="${pageContext.request.contextPath}/activation/remove/do.submit" method="POST"
@@ -21,6 +25,9 @@
             <input class="btn btn-danger btn-table" type="submit" value="Remove">
         </form>
         <form action="${pageContext.request.contextPath}/activation/commit/do.submit" method="POST" class="pull-right">
+            <c:if test="${param.showOtpInput == true}">
+                OTP: <input name="activationOtp" size="12"/>
+            </c:if>
             <input type="hidden" name="activationId" value="<c:out value="${param.activationId}"/>"/>
             <input type="hidden" name="redirectUserId" value="<c:out value="${param.redirectUserId}"/>"/>
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />

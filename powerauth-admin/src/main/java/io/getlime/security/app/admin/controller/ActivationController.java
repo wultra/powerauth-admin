@@ -27,7 +27,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.ws.soap.client.SoapFaultClientException;
 
+import javax.servlet.http.HttpSession;
 import java.security.Principal;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -43,10 +46,12 @@ import java.util.*;
 public class ActivationController {
 
     private final PowerAuthServiceClient client;
+    private final HttpSession httpSession;
 
     @Autowired
-    public ActivationController(PowerAuthServiceClient client) {
+    public ActivationController(PowerAuthServiceClient client, HttpSession httpSession) {
         this.client = client;
+        this.httpSession = httpSession;
     }
 
     private final SignatureAuditItemConverter signatureAuditItemConverter = new SignatureAuditItemConverter();
@@ -149,6 +154,13 @@ public class ActivationController {
         model.put("version", activation.getVersion());
         model.put("platform", activation.getPlatform());
         model.put("deviceInfo", activation.getDeviceInfo());
+        model.put("showOtpInput", false);
+        if (activation.getActivationStatus() == ActivationStatus.PENDING_COMMIT) {
+            Boolean requestOtpOnCommit = (Boolean) httpSession.getAttribute("requestOtpOnCommit");
+            if (requestOtpOnCommit != null && requestOtpOnCommit) {
+                model.put("showOtpInput", true);
+            }
+        }
 
         GetApplicationDetailResponse application = client.getApplicationDetail(activation.getApplicationId());
         model.put("applicationId", application.getApplicationId());
@@ -191,19 +203,52 @@ public class ActivationController {
     /**
      * Create a new activation.
      *
-     * @param applicationId Application ID of an associated application.
-     * @param userId        User ID.
-     * @param model         Model with passed parameters.
+     * @param applicationId           Application ID of an associated application.
+     * @param userId                  User ID.
+     * @param activationOtpValidation Activation OTP validation mode.
+     * @param activationOtp           Activation OTP code.
+     * @param model                   Model with passed parameters.
+     * @param redirectAttributes      Redirect attributes.
      * @return Redirect the user to activation detail.
      */
     @RequestMapping(value = "/activation/create")
-    public String activationCreate(@RequestParam(value = "applicationId") Long applicationId, @RequestParam(value = "userId") String userId, Map<String, Object> model) {
+    public String activationCreate(@RequestParam(value = "applicationId") Long applicationId, @RequestParam(value = "userId") String userId,
+                                   @RequestParam(value = "activationOtpValidation") String activationOtpValidation,
+                                   @RequestParam(value = "activationOtp") String activationOtp,
+                                   Map<String, Object> model, RedirectAttributes redirectAttributes) {
+        InitActivationResponse response;
 
-        InitActivationResponse response = client.initActivation(userId, applicationId);
+        if (!"NONE".equals(activationOtpValidation) && (activationOtp == null || activationOtp.isEmpty())) {
+            redirectAttributes.addFlashAttribute("error", "Please specify the OTP validation code.");
+            return "redirect:/activation/list?userId=" + userId;
+        }
+        boolean requestOtpOnCommit = false;
+        switch (activationOtpValidation) {
+            case "NONE":
+                response = client.initActivation(userId, applicationId);
+                break;
+
+            case "ON_KEY_EXCHANGE":
+                response = client.initActivation(userId, applicationId, ActivationOtpValidation.ON_KEY_EXCHANGE, activationOtp);
+                break;
+
+            case "ON_COMMIT":
+                response = client.initActivation(userId, applicationId, ActivationOtpValidation.ON_COMMIT, activationOtp);
+                requestOtpOnCommit = true;
+                break;
+
+            default:
+                redirectAttributes.addFlashAttribute("error", "Invalid OTP validation mode.");
+                return "redirect:/activation/list?userId=" + userId;
+        }
+
 
         model.put("activationCode", response.getActivationCode());
         model.put("activationId", response.getActivationId());
         model.put("activationSignature", response.getActivationSignature());
+        if (requestOtpOnCommit) {
+            httpSession.setAttribute("requestOtpOnCommit", Boolean.TRUE);
+        }
 
         return "redirect:/activation/detail/" + response.getActivationId();
     }
@@ -211,13 +256,14 @@ public class ActivationController {
     /**
      * Commit activation.
      *
-     * @param activationId Activation ID.
-     * @param model        Model with passed parameters.
-     * @param principal    Principal entity.
+     * @param activationId  Activation ID.
+     * @param model         Model with passed parameters.
+     * @param principal     Principal entity.
      * @return Redirect the user to activation detail.
      */
     @RequestMapping(value = "/activation/create/do.submit", method = RequestMethod.POST)
-    public String activationCreateCommitAction(@RequestParam(value = "activationId") String activationId, Map<String, Object> model, Principal principal) {
+    public String activationCreateCommitAction(@RequestParam(value = "activationId") String activationId,
+                                               Map<String, Object> model, Principal principal) {
         String username = extractUsername(principal);
         CommitActivationResponse commitActivation = client.commitActivation(activationId, username);
         return "redirect:/activation/detail/" + commitActivation.getActivationId();
@@ -264,20 +310,38 @@ public class ActivationController {
     /**
      * Commit activation.
      *
-     * @param activationId Activation ID
-     * @param userId       User ID identifying user for redirect to the list of activations
-     * @param model        Model with passed parameters.
-     * @param principal    Principal entity.
+     * @param activationId       Activation ID.
+     * @param userId             User ID identifying user for redirect to the list of activations.
+     * @param activationOtp      Activation OTP code.
+     * @param model              Model with passed parameters.
+     * @param principal          Principal entity.
+     * @param redirectAttributes Redirect attributes.
      * @return Redirect user to given URL or to activation detail, in case 'redirect' is null or empty.
      */
     @RequestMapping(value = "/activation/commit/do.submit", method = RequestMethod.POST)
-    public String commitActivation(@RequestParam(value = "activationId") String activationId, @RequestParam(value = "redirectUserId") String userId, Map<String, Object> model, Principal principal) {
+    public String commitActivation(@RequestParam(value = "activationId") String activationId,
+                                   @RequestParam(value = "redirectUserId") String userId,
+                                   @RequestParam(value = "activationOtp", required = false) String activationOtp,
+                                   Map<String, Object> model, Principal principal,
+                                   RedirectAttributes redirectAttributes) {
         String username = extractUsername(principal);
-        CommitActivationResponse commitActivation = client.commitActivation(activationId, username);
-        if (userId != null && !userId.trim().isEmpty()) {
-            return "redirect:/activation/list?userId=" + userId;
+        CommitActivationRequest request = new CommitActivationRequest();
+        request.setActivationId(activationId);
+        request.setExternalUserId(username);
+        if (activationOtp != null) {
+            request.setActivationOtp(activationOtp);
         }
-        return "redirect:/activation/detail/" + commitActivation.getActivationId();
+        try {
+            CommitActivationResponse commitActivation = client.commitActivation(request);
+            httpSession.removeAttribute("requestOtpOnCommit");
+            if (userId != null && !userId.trim().isEmpty()) {
+                return "redirect:/activation/list?userId=" + userId;
+            }
+            return "redirect:/activation/detail/" + commitActivation.getActivationId();
+        } catch (SoapFaultClientException ex) {
+            redirectAttributes.addFlashAttribute("error", "Activation commit failed.");
+            return "redirect:/activation/detail/" + activationId;
+        }
     }
 
     /**

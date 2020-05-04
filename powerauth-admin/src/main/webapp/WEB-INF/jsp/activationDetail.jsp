@@ -149,6 +149,7 @@
                         </td>
                     </tr>
                         <tr>
+                            <c:if test="${platform != null}">
                             <td>
                                 Platform<br>
                                 <c:choose>
@@ -169,6 +170,7 @@
                                     </c:otherwise>
                                 </c:choose>
                             </td>
+                            </c:if>
                             <c:if test="${deviceInfo != null}">
                             <td>
                                 User Device Information<br>
@@ -195,6 +197,8 @@
                     <jsp:include page="activationStatusForms.jsp">
                         <jsp:param value="${status}" name="status"/>
                         <jsp:param value="${activationId}" name="activationId"/>
+                        <jsp:param value="${showOtpInput}" name="showOtpInput"/>
+                        <jsp:param value="${error}" name="error"/>
                     </jsp:include>
                 </div>
             </c:if>

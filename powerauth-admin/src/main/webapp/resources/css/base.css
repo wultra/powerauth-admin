@@ -106,3 +106,13 @@ pre.code, pre.code code {
 .tooltip-inner td .word-break {
     word-break: break-all;
 }
+
+.otp-hidden {
+    visibility: hidden;
+    width: 0;
+}
+
+.otp-displayed {
+    visibility: visible;
+    width: 96px;
+}
