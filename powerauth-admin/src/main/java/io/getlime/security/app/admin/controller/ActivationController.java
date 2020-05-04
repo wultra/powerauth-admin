@@ -246,14 +246,13 @@ public class ActivationController {
     /**
      * Commit activation.
      *
-     * @param activationId  Activation ID.
-     * @param model         Model with passed parameters.
-     * @param principal     Principal entity.
+     * @param activationId Activation ID.
+     * @param model        Model with passed parameters.
+     * @param principal    Principal entity.
      * @return Redirect the user to activation detail.
      */
     @RequestMapping(value = "/activation/create/do.submit", method = RequestMethod.POST)
-    public String activationCreateCommitAction(@RequestParam(value = "activationId") String activationId,
-                                               Map<String, Object> model, Principal principal) {
+    public String activationCreateCommitAction(@RequestParam(value = "activationId") String activationId, Map<String, Object> model, Principal principal) {
         String username = extractUsername(principal);
         CommitActivationResponse commitActivation = client.commitActivation(activationId, username);
         return "redirect:/activation/detail/" + commitActivation.getActivationId();
