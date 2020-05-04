@@ -24,14 +24,14 @@
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
             <input class="btn btn-danger btn-table" type="submit" value="Remove">
         </form>
-        <form action="${pageContext.request.contextPath}/activation/commit/do.submit" method="POST" class="pull-right">
+        <form action="${pageContext.request.contextPath}/activation/commit/do.submit" method="POST" class="form-inline">
             <c:if test="${param.showOtpInput == true}">
-                OTP: <input name="activationOtp" size="12"/>
+                OTP: <input name="activationOtp" class="form-control" size="12"/>
             </c:if>
             <input type="hidden" name="activationId" value="<c:out value="${param.activationId}"/>"/>
             <input type="hidden" name="redirectUserId" value="<c:out value="${param.redirectUserId}"/>"/>
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-            <input class="btn btn-success btn-table" type="submit" value="Commit">
+            <input class="btn btn-success btn-table pull-right" type="submit" value="Commit">
         </form>
     </c:when>
     <c:when test="${param.status == 'ACTIVE'}">
