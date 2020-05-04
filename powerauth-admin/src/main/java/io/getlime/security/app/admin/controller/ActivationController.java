@@ -217,7 +217,6 @@ public class ActivationController {
             redirectAttributes.addFlashAttribute("error", "Please specify the OTP validation code.");
             return "redirect:/activation/list?userId=" + userId;
         }
-        boolean requestOtpOnCommit = false;
         switch (activationOtpValidation) {
             case "NONE":
                 response = client.initActivation(userId, applicationId);
@@ -229,7 +228,6 @@ public class ActivationController {
 
             case "ON_COMMIT":
                 response = client.initActivation(userId, applicationId, ActivationOtpValidation.ON_COMMIT, activationOtp);
-                requestOtpOnCommit = true;
                 break;
 
             default:
