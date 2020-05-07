@@ -36,6 +36,9 @@
                 <h3 class="panel-title">New Activation</h3>
             </div>
             <div class="panel-body">
+                <c:if test="${not empty error}">
+                    <div style="color: #c0007f; margin-bottom: 5px;"><c:out value="${error}"/></div>
+                </c:if>
                 <form action="${pageContext.request.contextPath}/activation/create?userId=<c:out value="${userId}"/>" class="form-inline pull-left">
                     <div class="form-group">
                         <select name="applicationId" class="form-control">
@@ -45,6 +48,12 @@
                                 </option>
                             </c:forEach>
                         </select>
+                        <select name="activationOtpValidation" class="form-control" onchange="if (this.selectedIndex > 0) document.getElementById('activationOtp').className='otp-displayed form-control'; else document.getElementById('activationOtp').className='otp-hidden';">
+                            <option value="NONE">Do not use OTP</option>
+                            <option value="ON_KEY_EXCHANGE">OTP on key exchange</option>
+                            <option value="ON_COMMIT">OTP on activation commit</option>
+                        </select>
+                        <input type="text" size="12" name="activationOtp" id="activationOtp" class="otp-hidden"/>
                         <input type="hidden" name="userId" value="<c:out value="${userId}"/>"/>
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                         <input type="submit" value="Create Activation" class="btn btn-default"/>
