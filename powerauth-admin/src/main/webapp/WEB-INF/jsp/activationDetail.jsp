@@ -47,7 +47,7 @@
             </div>
         </c:if>
 
-        <c:if test="${status == 'OTP_USED'}">
+        <c:if test="${status == 'PENDING_COMMIT'}">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">Activation Verification</h3>
@@ -148,12 +148,41 @@
                             </p>
                         </td>
                     </tr>
+                        <tr>
+                            <c:if test="${platform != null}">
+                            <td>
+                                Platform<br>
+                                <c:choose>
+                                    <c:when test="${platform == 'ios'}">
+                                        <span class="black">iOS</span>
+                                    </c:when>
+                                    <c:when test="${platform == 'android'}">
+                                        <span class="black">Android</span>
+                                    </c:when>
+                                    <c:when test="${platform == 'hw'}">
+                                        <span class="black">Hardware Token</span>
+                                    </c:when>
+                                    <c:when test="${platform == 'unknown'}">
+                                        <span class="black">Unknown</span>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <span class="black">${platform}</span>
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
+                            </c:if>
+                            <c:if test="${deviceInfo != null}">
+                            <td>
+                                User Device Information<br>
+                                <span class="black">
+                                    <c:out value="${deviceInfo}"/>
+                                </span>
+                            </td>
+                            </c:if>
+                        </tr>
                     <c:if test="${not empty blockedReason}">
                         <tr>
-                            <td>
-                                &nbsp;
-                            </td>
-                            <td>
+                            <td colspan="2">
                                 Blocked Reason<br>
                                 <span class="orange code">
                                     <c:out value="${blockedReason}"/>
@@ -168,6 +197,8 @@
                     <jsp:include page="activationStatusForms.jsp">
                         <jsp:param value="${status}" name="status"/>
                         <jsp:param value="${activationId}" name="activationId"/>
+                        <jsp:param value="${showOtpInput}" name="showOtpInput"/>
+                        <jsp:param value="${error}" name="error"/>
                     </jsp:include>
                 </div>
             </c:if>
@@ -382,11 +413,19 @@
                                             </p>
                                         </td>
                                         <c:choose>
-                                            <c:when test="${not empty item.blockedReason}">
+                                            <c:when test="${not empty item.eventReason}">
                                                 <td>
-                                                    Blocked Reason<br>
+                                                    <c:choose>
+                                                        <c:when test="${item.activationStatus == 'BLOCKED'}">
+                                                            Blocked Reason
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            Event Reason
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                    <br>
                                                     <span class="orange code">
-                                                        <c:out value="${item.blockedReason}"/>
+                                                        <c:out value="${item.eventReason}"/>
                                                     </span>
                                                 </td>
                                             </c:when>
