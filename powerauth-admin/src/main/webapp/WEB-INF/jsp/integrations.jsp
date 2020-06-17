@@ -30,7 +30,7 @@
         </div>
         <div class="panel-body">
             Also, make sure to create at least one "integration" first and use the credentials for this instance
-            of <strong>PowerAuth 2.0 Admin</strong> application (so that it can access the service), by setting
+            of <strong>PowerAuth Admin</strong> application (so that it can access the service), by setting
             following two properties:
             <div class="code">
                 powerauth.service.security.clientToken=YOUR_CLIENT_TOKEN<br/>

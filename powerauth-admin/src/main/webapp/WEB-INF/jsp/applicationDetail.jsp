@@ -27,6 +27,7 @@
                 <ul class="nav nav-tabs" id="nav-tab" role="tablist">
                     <li role="presentation"><a href="#versions" id="tabs-versions" aria-controls="versions" role="tab" data-toggle="tab">Mobile App Config</a></li>
                     <li role="presentation"><a href="#callbacks" id="tabs-callbacks" aria-controls="callbacks" role="tab" data-toggle="tab">Callbacks</a></li>
+                    <li role="presentation"><a href="#roles" id="tabs-roles" aria-controls="roles" role="tab" data-toggle="tab">Roles</a></li>
                     <li role="presentation"><a href="#recovery" id="tabs-recovery" aria-controls="recovery" role="tab" data-toggle="tab">Recovery Settings</a></li>
                 </ul>
 
@@ -67,7 +68,7 @@
                                             <div class="panel panel-default">
                                                 <div class="panel-heading">
                                                     <h3 class="panel-title btn-sm pull-left">Application Versions</h3>
-                                                    <a href="${pageContext.request.contextPath}/application/detail/<c:out value="${id}"/>/version/create" class="btn btn-default pull-right">New Version</a>
+                                                    <a href="${pageContext.request.contextPath}/application/detail/<c:out value="${id}"/>/version/create" class="btn btn-sm btn-default pull-right">New Version</a>
                                                     <div class="clearfix"></div>
                                                 </div>
                                                 <div class="panel-body">
@@ -77,7 +78,8 @@
                                                             <th>Version</th>
                                                             <th>Application Key</th>
                                                             <th>Application Secret</th>
-                                                            <th colspan="2">Supported</th>
+                                                            <th>Supported</th>
+                                                            <th>Actions</th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
@@ -209,6 +211,71 @@
                                                 </c:choose>
                                             </div>
                                         </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div role="tabpanel" class="tab-pane" id="roles" aria-labelledby="tabs-roles">
+                        <table class="table w100">
+                            <tbody>
+                            <tr>
+                                <td>
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="panel panel-info" style="margin-top: 30px;">
+                                                <div class="panel-body">
+                                                    <span class="glyphicon glyphicon-info-sign"></span> Define roles
+                                                    assigned to the application.
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-12">
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading">
+                                                    <h3 class="panel-title btn-sm pull-left">Application Roles</h3>
+                                                    <a href="${pageContext.request.contextPath}/application/detail/<c:out value="${id}"/>/role/create" class="btn btn-sm btn-default pull-right">Add Role</a>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                                <c:choose>
+                                                    <c:when test="${fn:length(roles) == 0}">
+                                                        <div class="panel-body">
+                                                            <p class="gray text-center">
+                                                                No application roles are configured
+                                                            </p>
+                                                        </div>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <table class="table">
+                                                            <thead>
+                                                            <tr>
+                                                                <th>Role</th>
+                                                                <th class="text-right">Actions</th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            <c:forEach items="${roles}" var="item">
+                                                                <tr class="code">
+                                                                    <td><c:out value="${item}"/></td>
+                                                                    <td>
+                                                                        <form action="${pageContext.request.contextPath}/application/detail/<c:out value="${id}"/>/role/remove/do.submit" method="POST" class="action-remove">
+                                                                            <input type="hidden" name="name" value="${item}"/>
+                                                                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                                                            <input type="submit" value="Remove" class="btn btn-sm btn-danger pull-right btn-table"/>
+                                                                        </form>
+                                                                    </td>
+                                                                </tr>
+                                                            </c:forEach>
+                                                            </tbody>
+                                                        </table>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </td>
                             </tr>

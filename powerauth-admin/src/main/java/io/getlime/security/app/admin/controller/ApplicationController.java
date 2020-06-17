@@ -29,6 +29,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -96,6 +97,7 @@ public class ApplicationController {
         model.put("postcardPublicKey", recoveryConfig.getPostcardPublicKey());
         model.put("remotePostcardPublicKey", recoveryConfig.getRemotePostcardPublicKey());
         model.put("versions", Lists.reverse(applicationDetails.getVersions()));
+        model.put("roles", applicationDetails.getApplicationRoles());
         model.put("callbacks", callbackUrlList);
         return "applicationDetail";
     }
@@ -134,6 +136,19 @@ public class ApplicationController {
     public String applicationCreateCallback(@PathVariable(value = "id") Long id, Map<String, Object> model) {
         model.put("applicationId", id);
         return "callbackCreate";
+    }
+
+    /**
+     * Show application role create form.
+     *
+     * @param id Application ID.
+     * @param model Model with passed parameters.
+     * @return "roleCreate" view.
+     */
+    @RequestMapping(value = "/application/detail/{id}/role/create")
+    public String applicationCreateRole(@PathVariable(value = "id") Long id, Map<String, Object> model) {
+        model.put("applicationId", id);
+        return "roleCreate";
     }
 
     /**
@@ -241,6 +256,46 @@ public class ApplicationController {
             @PathVariable(value = "id") Long id) {
         client.removeCallbackUrl(callbackId);
         return "redirect:/application/detail/" + id + "#callbacks";
+    }
+
+    /**
+     * Execute the action that creates a new role assigned to given application.
+     *
+     * @param id Application ID.
+     * @param name Role name.
+     * @param redirectAttributes Redirect attributes.
+     * @return Redirect to application detail, roles tab.
+     */
+    @RequestMapping(value = "/application/detail/{id}/role/create/do.submit")
+    public String applicationCreateRoleAction(
+            @RequestParam(value = "name") String name,
+            @PathVariable(value = "id") Long id, RedirectAttributes redirectAttributes) {
+        String error = null;
+        if (name == null || name.trim().isEmpty()) {
+            error = "Role name must not be empty.";
+        }
+        if (error != null) {
+            redirectAttributes.addFlashAttribute("error", error);
+            redirectAttributes.addFlashAttribute("name", name);
+            return "redirect:/application/detail/" + id + "/role/create";
+        }
+        client.addApplicationRoles(id, Collections.singletonList(name));
+        return "redirect:/application/detail/" + id + "#roles";
+    }
+
+    /**
+     * Execute the action that removes a callback with given ID.
+     *
+     * @param id Application ID.
+     * @param name Role name.
+     * @return Redirect to application detail, roles tab.
+     */
+    @RequestMapping(value = "/application/detail/{id}/role/remove/do.submit")
+    public String applicationRemoveRoleAction(
+            @RequestParam(value = "name") String name,
+            @PathVariable(value = "id") Long id) {
+        client.removeApplicationRoles(id, Collections.singletonList(name));
+        return "redirect:/application/detail/" + id + "#roles";
     }
 
     /**
