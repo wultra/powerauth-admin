@@ -151,6 +151,7 @@ public class ActivationController {
         model.put("version", activation.getVersion());
         model.put("platform", activation.getPlatform());
         model.put("deviceInfo", activation.getDeviceInfo());
+        model.put("activationFlags", activation.getActivationFlags());
         if (activation.getActivationStatus() == ActivationStatus.PENDING_COMMIT && activation.getActivationOtpValidation() == ActivationOtpValidation.ON_COMMIT) {
             model.put("showOtpInput", true);
         } else {
@@ -349,6 +350,56 @@ public class ActivationController {
             return "redirect:/activation/list?userId=" + userId;
         }
         return "redirect:/activation/detail/" + removeActivation.getActivationId() + "#versions";
+    }
+
+    /**
+     * Show activation flag create form.
+     *
+     * @param activationId Activation ID
+     * @param model Model with passed parameters.
+     * @return The "activationFlagCreate" view.
+     */
+    @RequestMapping(value = "/activation/detail/{activationId}/flag/create")
+    public String applicationCreateFlag(@PathVariable(value = "activationId") String activationId, Map<String, Object> model) {
+        model.put("activationId", activationId);
+        return "activationFlagCreate";
+    }
+
+    /**
+     * Add an activation flag.
+     *
+     * @param activationId Activation ID.
+     * @param name Activation flag name.
+     * @param redirectAttributes Redirect attributes.
+     * @return Redirect the user to activation detail.
+     */
+    @RequestMapping(value = "/activation/detail/{activationId}/flag/create/do.submit", method = RequestMethod.POST)
+    public String activationCreateFlagAction(@PathVariable(value = "activationId") String activationId, @RequestParam(value = "name") String name,
+                                             RedirectAttributes redirectAttributes) {
+        String error = null;
+        if (name == null || name.trim().isEmpty()) {
+            error = "Flag name must not be empty.";
+        }
+        if (error != null) {
+            redirectAttributes.addFlashAttribute("error", error);
+            redirectAttributes.addFlashAttribute("name", name);
+            return "redirect:/activation/detail/" + activationId + "/flag/create";
+        }
+        client.addActivationFlags(activationId, Collections.singletonList(name));
+        return "redirect:/activation/detail/" + activationId;
+    }
+
+    /**
+     * Remove activation flag.
+     *
+     * @param activationId Activation ID.
+     * @param name Activation flag name.
+     * @return Redirect user to given URL or to activation detail.
+     */
+    @RequestMapping(value = "/activation/detail/{activationId}/flag/remove/do.submit", method = RequestMethod.POST)
+    public String activationRemoveFlagAction(@PathVariable(value = "activationId") String activationId, @RequestParam(value = "name") String name) {
+        client.removeActivationFlags(activationId, Collections.singletonList(name));
+        return "redirect:/activation/detail/" + activationId;
     }
 
     /**
