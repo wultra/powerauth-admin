@@ -6,7 +6,7 @@
 
 
 <jsp:include page="header.jsp">
-    <jsp:param name="pageTitle" value="PowerAuth 2.0 - Integrations"/>
+    <jsp:param name="pageTitle" value="PowerAuth - Integrations"/>
 </jsp:include>
 
 <c:if test="${not restrictedAccess}">
@@ -15,22 +15,22 @@
             <h3 class="panel-title">Application Security is not Enabled</h3>
         </div>
         <div class="panel-body">
-            At this moment, any application is able to call this instance of the PowerAuth 2.0 Server with
+            At this moment, any application is able to call this instance of the PowerAuth Server with
             no restrictions as long as it can see the service. You can change this behavior and set up access
             restriction by adding one or more "integrations". Each "integration" represents an application that
-            accesses PowerAuth 2.0 Server instance and provides access credentials (HTTP Basic in case of
+            accesses PowerAuth Server instance and provides access credentials (HTTP Basic in case of
             RESTful interface, WS-Security with "username-token" security in case of SOAP interface).
         </div>
         <div class="panel-body">
-            To enable access restriction on PowerAuth 2.0 Server, set the following property for the
-            <strong>PowerAuth 2.0 Server</strong> application:
+            To enable access restriction on PowerAuth Server, set the following property for the
+            <strong>PowerAuth Server</strong> application:
             <div class="code">
                 powerauth.service.restrictAccess=true
             </div>
         </div>
         <div class="panel-body">
             Also, make sure to create at least one "integration" first and use the credentials for this instance
-            of <strong>PowerAuth 2.0 Admin</strong> application (so that it can access the service), by setting
+            of <strong>PowerAuth Admin</strong> application (so that it can access the service), by setting
             following two properties:
             <div class="code">
                 powerauth.service.security.clientToken=YOUR_CLIENT_TOKEN<br/>

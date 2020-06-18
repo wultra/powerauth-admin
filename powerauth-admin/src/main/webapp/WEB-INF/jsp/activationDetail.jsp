@@ -5,7 +5,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <jsp:include page="header.jsp">
-    <jsp:param name="pageTitle" value="PowerAuth 2.0 - Activation Details"/>
+    <jsp:param name="pageTitle" value="PowerAuth - Activation Details"/>
 </jsp:include>
 
 <ol class="breadcrumb">

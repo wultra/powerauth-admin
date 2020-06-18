@@ -4,7 +4,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <jsp:include page="header.jsp">
-    <jsp:param name="pageTitle" value="PowerAuth 2.0 Admin - New Application"/>
+    <jsp:param name="pageTitle" value="PowerAuth Admin - New Application"/>
 </jsp:include>
 
 <ol class="breadcrumb">

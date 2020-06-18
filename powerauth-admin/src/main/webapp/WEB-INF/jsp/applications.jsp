@@ -7,7 +7,7 @@
 <c:choose>
     <c:when test="${fn:length(applications) == 0}">
         <jsp:include page="headerSimple.jsp">
-            <jsp:param name="pageTitle" value="PowerAuth 2.0 - Applications"/>
+            <jsp:param name="pageTitle" value="PowerAuth - Applications"/>
         </jsp:include>
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -25,7 +25,7 @@
     </c:when>
     <c:otherwise>
         <jsp:include page="header.jsp">
-            <jsp:param name="pageTitle" value="PowerAuth 2.0 - Applications"/>
+            <jsp:param name="pageTitle" value="PowerAuth - Applications"/>
         </jsp:include>
         <div class="panel panel-default">
             <div class="panel-heading">
