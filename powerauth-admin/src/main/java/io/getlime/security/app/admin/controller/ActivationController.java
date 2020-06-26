@@ -16,11 +16,11 @@
 
 package io.getlime.security.app.admin.controller;
 
+import com.wultra.security.powerauth.client.PowerAuthClient;
+import com.wultra.security.powerauth.client.v3.*;
 import io.getlime.security.app.admin.converter.SignatureAuditItemConverter;
 import io.getlime.security.app.admin.model.SignatureAuditItem;
 import io.getlime.security.app.admin.util.QRUtil;
-import io.getlime.powerauth.soap.v3.*;
-import io.getlime.security.powerauth.soap.spring.client.PowerAuthServiceClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,10 +44,10 @@ import java.util.*;
 @Controller
 public class ActivationController {
 
-    private final PowerAuthServiceClient client;
+    private final PowerAuthClient client;
 
     @Autowired
-    public ActivationController(PowerAuthServiceClient client) {
+    public ActivationController(PowerAuthClient client) {
         this.client = client;
     }
 

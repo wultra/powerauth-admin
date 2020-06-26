@@ -16,9 +16,10 @@
 
 package io.getlime.security.app.admin.controller;
 
+import com.wultra.security.powerauth.client.PowerAuthClient;
+import com.wultra.security.powerauth.client.v3.GetIntegrationListRequest;
+import com.wultra.security.powerauth.client.v3.GetIntegrationListResponse;
 import io.getlime.security.app.admin.configuration.PowerAuthWebServiceConfiguration;
-import io.getlime.powerauth.soap.v3.*;
-import io.getlime.security.powerauth.soap.spring.client.PowerAuthServiceClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,7 +37,7 @@ import java.util.Map;
 public class IntegrationController {
 
     @Autowired
-    private PowerAuthServiceClient client;
+    private PowerAuthClient client;
 
     @Autowired
     private PowerAuthWebServiceConfiguration configuration;

@@ -17,8 +17,8 @@
 package io.getlime.security.app.admin.controller;
 
 import com.google.common.collect.Lists;
-import io.getlime.powerauth.soap.v3.*;
-import io.getlime.security.powerauth.soap.spring.client.PowerAuthServiceClient;
+import com.wultra.security.powerauth.client.PowerAuthClient;
+import com.wultra.security.powerauth.client.v3.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,10 +41,10 @@ import java.util.Map;
 @Controller
 public class ApplicationController {
 
-    private final PowerAuthServiceClient client;
+    private final PowerAuthClient client;
 
     @Autowired
-    public ApplicationController(PowerAuthServiceClient client) {
+    public ApplicationController(PowerAuthClient client) {
         this.client = client;
     }
 
