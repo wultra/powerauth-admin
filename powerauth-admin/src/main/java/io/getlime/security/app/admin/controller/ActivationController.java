@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.ws.soap.client.SoapFaultClientException;
 
 import java.security.Principal;
 import java.text.DateFormat;
@@ -327,9 +326,8 @@ public class ActivationController {
                 return "redirect:/activation/list?userId=" + userId;
             }
             return "redirect:/activation/detail/" + commitActivation.getActivationId();
-        } catch (SoapFaultClientException ex) {
-            redirectAttributes.addFlashAttribute("error", "Activation commit failed.");
-            return "redirect:/activation/detail/" + activationId;
+        } catch (Exception ex) {
+            return "redirect:/error";
         }
     }
 
@@ -385,8 +383,12 @@ public class ActivationController {
             redirectAttributes.addFlashAttribute("name", name);
             return "redirect:/activation/detail/" + activationId + "/flag/create";
         }
-        client.addActivationFlags(activationId, Collections.singletonList(name));
-        return "redirect:/activation/detail/" + activationId;
+        try {
+            client.addActivationFlags(activationId, Collections.singletonList(name));
+            return "redirect:/activation/detail/" + activationId;
+        } catch (Exception ex) {
+            return "redirect:/error";
+        }
     }
 
     /**
@@ -398,8 +400,12 @@ public class ActivationController {
      */
     @RequestMapping(value = "/activation/detail/{activationId}/flag/remove/do.submit", method = RequestMethod.POST)
     public String activationRemoveFlagAction(@PathVariable(value = "activationId") String activationId, @RequestParam(value = "name") String name) {
-        client.removeActivationFlags(activationId, Collections.singletonList(name));
-        return "redirect:/activation/detail/" + activationId;
+        try {
+            client.removeActivationFlags(activationId, Collections.singletonList(name));
+            return "redirect:/activation/detail/" + activationId;
+        } catch (Exception ex) {
+            return "redirect:/error";
+        }
     }
 
     /**
