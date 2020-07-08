@@ -31,7 +31,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.ws.soap.client.SoapFaultClientException;
 
 import java.security.Principal;
 import java.text.DateFormat;
@@ -430,8 +429,13 @@ public class ActivationController {
             redirectAttributes.addFlashAttribute("name", name);
             return "redirect:/activation/detail/" + activationId + "/flag/create";
         }
-        client.addActivationFlags(activationId, Collections.singletonList(name));
-        return "redirect:/activation/detail/" + activationId;
+        try {
+            client.addActivationFlags(activationId, Collections.singletonList(name));
+            return "redirect:/activation/detail/" + activationId;
+        } catch (Exception ex) {
+            logger.warn(ex.getMessage(), ex);
+            return "error";
+        }
     }
 
     /**
