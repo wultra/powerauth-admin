@@ -17,7 +17,7 @@
 package io.getlime.security.app.admin.converter;
 
 import com.google.common.io.BaseEncoding;
-import io.getlime.powerauth.soap.v3.SignatureAuditResponse;
+import com.wultra.security.powerauth.client.v3.SignatureAuditResponse;
 import io.getlime.security.app.admin.model.SignatureAuditItem;
 
 import java.nio.charset.StandardCharsets;

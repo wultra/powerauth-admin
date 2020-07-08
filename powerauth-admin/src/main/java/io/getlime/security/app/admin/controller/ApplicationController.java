@@ -17,8 +17,11 @@
 package io.getlime.security.app.admin.controller;
 
 import com.google.common.collect.Lists;
-import io.getlime.powerauth.soap.v3.*;
-import io.getlime.security.powerauth.soap.spring.client.PowerAuthServiceClient;
+import com.wultra.security.powerauth.client.PowerAuthClient;
+import com.wultra.security.powerauth.client.model.error.PowerAuthClientException;
+import com.wultra.security.powerauth.client.v3.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +32,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -40,10 +44,12 @@ import java.util.Map;
 @Controller
 public class ApplicationController {
 
-    private final PowerAuthServiceClient client;
+    private static final Logger logger = LoggerFactory.getLogger(ApplicationController.class);
+
+    private final PowerAuthClient client;
 
     @Autowired
-    public ApplicationController(PowerAuthServiceClient client) {
+    public ApplicationController(PowerAuthClient client) {
         this.client = client;
     }
 
@@ -54,11 +60,16 @@ public class ApplicationController {
      */
     @RequestMapping(value = "/")
     public String homePage() {
-        List<GetApplicationListResponse.Applications> applicationList = client.getApplicationList();
-        if (applicationList.isEmpty()) {
-            return "redirect:/application/list";
-        } else {
-            return "redirect:/activation/list";
+        try {
+            List<GetApplicationListResponse.Applications> applicationList = client.getApplicationList();
+            if (applicationList.isEmpty()) {
+                return "redirect:/application/list";
+            } else {
+                return "redirect:/activation/list";
+            }
+        } catch (PowerAuthClientException ex) {
+            logger.warn(ex.getMessage(), ex);
+            return "error";
         }
     }
 
@@ -70,9 +81,14 @@ public class ApplicationController {
      */
     @RequestMapping(value = "/application/list")
     public String applicationList(Map<String, Object> model) {
-        List<GetApplicationListResponse.Applications> applicationList = client.getApplicationList();
-        model.put("applications", applicationList);
-        return "applications";
+        try {
+            List<GetApplicationListResponse.Applications> applicationList = client.getApplicationList();
+            model.put("applications", applicationList);
+            return "applications";
+        } catch (PowerAuthClientException ex) {
+            logger.warn(ex.getMessage(), ex);
+            return "error";
+        }
     }
 
     /**
@@ -84,20 +100,26 @@ public class ApplicationController {
      */
     @RequestMapping(value = "/application/detail/{id}")
     public String applicationDetail(@PathVariable(value = "id") Long id, Map<String, Object> model) {
-        GetApplicationDetailResponse applicationDetails = client.getApplicationDetail(id);
-        GetRecoveryConfigResponse recoveryConfig = client.getRecoveryConfig(id);
-        List<GetCallbackUrlListResponse.CallbackUrlList> callbackUrlList = client.getCallbackUrlList(id);
-        model.put("id", applicationDetails.getApplicationId());
-        model.put("name", applicationDetails.getApplicationName());
-        model.put("masterPublicKey", applicationDetails.getMasterPublicKey());
-        model.put("activationRecoveryEnabled", recoveryConfig.isActivationRecoveryEnabled());
-        model.put("recoveryPostcardEnabled", recoveryConfig.isRecoveryPostcardEnabled());
-        model.put("allowMultipleRecoveryCodes", recoveryConfig.isAllowMultipleRecoveryCodes());
-        model.put("postcardPublicKey", recoveryConfig.getPostcardPublicKey());
-        model.put("remotePostcardPublicKey", recoveryConfig.getRemotePostcardPublicKey());
-        model.put("versions", Lists.reverse(applicationDetails.getVersions()));
-        model.put("callbacks", callbackUrlList);
-        return "applicationDetail";
+        try {
+            GetApplicationDetailResponse applicationDetails = client.getApplicationDetail(id);
+            GetRecoveryConfigResponse recoveryConfig = client.getRecoveryConfig(id);
+            List<GetCallbackUrlListResponse.CallbackUrlList> callbackUrlList = client.getCallbackUrlList(id);
+            model.put("id", applicationDetails.getApplicationId());
+            model.put("name", applicationDetails.getApplicationName());
+            model.put("masterPublicKey", applicationDetails.getMasterPublicKey());
+            model.put("activationRecoveryEnabled", recoveryConfig.isActivationRecoveryEnabled());
+            model.put("recoveryPostcardEnabled", recoveryConfig.isRecoveryPostcardEnabled());
+            model.put("allowMultipleRecoveryCodes", recoveryConfig.isAllowMultipleRecoveryCodes());
+            model.put("postcardPublicKey", recoveryConfig.getPostcardPublicKey());
+            model.put("remotePostcardPublicKey", recoveryConfig.getRemotePostcardPublicKey());
+            model.put("versions", Lists.reverse(applicationDetails.getVersions()));
+            // model.put("roles", applicationDetails.getApplicationRoles());
+            model.put("callbacks", callbackUrlList);
+            return "applicationDetail";
+        } catch (PowerAuthClientException ex) {
+            logger.warn(ex.getMessage(), ex);
+            return "error";
+        }
     }
 
     /**
@@ -137,6 +159,19 @@ public class ApplicationController {
     }
 
     /**
+     * Show application role create form.
+     *
+     * @param id Application ID.
+     * @param model Model with passed parameters.
+     * @return "roleCreate" view.
+     */
+    @RequestMapping(value = "/application/detail/{id}/role/create")
+    public String applicationCreateRole(@PathVariable(value = "id") Long id, Map<String, Object> model) {
+        model.put("applicationId", id);
+        return "roleCreate";
+    }
+
+    /**
      * Execute the application create action by calling the SOAP service.
      *
      * @param name Application name.
@@ -145,12 +180,17 @@ public class ApplicationController {
      */
     @RequestMapping(value = "/application/create/do.submit", method = RequestMethod.POST)
     public String applicationCreateAction(@RequestParam String name, RedirectAttributes redirectAttributes) {
-        if (name == null || name.trim().isEmpty()) {
-            redirectAttributes.addFlashAttribute("error", "Application name must not be empty.");
-            return "redirect:/application/create";
+        try {
+            if (name == null || name.trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Application name must not be empty.");
+                return "redirect:/application/create";
+            }
+            CreateApplicationResponse application = client.createApplication(name);
+            return "redirect:/application/detail/" + application.getApplicationId();
+        } catch (PowerAuthClientException ex) {
+            logger.warn(ex.getMessage(), ex);
+            return "error";
         }
-        CreateApplicationResponse application = client.createApplication(name);
-        return "redirect:/application/detail/" + application.getApplicationId();
     }
 
     /**
@@ -163,12 +203,17 @@ public class ApplicationController {
      */
     @RequestMapping(value = "/application/detail/{applicationId}/version/create/do.submit", method = RequestMethod.POST)
     public String applicationVersionCreateAction(@PathVariable Long applicationId, @RequestParam String name, RedirectAttributes redirectAttributes) {
-        if (name == null || name.trim().isEmpty()) {
-            redirectAttributes.addFlashAttribute("error", "Application version name must not be empty.");
-            return "redirect:/application/detail/" + applicationId + "/version/create";
+        try {
+            if (name == null || name.trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Application version name must not be empty.");
+                return "redirect:/application/detail/" + applicationId + "/version/create";
+            }
+            client.createApplicationVersion(applicationId, name);
+            return "redirect:/application/detail/" + applicationId;
+        } catch (PowerAuthClientException ex) {
+            logger.warn(ex.getMessage(), ex);
+            return "error";
         }
-        client.createApplicationVersion(applicationId, name);
-        return "redirect:/application/detail/" + applicationId;
     }
 
     /**
@@ -184,12 +229,17 @@ public class ApplicationController {
             @RequestParam(value = "version", required = false) Long version,
             @RequestParam(value = "enabled") Boolean enabled,
             @PathVariable(value = "id") Long id) {
-        if (enabled) {
-            client.supportApplicationVersion(version);
-        } else {
-            client.unsupportApplicationVersion(version);
+        try {
+            if (enabled) {
+                client.supportApplicationVersion(version);
+            } else {
+                client.unsupportApplicationVersion(version);
+            }
+            return "redirect:/application/detail/" + id;
+        } catch (PowerAuthClientException ex) {
+            logger.warn(ex.getMessage(), ex);
+            return "error";
         }
-        return "redirect:/application/detail/" + id;
     }
 
     /**
@@ -206,26 +256,31 @@ public class ApplicationController {
             @RequestParam(value = "name") String name,
             @RequestParam(value = "callbackUrl") String callbackUrl,
             @PathVariable(value = "id") Long id, RedirectAttributes redirectAttributes) {
-        String error = null;
-        if (name == null || name.trim().isEmpty()) {
-            error = "Callback name must not be empty.";
-        } else if (callbackUrl == null || callbackUrl.trim().isEmpty()) {
-            error = "Callback URL must not be empty.";
-        } else {
-            try {
-                new URL(callbackUrl);
-            } catch (MalformedURLException e) {
-                error = "Callback URL is not in a valid format";
+        try {
+            String error = null;
+            if (name == null || name.trim().isEmpty()) {
+                error = "Callback name must not be empty.";
+            } else if (callbackUrl == null || callbackUrl.trim().isEmpty()) {
+                error = "Callback URL must not be empty.";
+            } else {
+                try {
+                    new URL(callbackUrl);
+                } catch (MalformedURLException e) {
+                    error = "Callback URL is not in a valid format";
+                }
             }
+            if (error != null) {
+                redirectAttributes.addFlashAttribute("error", error);
+                redirectAttributes.addFlashAttribute("name", name);
+                redirectAttributes.addFlashAttribute("callbackUrl", callbackUrl);
+                return "redirect:/application/detail/" + id + "/callback/create";
+            }
+            client.createCallbackUrl(id, name, callbackUrl);
+            return "redirect:/application/detail/" + id + "#callbacks";
+        } catch (PowerAuthClientException ex) {
+            logger.warn(ex.getMessage(), ex);
+            return "error";
         }
-        if (error != null) {
-            redirectAttributes.addFlashAttribute("error", error);
-            redirectAttributes.addFlashAttribute("name", name);
-            redirectAttributes.addFlashAttribute("callbackUrl", callbackUrl);
-            return "redirect:/application/detail/" + id + "/callback/create";
-        }
-        client.createCallbackUrl(id, name, callbackUrl);
-        return "redirect:/application/detail/" + id + "#callbacks";
     }
 
     /**
@@ -239,8 +294,53 @@ public class ApplicationController {
     public String applicationRemoveCallbackAction(
             @RequestParam(value = "id") String callbackId,
             @PathVariable(value = "id") Long id) {
-        client.removeCallbackUrl(callbackId);
-        return "redirect:/application/detail/" + id + "#callbacks";
+        try {
+            client.removeCallbackUrl(callbackId);
+            return "redirect:/application/detail/" + id + "#callbacks";
+        } catch (PowerAuthClientException ex) {
+            logger.warn(ex.getMessage(), ex);
+            return "error";
+        }
+    }
+
+    /**
+     * Execute the action that creates a new role assigned to given application.
+     *
+     * @param id Application ID.
+     * @param name Role name.
+     * @param redirectAttributes Redirect attributes.
+     * @return Redirect to application detail, roles tab.
+     */
+    @RequestMapping(value = "/application/detail/{id}/role/create/do.submit")
+    public String applicationCreateRoleAction(
+            @RequestParam(value = "name") String name,
+            @PathVariable(value = "id") Long id, RedirectAttributes redirectAttributes) {
+        String error = null;
+        if (name == null || name.trim().isEmpty()) {
+            error = "Role name must not be empty.";
+        }
+        if (error != null) {
+            redirectAttributes.addFlashAttribute("error", error);
+            redirectAttributes.addFlashAttribute("name", name);
+            return "redirect:/application/detail/" + id + "/role/create";
+        }
+        client.addApplicationRoles(id, Collections.singletonList(name));
+        return "redirect:/application/detail/" + id + "#roles";
+    }
+
+    /**
+     * Execute the action that removes a callback with given ID.
+     *
+     * @param id Application ID.
+     * @param name Role name.
+     * @return Redirect to application detail, roles tab.
+     */
+    @RequestMapping(value = "/application/detail/{id}/role/remove/do.submit")
+    public String applicationRemoveRoleAction(
+            @RequestParam(value = "name") String name,
+            @PathVariable(value = "id") Long id) {
+        client.removeApplicationRoles(id, Collections.singletonList(name));
+        return "redirect:/application/detail/" + id + "#roles";
     }
 
     /**
@@ -259,13 +359,17 @@ public class ApplicationController {
             @RequestParam(value = "allowMultipleRecoveryCodes", required = false) boolean allowMultipleRecoveryCodes,
             @RequestParam(value = "remotePostcardPublicKey", required = false) String remotePostcardPublicKey,
             @PathVariable(value = "id") Long id) {
-        if (!activationRecoveryEnabled && recoveryPostcardEnabled) {
-            // Turn off recovery postcard in case activation recovery is disabled
-            recoveryPostcardEnabled = false;
+        try {
+            if (!activationRecoveryEnabled && recoveryPostcardEnabled) {
+                // Turn off recovery postcard in case activation recovery is disabled
+                recoveryPostcardEnabled = false;
+            }
+            client.updateRecoveryConfig(id, activationRecoveryEnabled, recoveryPostcardEnabled, allowMultipleRecoveryCodes, remotePostcardPublicKey);
+            return "redirect:/application/detail/" + id + "#recovery";
+        } catch (PowerAuthClientException ex) {
+            logger.warn(ex.getMessage(), ex);
+            return "error";
         }
-        client.updateRecoveryConfig(id, activationRecoveryEnabled, recoveryPostcardEnabled, allowMultipleRecoveryCodes, remotePostcardPublicKey);
-        return "redirect:/application/detail/" + id + "#recovery";
     }
-
 
 }
