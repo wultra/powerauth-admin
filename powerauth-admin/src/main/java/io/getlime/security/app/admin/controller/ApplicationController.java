@@ -315,17 +315,22 @@ public class ApplicationController {
     public String applicationCreateRoleAction(
             @RequestParam(value = "name") String name,
             @PathVariable(value = "id") Long id, RedirectAttributes redirectAttributes) {
-        String error = null;
-        if (name == null || name.trim().isEmpty()) {
-            error = "Role name must not be empty.";
+        try {
+            String error = null;
+            if (name == null || name.trim().isEmpty()) {
+                error = "Role name must not be empty.";
+            }
+            if (error != null) {
+                redirectAttributes.addFlashAttribute("error", error);
+                redirectAttributes.addFlashAttribute("name", name);
+                return "redirect:/application/detail/" + id + "/role/create";
+            }
+            client.addApplicationRoles(id, Collections.singletonList(name));
+            return "redirect:/application/detail/" + id + "#roles";
+        } catch (PowerAuthClientException ex) {
+            logger.warn(ex.getMessage(), ex);
+            return "error";
         }
-        if (error != null) {
-            redirectAttributes.addFlashAttribute("error", error);
-            redirectAttributes.addFlashAttribute("name", name);
-            return "redirect:/application/detail/" + id + "/role/create";
-        }
-        client.addApplicationRoles(id, Collections.singletonList(name));
-        return "redirect:/application/detail/" + id + "#roles";
     }
 
     /**
@@ -339,8 +344,13 @@ public class ApplicationController {
     public String applicationRemoveRoleAction(
             @RequestParam(value = "name") String name,
             @PathVariable(value = "id") Long id) {
-        client.removeApplicationRoles(id, Collections.singletonList(name));
-        return "redirect:/application/detail/" + id + "#roles";
+        try {
+            client.removeApplicationRoles(id, Collections.singletonList(name));
+            return "redirect:/application/detail/" + id + "#roles";
+        } catch (PowerAuthClientException ex) {
+            logger.warn(ex.getMessage(), ex);
+            return "error";
+        }
     }
 
     /**

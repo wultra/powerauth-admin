@@ -348,27 +348,23 @@ public class ActivationController {
                                    @RequestParam(value = "activationOtp", required = false) String activationOtp,
                                    Map<String, Object> model, Principal principal,
                                    RedirectAttributes redirectAttributes) {
+        String username = extractUsername(principal);
+        CommitActivationRequest request = new CommitActivationRequest();
+        request.setActivationId(activationId);
+        request.setExternalUserId(username);
+        if (activationOtp != null) {
+            request.setActivationOtp(activationOtp);
+        }
         try {
-            String username = extractUsername(principal);
-            CommitActivationRequest request = new CommitActivationRequest();
-            request.setActivationId(activationId);
-            request.setExternalUserId(username);
-            if (activationOtp != null) {
-                request.setActivationOtp(activationOtp);
+            CommitActivationResponse commitActivation = client.commitActivation(request);
+            if (userId != null && !userId.trim().isEmpty()) {
+                return "redirect:/activation/list?userId=" + userId;
             }
-            try {
-                CommitActivationResponse commitActivation = client.commitActivation(request);
-                if (userId != null && !userId.trim().isEmpty()) {
-                    return "redirect:/activation/list?userId=" + userId;
-                }
-                return "redirect:/activation/detail/" + commitActivation.getActivationId();
-            } catch (SoapFaultClientException ex) {
-                redirectAttributes.addFlashAttribute("error", "Activation commit failed.");
-                return "redirect:/activation/detail/" + activationId;
-            }
+            return "redirect:/activation/detail/" + commitActivation.getActivationId();
         } catch (PowerAuthClientException ex) {
             logger.warn(ex.getMessage(), ex);
-            return "error";
+            redirectAttributes.addFlashAttribute("error", "Activation commit failed.");
+            return "redirect:/activation/detail/" + activationId;
         }
     }
 
