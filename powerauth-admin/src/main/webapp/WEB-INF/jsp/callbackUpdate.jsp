@@ -4,7 +4,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <jsp:include page="header.jsp">
-    <jsp:param name="pageTitle" value="PowerAuth Admin - New Callback URL"/>
+    <jsp:param name="pageTitle" value="PowerAuth Admin - Callback Update"/>
 </jsp:include>
 
 <ol class="breadcrumb">
@@ -17,10 +17,10 @@
     <div class="col-sm-7">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">New Callback</h3>
+                <h3 class="panel-title">Update Callback</h3>
             </div>
             <div class="panel-body">
-                <form class="form-horizontal" method="POST" action="${pageContext.request.contextPath}/application/detail/<c:out value="${applicationId}"/>/callback/create/do.submit">
+                <form class="form-horizontal" method="POST" action="${pageContext.request.contextPath}/application/detail/<c:out value="${applicationId}"/>/callback/update/do.submit">
                     <div class="form-group">
                         <label for="name" class="col-sm-3 control-label">Callback Name</label>
                         <div class="col-sm-9">
@@ -42,49 +42,49 @@
                     <div class="form-group">
                         <label for="attr_userId" class="col-sm-3 control-label">User ID</label>
                         <div class="col-sm-9" style="margin-top: 6px">
-                            <input type="checkbox" id="attr_userId" name="attr_userId" onchange="refreshCallbackJson()"/>
+                            <input type="checkbox" id="attr_userId" name="attr_userId" onchange="refreshCallbackJson()" <c:if test="${not empty attr_userId}">checked</c:if>/>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="attr_activationName" class="col-sm-3 control-label">Activation Name</label>
                         <div class="col-sm-9" style="margin-top: 6px">
-                            <input type="checkbox" id="attr_activationName" name="attr_activationName" onchange="refreshCallbackJson()"/>
+                            <input type="checkbox" id="attr_activationName" name="attr_activationName" onchange="refreshCallbackJson()" <c:if test="${not empty attr_activationName}">checked</c:if>/>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="attr_deviceInfo" class="col-sm-3 control-label">Device Info</label>
                         <div class="col-sm-9" style="margin-top: 6px">
-                            <input type="checkbox" id="attr_deviceInfo" name="attr_deviceInfo" onchange="refreshCallbackJson()"/>
+                            <input type="checkbox" id="attr_deviceInfo" name="attr_deviceInfo" onchange="refreshCallbackJson()" <c:if test="${not empty attr_deviceInfo}">checked</c:if>/>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="attr_platform" class="col-sm-3 control-label">Platform</label>
                         <div class="col-sm-9" style="margin-top: 6px">
-                            <input type="checkbox" id="attr_platform" name="attr_platform" onchange="refreshCallbackJson()"/>
+                            <input type="checkbox" id="attr_platform" name="attr_platform" onchange="refreshCallbackJson()" <c:if test="${not empty attr_platform}">checked</c:if>/>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="attr_activationFlags" class="col-sm-3 control-label">Activation Flags</label>
                         <div class="col-sm-9" style="margin-top: 6px">
-                            <input type="checkbox" id="attr_activationFlags" name="attr_activationFlags" onchange="refreshCallbackJson()"/>
+                            <input type="checkbox" id="attr_activationFlags" name="attr_activationFlags" onchange="refreshCallbackJson()" <c:if test="${not empty attr_activationFlags}">checked</c:if>/>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="attr_activationStatus" class="col-sm-3 control-label">Activation Status</label>
                         <div class="col-sm-9" style="margin-top: 6px">
-                            <input type="checkbox" id="attr_activationStatus" name="attr_activationStatus" onchange="refreshCallbackJson()"/>
+                            <input type="checkbox" id="attr_activationStatus" name="attr_activationStatus" onchange="refreshCallbackJson()" <c:if test="${not empty attr_activationStatus}">checked</c:if>/>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="attr_blockedReason" class="col-sm-3 control-label">Blocked Reason</label>
                         <div class="col-sm-9" style="margin-top: 6px">
-                            <input type="checkbox" id="attr_blockedReason" name="attr_blockedReason" onchange="refreshCallbackJson()"/>
+                            <input type="checkbox" id="attr_blockedReason" name="attr_blockedReason" onchange="refreshCallbackJson()" <c:if test="${not empty attr_blockedReason}">checked</c:if>/>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="attr_applicationId" class="col-sm-3 control-label">Application ID</label>
                         <div class="col-sm-9" style="margin-top: 6px">
-                            <input type="checkbox" id="attr_applicationId" name="attr_applicationId" onchange="refreshCallbackJson()"/>
+                            <input type="checkbox" id="attr_applicationId" name="attr_applicationId" onchange="refreshCallbackJson()" <c:if test="${not empty attr_applicationId}">checked</c:if>/>
                         </div>
                     </div>
                     <div class="form-group text-right">
@@ -94,6 +94,7 @@
                             </c:if>
                         </div>
                         <div class="col-sm-3">
+                            <input type="hidden" name="callbackId" value="<c:out value="${callbackId}"/>"/>
                             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                             <input type="submit" value="Submit" class="btn btn-success"/>
                         </div>
