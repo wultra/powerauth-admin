@@ -308,6 +308,11 @@ public class ApplicationController {
                 }
             }
             if (error != null) {
+                for (String attribute: CALLBACK_ATTRIBUTES_OPTIONAL) {
+                    if (allParams.get(attribute) != null) {
+                        redirectAttributes.addFlashAttribute(attribute, true);
+                    }
+                }
                 redirectAttributes.addFlashAttribute("error", error);
                 redirectAttributes.addFlashAttribute("name", name);
                 redirectAttributes.addFlashAttribute("callbackUrl", callbackUrl);
