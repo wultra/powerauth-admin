@@ -358,6 +358,7 @@ public class ApplicationController {
                 }
             }
             if (error != null) {
+                redirectAttributes.addAttribute("callbackId", callbackId);
                 redirectAttributes.addFlashAttribute("error", error);
                 redirectAttributes.addFlashAttribute("name", name);
                 redirectAttributes.addFlashAttribute("callbackUrl", callbackUrl);
