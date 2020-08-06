@@ -115,12 +115,12 @@
                     We will <span class="code">POST</span> a following JSON callback to the URL you
                     specify whenever an activation status changes.
                 </p>
-                <pre class="code" id="callback_json"/>
+                <pre class="code"><code class="json" id="callback_json"/></pre>
             </div>
 
         </div>
     </div>
 </div>
 
-<jsp:include page="footerCallbacks.jsp"/>
 <jsp:include page="footer.jsp"/>
+<jsp:include page="footerCallbacks.jsp"/>
