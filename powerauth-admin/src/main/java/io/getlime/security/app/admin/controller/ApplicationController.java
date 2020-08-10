@@ -32,9 +32,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Controller related to application and application version management.
@@ -45,6 +43,8 @@ import java.util.Map;
 public class ApplicationController {
 
     private static final Logger logger = LoggerFactory.getLogger(ApplicationController.class);
+
+    private final List<String> CALLBACK_ATTRIBUTES_OPTIONAL = Arrays.asList("attr_userId", "attr_activationName", "attr_deviceInfo", "attr_platform", "attr_activationFlags", "attr_activationStatus", "attr_blockedReason", "attr_applicationId");
 
     private final PowerAuthClient client;
 
@@ -98,8 +98,8 @@ public class ApplicationController {
      * @param model Model with passed parameters.
      * @return "applicationDetail" view.
      */
-    @RequestMapping(value = "/application/detail/{id}")
-    public String applicationDetail(@PathVariable(value = "id") Long id, Map<String, Object> model) {
+    @RequestMapping(value = "/application/detail/{applicationId}")
+    public String applicationDetail(@PathVariable(value = "applicationId") Long id, Map<String, Object> model) {
         try {
             GetApplicationDetailResponse applicationDetails = client.getApplicationDetail(id);
             GetRecoveryConfigResponse recoveryConfig = client.getRecoveryConfig(id);
@@ -139,8 +139,8 @@ public class ApplicationController {
      * @param model Model with passed parameters.
      * @return "applicationVersionCreate" view.
      */
-    @RequestMapping(value = "/application/detail/{id}/version/create")
-    public String applicationVersionCreate(@PathVariable Long id, Map<String, Object> model) {
+    @RequestMapping(value = "/application/detail/{applicationId}/version/create")
+    public String applicationVersionCreate(@PathVariable(value = "applicationId") Long id, Map<String, Object> model) {
         model.put("applicationId", id);
         return "applicationVersionCreate";
     }
@@ -152,10 +152,48 @@ public class ApplicationController {
      * @param model Model with passed parameters.
      * @return "callbackCreate" view.
      */
-    @RequestMapping(value = "/application/detail/{id}/callback/create")
-    public String applicationCreateCallback(@PathVariable(value = "id") Long id, Map<String, Object> model) {
+    @RequestMapping(value = "/application/detail/{applicationId}/callback/create")
+    public String applicationCreateCallback(@PathVariable(value = "applicationId") Long id, Map<String, Object> model) {
         model.put("applicationId", id);
         return "callbackCreate";
+    }
+
+    /**
+     * Show application callback update form.
+     *
+     * @param applicationId Application ID.
+     * @param callbackId Callback ID.
+     * @param model Model with passed parameters.
+     * @return "callbackUpdate" view.
+     */
+    @RequestMapping(value = "/application/detail/{applicationId}/callback/update")
+    public String applicationUpdateCallback(@PathVariable(value = "applicationId") Long applicationId,
+                                            @RequestParam String callbackId,
+                                            Map<String, Object> model) {
+        if (callbackId == null) {
+            logger.warn("Missing callback ID");
+            return "error";
+        }
+        try {
+            List<GetCallbackUrlListResponse.CallbackUrlList> callbacks = client.getCallbackUrlList(applicationId);
+            for (GetCallbackUrlListResponse.CallbackUrlList callback: callbacks) {
+                if (callback.getId().equals(callbackId)) {
+                    model.put("callbackId", callbackId);
+                    model.put("applicationId", applicationId);
+                    model.put("name", callback.getName());
+                    model.put("callbackUrl", callback.getCallbackUrl());
+                    for (String attribute: callback.getAttributes()) {
+                        model.put("attr_" + attribute, true);
+                    }
+                    return "callbackUpdate";
+                }
+            }
+            logger.warn("Callback not found, application ID: {}, callback ID: {}", applicationId, callbackId);
+            return "error";
+        } catch (PowerAuthClientException ex) {
+            logger.warn(ex.getMessage(), ex);
+            return "error";
+        }
     }
 
     /**
@@ -165,8 +203,8 @@ public class ApplicationController {
      * @param model Model with passed parameters.
      * @return "roleCreate" view.
      */
-    @RequestMapping(value = "/application/detail/{id}/role/create")
-    public String applicationCreateRole(@PathVariable(value = "id") Long id, Map<String, Object> model) {
+    @RequestMapping(value = "/application/detail/{applicationId}/role/create")
+    public String applicationCreateRole(@PathVariable(value = "applicationId") Long id, Map<String, Object> model) {
         model.put("applicationId", id);
         return "roleCreate";
     }
@@ -224,11 +262,11 @@ public class ApplicationController {
      * @param id      Application ID (path variable), for the redirect purposes
      * @return Redirect to application detail (application versions are visible there).
      */
-    @RequestMapping(value = "/application/detail/{id}/version/update/do.submit", method = RequestMethod.POST)
+    @RequestMapping(value = "/application/detail/{applicationId}/version/update/do.submit", method = RequestMethod.POST)
     public String applicationUpdateAction(
             @RequestParam(value = "version", required = false) Long version,
             @RequestParam(value = "enabled") Boolean enabled,
-            @PathVariable(value = "id") Long id) {
+            @PathVariable(value = "applicationId") Long id) {
         try {
             if (enabled) {
                 client.supportApplicationVersion(version);
@@ -245,18 +283,18 @@ public class ApplicationController {
     /**
      * Execute the action that creates a new callback on given application.
      *
-     * @param id    Application ID.
-     * @param name  Callback URL name.
-     * @param callbackUrl Callback URL value.
+     * @param allParams All request parameters.
+     * @param applicationId Application ID.
      * @param redirectAttributes Redirect attributes.
      * @return Redirect to application detail, callbacks tab.
      */
-    @RequestMapping(value = "/application/detail/{id}/callback/create/do.submit")
+    @RequestMapping(value = "/application/detail/{applicationId}/callback/create/do.submit")
     public String applicationCreateCallbackAction(
-            @RequestParam(value = "name") String name,
-            @RequestParam(value = "callbackUrl") String callbackUrl,
-            @PathVariable(value = "id") Long id, RedirectAttributes redirectAttributes) {
+            @RequestParam Map<String, String> allParams,
+            @PathVariable(value = "applicationId") Long applicationId, RedirectAttributes redirectAttributes) {
         try {
+            String name = allParams.get("name");
+            String callbackUrl = allParams.get("callbackUrl");
             String error = null;
             if (name == null || name.trim().isEmpty()) {
                 error = "Callback name must not be empty.";
@@ -270,18 +308,82 @@ public class ApplicationController {
                 }
             }
             if (error != null) {
+                for (String attribute: CALLBACK_ATTRIBUTES_OPTIONAL) {
+                    if (allParams.get(attribute) != null) {
+                        redirectAttributes.addFlashAttribute(attribute, true);
+                    }
+                }
                 redirectAttributes.addFlashAttribute("error", error);
                 redirectAttributes.addFlashAttribute("name", name);
                 redirectAttributes.addFlashAttribute("callbackUrl", callbackUrl);
-                return "redirect:/application/detail/" + id + "/callback/create";
+                return "redirect:/application/detail/" + applicationId + "/callback/create";
             }
-            client.createCallbackUrl(id, name, callbackUrl);
-            return "redirect:/application/detail/" + id + "#callbacks";
+            List<String> attributes = new ArrayList<>();
+            attributes.add("activationId");
+            for (String attribute: CALLBACK_ATTRIBUTES_OPTIONAL) {
+                if (allParams.get(attribute) != null) {
+                    attributes.add(attribute.replace("attr_", ""));
+                }
+            }
+            client.createCallbackUrl(applicationId, name, callbackUrl, attributes);
+            return "redirect:/application/detail/" + applicationId + "#callbacks";
         } catch (PowerAuthClientException ex) {
             logger.warn(ex.getMessage(), ex);
             return "error";
         }
     }
+
+    /**
+     * Execute the action that creates a new callback on given application.
+     *
+     * @param allParams All request parameters.
+     * @param applicationId    Application ID.
+     * @param redirectAttributes Redirect attributes.
+     * @return Redirect to application detail, callbacks tab.
+     */
+    @RequestMapping(value = "/application/detail/{applicationId}/callback/update/do.submit")
+    public String applicationUpdateCallbackAction(
+            @RequestParam Map<String, String> allParams,
+            @PathVariable(value = "applicationId") Long applicationId,
+            RedirectAttributes redirectAttributes) {
+        try {
+            String name = allParams.get("name");
+            String callbackUrl = allParams.get("callbackUrl");
+            String callbackId = allParams.get("callbackId");
+            String error = null;
+            if (name == null || name.trim().isEmpty()) {
+                error = "Callback name must not be empty.";
+            } else if (callbackUrl == null || callbackUrl.trim().isEmpty()) {
+                error = "Callback URL must not be empty.";
+            } else {
+                try {
+                    new URL(callbackUrl);
+                } catch (MalformedURLException e) {
+                    error = "Callback URL is not in a valid format";
+                }
+            }
+            if (error != null) {
+                redirectAttributes.addAttribute("callbackId", callbackId);
+                redirectAttributes.addFlashAttribute("error", error);
+                redirectAttributes.addFlashAttribute("name", name);
+                redirectAttributes.addFlashAttribute("callbackUrl", callbackUrl);
+                return "redirect:/application/detail/" + applicationId + "/callback/update";
+            }
+            List<String> attributes = new ArrayList<>();
+            attributes.add("activationId");
+            for (String attribute: CALLBACK_ATTRIBUTES_OPTIONAL) {
+                if (allParams.get(attribute) != null) {
+                    attributes.add(attribute.replace("attr_", ""));
+                }
+            }
+            client.updateCallbackUrl(callbackId, applicationId, name, callbackUrl, attributes);
+            return "redirect:/application/detail/" + applicationId + "#callbacks";
+        } catch (PowerAuthClientException ex) {
+            logger.warn(ex.getMessage(), ex);
+            return "error";
+        }
+    }
+
 
     /**
      * Execute the action that removes a callback with given ID.
@@ -290,10 +392,10 @@ public class ApplicationController {
      * @param callbackId Callback ID.
      * @return Redirect to application detail, callbacks tab.
      */
-    @RequestMapping(value = "/application/detail/{id}/callback/remove/do.submit")
+    @RequestMapping(value = "/application/detail/{applicationId}/callback/remove/do.submit")
     public String applicationRemoveCallbackAction(
-            @RequestParam(value = "id") String callbackId,
-            @PathVariable(value = "id") Long id) {
+            @RequestParam(value = "callbackId") String callbackId,
+            @PathVariable(value = "applicationId") Long id) {
         try {
             client.removeCallbackUrl(callbackId);
             return "redirect:/application/detail/" + id + "#callbacks";
@@ -311,10 +413,10 @@ public class ApplicationController {
      * @param redirectAttributes Redirect attributes.
      * @return Redirect to application detail, roles tab.
      */
-    @RequestMapping(value = "/application/detail/{id}/role/create/do.submit")
+    @RequestMapping(value = "/application/detail/{applicationId}/role/create/do.submit")
     public String applicationCreateRoleAction(
             @RequestParam(value = "name") String name,
-            @PathVariable(value = "id") Long id, RedirectAttributes redirectAttributes) {
+            @PathVariable(value = "applicationId") Long id, RedirectAttributes redirectAttributes) {
         try {
             String error = null;
             if (name == null || name.trim().isEmpty()) {
@@ -340,10 +442,10 @@ public class ApplicationController {
      * @param name Role name.
      * @return Redirect to application detail, roles tab.
      */
-    @RequestMapping(value = "/application/detail/{id}/role/remove/do.submit")
+    @RequestMapping(value = "/application/detail/{applicationId}/role/remove/do.submit")
     public String applicationRemoveRoleAction(
             @RequestParam(value = "name") String name,
-            @PathVariable(value = "id") Long id) {
+            @PathVariable(value = "applicationId") Long id) {
         try {
             client.removeApplicationRoles(id, Collections.singletonList(name));
             return "redirect:/application/detail/" + id + "#roles";
@@ -362,13 +464,13 @@ public class ApplicationController {
      * @param id Application ID.
      * @return Redirect to application detail, recovery tab.
      */
-    @RequestMapping(value = "/application/detail/{id}/recovery/update/do.submit")
+    @RequestMapping(value = "/application/detail/{applicationId}/recovery/update/do.submit")
     public String applicationUpdateRecoveryConfigAction(
             @RequestParam(value = "activationRecoveryEnabled", required = false) boolean activationRecoveryEnabled,
             @RequestParam(value = "recoveryPostcardEnabled", required = false) boolean recoveryPostcardEnabled,
             @RequestParam(value = "allowMultipleRecoveryCodes", required = false) boolean allowMultipleRecoveryCodes,
             @RequestParam(value = "remotePostcardPublicKey", required = false) String remotePostcardPublicKey,
-            @PathVariable(value = "id") Long id) {
+            @PathVariable(value = "applicationId") Long id) {
         try {
             if (!activationRecoveryEnabled && recoveryPostcardEnabled) {
                 // Turn off recovery postcard in case activation recovery is disabled

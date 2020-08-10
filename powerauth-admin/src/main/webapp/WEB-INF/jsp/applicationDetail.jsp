@@ -197,10 +197,15 @@
                                                                     <td><c:out value="${item.name}"/></td>
                                                                     <td><c:out value="${item.callbackUrl}"/></td>
                                                                     <td>
-                                                                        <form action="${pageContext.request.contextPath}/application/detail/<c:out value="${id}"/>/callback/remove/do.submit" method="POST" class="action-remove">
-                                                                            <input type="hidden" name="id" value="<c:out value="${item.id}"/>"/>
+                                                                        <form action="${pageContext.request.contextPath}/application/detail/<c:out value="${id}"/>/callback/remove/do.submit" method="POST" class="pull-right action-remove">
+                                                                            <input type="hidden" name="callbackId" value="<c:out value="${item.id}"/>"/>
                                                                             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                                                             <input type="submit" value="Remove" class="btn btn-sm btn-danger pull-right btn-table"/>
+                                                                        </form>
+                                                                        <form action="${pageContext.request.contextPath}/application/detail/<c:out value="${id}"/>/callback/update" method="POST" class="pull-right">
+                                                                            <input type="hidden" name="callbackId" value="<c:out value="${item.id}"/>"/>
+                                                                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                                                            <input type="submit" value="Update" class="btn btn-sm btn-success pull-right btn-table"/>
                                                                         </form>
                                                                     </td>
                                                                 </tr>
