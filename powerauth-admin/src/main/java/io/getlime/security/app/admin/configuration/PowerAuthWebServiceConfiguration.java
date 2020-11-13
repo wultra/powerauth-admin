@@ -16,16 +16,12 @@
 
 package io.getlime.security.app.admin.configuration;
 
-import io.getlime.security.powerauth.soap.spring.client.PowerAuthServiceClient;
-import org.apache.wss4j.dom.WSConstants;
+import com.wultra.security.powerauth.client.PowerAuthClient;
+import com.wultra.security.powerauth.rest.client.PowerAuthRestClient;
+import com.wultra.security.powerauth.rest.client.PowerAuthRestClientConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.oxm.jaxb.Jaxb2Marshaller;
-import org.springframework.ws.client.support.interceptor.ClientInterceptor;
-import org.springframework.ws.soap.security.wss4j2.Wss4jSecurityInterceptor;
-
-import javax.net.ssl.*;
 
 /**
  * PowerAuth SOAP WebService Configuration
@@ -53,81 +49,17 @@ public class PowerAuthWebServiceConfiguration {
     }
 
     /**
-     * Return WS-Security interceptor instance using UsernameToken authentication.
-     * @return Wss4jSecurityInterceptor instance.
+     * Initialize PowerAuth REST client.
+     * @return PowerAuth REST client.
      */
     @Bean
-    public Wss4jSecurityInterceptor securityInterceptor(){
-        Wss4jSecurityInterceptor wss4jSecurityInterceptor = new Wss4jSecurityInterceptor();
-        wss4jSecurityInterceptor.setSecurementActions("UsernameToken");
-        wss4jSecurityInterceptor.setSecurementUsername(configuration.getClientToken());
-        wss4jSecurityInterceptor.setSecurementPassword(configuration.getClientSecret());
-        wss4jSecurityInterceptor.setSecurementPasswordType(WSConstants.PW_TEXT);
-        return wss4jSecurityInterceptor;
+    public PowerAuthClient powerAuthClient() {
+        PowerAuthRestClientConfiguration config = new PowerAuthRestClientConfiguration();
+        config.setPowerAuthClientToken(configuration.getClientToken());
+        config.setPowerAuthClientSecret(configuration.getClientSecret());
+        config.setAcceptInvalidSslCertificate(configuration.isAcceptInvalidSslCertificate());
+        return new PowerAuthRestClient(configuration.getPowerAuthServiceUrl(), config);
     }
 
-    /**
-     * Return SOAP service marshaller.
-     *
-     * @return Marshaller instance with a correct context path.
-     */
-    @Bean
-    public Jaxb2Marshaller marshaller() {
-        Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
-        marshaller.setContextPath("io.getlime.powerauth.soap.v3");
-        return marshaller;
-    }
-
-    /**
-     * Return a correctly configured PowerAuthServiceClient instance.
-     *
-     * @param marshaller SOAP service marshaller.
-     * @return Correctly configured PowerAuthServiceClient instance.
-     */
-    @Bean
-    public PowerAuthServiceClient powerAuthClient(Jaxb2Marshaller marshaller) {
-        PowerAuthServiceClient client = new PowerAuthServiceClient();
-        client.setDefaultUri(configuration.getPowerAuthServiceUrl());
-        client.setMarshaller(marshaller);
-        client.setUnmarshaller(marshaller);
-
-        // if invalid SSL certificates should be accepted
-        if (configuration.isAcceptInvalidSslCertificate()) {
-
-            HttpsURLConnection.setDefaultHostnameVerifier((hostname, session) -> true);
-
-            TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
-
-                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                    return null;
-                }
-
-                public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {
-                }
-
-                public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
-                }
-
-            }};
-
-            try {
-                SSLContext sc = SSLContext.getInstance("SSL");
-                sc.init(null, trustAllCerts, new java.security.SecureRandom());
-                HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-            } catch (Exception e) {
-                // ... ignore
-            }
-
-        }
-
-        // if there is a configuration with security credentials, add interceptor
-        if (!configuration.getClientToken().isEmpty()) {
-            ClientInterceptor[] interceptors = new ClientInterceptor[] {
-                    securityInterceptor()
-            };
-            client.setInterceptors(interceptors);
-        }
-        return client;
-    }
 
 }

@@ -16,9 +16,13 @@
 
 package io.getlime.security.app.admin.controller;
 
+import com.wultra.security.powerauth.client.PowerAuthClient;
+import com.wultra.security.powerauth.client.model.error.PowerAuthClientException;
+import com.wultra.security.powerauth.client.v3.GetIntegrationListRequest;
+import com.wultra.security.powerauth.client.v3.GetIntegrationListResponse;
 import io.getlime.security.app.admin.configuration.PowerAuthWebServiceConfiguration;
-import io.getlime.powerauth.soap.v3.*;
-import io.getlime.security.powerauth.soap.spring.client.PowerAuthServiceClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,8 +39,10 @@ import java.util.Map;
 @Controller
 public class IntegrationController {
 
+    private static final Logger logger = LoggerFactory.getLogger(IntegrationController.class);
+
     @Autowired
-    private PowerAuthServiceClient client;
+    private PowerAuthClient client;
 
     @Autowired
     private PowerAuthWebServiceConfiguration configuration;
@@ -49,11 +55,16 @@ public class IntegrationController {
      */
     @RequestMapping(value = "/integration/list")
     public String integrationList(Map<String, Object> model) {
-        GetIntegrationListRequest request = new GetIntegrationListRequest();
-        GetIntegrationListResponse integrationListResponse = client.getIntegrationList(request);
-        model.put("restrictedAccess", integrationListResponse.isRestrictedAccess());
-        model.put("integrations", integrationListResponse.getItems());
-        return "integrations";
+        try {
+            GetIntegrationListRequest request = new GetIntegrationListRequest();
+            GetIntegrationListResponse integrationListResponse = client.getIntegrationList(request);
+            model.put("restrictedAccess", integrationListResponse.isRestrictedAccess());
+            model.put("integrations", integrationListResponse.getItems());
+            return "integrations";
+        } catch (PowerAuthClientException ex) {
+            logger.warn(ex.getMessage(), ex);
+            return "error";
+        }
     }
 
     /**
@@ -75,8 +86,13 @@ public class IntegrationController {
      */
     @RequestMapping(value = "/integration/create/do.submit", method = RequestMethod.POST)
     public String integrationCreateAction(@RequestParam String name) {
-        client.createIntegration(name);
-        return "redirect:/integration/list";
+        try {
+            client.createIntegration(name);
+            return "redirect:/integration/list";
+        } catch (PowerAuthClientException ex) {
+            logger.warn(ex.getMessage(), ex);
+            return "error";
+        }
     }
 
     /**
@@ -88,10 +104,15 @@ public class IntegrationController {
      */
     @RequestMapping(value = "/integration/remove/do.submit", method = RequestMethod.POST)
     public String removeActivation(@RequestParam(value = "integrationId") String integrationId, Map<String, Object> model) {
-        if (!configuration.isCurrentSecuritySettings(integrationId)) {
-            client.removeIntegration(integrationId);
+        try {
+            if (!configuration.isCurrentSecuritySettings(integrationId)) {
+                client.removeIntegration(integrationId);
+            }
+            return "redirect:/integration/list";
+        } catch (PowerAuthClientException ex) {
+            logger.warn(ex.getMessage(), ex);
+            return "error";
         }
-        return "redirect:/integration/list";
     }
 
 }

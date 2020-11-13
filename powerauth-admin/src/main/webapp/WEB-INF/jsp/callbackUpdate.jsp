@@ -4,7 +4,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <jsp:include page="header.jsp">
-    <jsp:param name="pageTitle" value="PowerAuth Admin - New Callback URL"/>
+    <jsp:param name="pageTitle" value="PowerAuth Admin - Callback Update"/>
 </jsp:include>
 
 <ol class="breadcrumb">
@@ -17,10 +17,10 @@
     <div class="col-sm-7">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">New Callback</h3>
+                <h3 class="panel-title">Update Callback</h3>
             </div>
             <div class="panel-body">
-                <form class="form-horizontal" method="POST" action="${pageContext.request.contextPath}/application/detail/<c:out value="${applicationId}"/>/callback/create/do.submit">
+                <form class="form-horizontal" method="POST" action="${pageContext.request.contextPath}/application/detail/<c:out value="${applicationId}"/>/callback/update/do.submit">
                     <div class="form-group">
                         <label for="name" class="col-sm-3 control-label">Callback Name</label>
                         <div class="col-sm-9">
@@ -94,6 +94,7 @@
                             </c:if>
                         </div>
                         <div class="col-sm-3">
+                            <input type="hidden" name="callbackId" value="<c:out value="${callbackId}"/>"/>
                             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                             <input type="submit" value="Submit" class="btn btn-success"/>
                         </div>
