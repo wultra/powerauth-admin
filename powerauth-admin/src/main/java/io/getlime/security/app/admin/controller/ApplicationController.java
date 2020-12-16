@@ -113,7 +113,7 @@ public class ApplicationController {
             model.put("postcardPublicKey", recoveryConfig.getPostcardPublicKey());
             model.put("remotePostcardPublicKey", recoveryConfig.getRemotePostcardPublicKey());
             model.put("versions", Lists.reverse(applicationDetails.getVersions()));
-            // model.put("roles", applicationDetails.getApplicationRoles());
+            model.put("roles", applicationDetails.getApplicationRoles());
             model.put("callbacks", callbackUrlList);
             return "applicationDetail";
         } catch (PowerAuthClientException ex) {

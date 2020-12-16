@@ -290,7 +290,7 @@
 
                     <div role="tabpanel" class="tab-pane" id="recovery" aria-labelledby="tabs-recovery">
                         <form action="${pageContext.request.contextPath}/application/detail/<c:out value="${id}"/>/recovery/update/do.submit" method="POST" class="action-update">
-                            <table class="table w100" style="margin-bottom: 0px">
+                            <table class="table w100" style="margin-bottom: 0">
                                 <tbody>
                                 <tr>
                                     <td>

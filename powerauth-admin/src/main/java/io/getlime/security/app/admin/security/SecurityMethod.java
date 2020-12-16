@@ -28,7 +28,7 @@ public class SecurityMethod {
     /**
      * Authentication via LDAP.
      */
-    public static String LDAP = "ldap";
+    public static final String LDAP = "ldap";
 
     /**
      * Checks if a provided security method is LDAP authentication.

@@ -72,14 +72,7 @@ public class ActivationController {
         try {
             if (userId != null) {
                 List<GetActivationListForUserResponse.Activations> activationList = client.getActivationListForUser(userId);
-                Collections.sort(activationList, new Comparator<GetActivationListForUserResponse.Activations>() {
-
-                    @Override
-                    public int compare(GetActivationListForUserResponse.Activations o1, GetActivationListForUserResponse.Activations o2) {
-                        return o2.getTimestampLastUsed().compare(o1.getTimestampLastUsed());
-                    }
-
-                });
+                activationList.sort((o1, o2) -> o2.getTimestampLastUsed().compare(o1.getTimestampLastUsed()));
 
                 model.put("activations", activationList);
                 model.put("userId", userId);
@@ -188,7 +181,7 @@ public class ActivationController {
             model.put("signatures", auditItemsFixed);
 
             List<ActivationHistoryResponse.Items> activationHistoryItems = client.getActivationHistory(activation.getActivationId(), startingDate, endingDate);
-            List<ActivationHistoryResponse.Items> trimmedActivationHistoryItems = new ArrayList<>();
+            List<ActivationHistoryResponse.Items> trimmedActivationHistoryItems;
             if (activationHistoryItems.size() > 100) {
                 trimmedActivationHistoryItems = activationHistoryItems.subList(0, 100);
             } else {
