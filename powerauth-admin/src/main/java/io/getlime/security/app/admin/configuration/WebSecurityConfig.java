@@ -32,7 +32,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private ApplicationConfiguration configuration;
+    private final ApplicationConfiguration configuration;
 
     @Autowired
     public WebSecurityConfig(ApplicationConfiguration configuration) {
@@ -80,22 +80,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
             LdapAuthenticationProviderConfigurer<AuthenticationManagerBuilder>.ContextSourceBuilder contextSource = ldapAuthentication.contextSource();
             if (!configuration.getLdapUrl().isEmpty()) {
-                contextSource = contextSource.url(configuration.getLdapUrl());
+                contextSource.url(configuration.getLdapUrl());
             }
             if (!configuration.getLdapPort().isEmpty()) {
-                contextSource = contextSource.port(Integer.valueOf(configuration.getLdapPort()));
+                contextSource.port(Integer.parseInt(configuration.getLdapPort()));
             }
             if (!configuration.getLdapRoot().isEmpty()) {
-                contextSource = contextSource.root(configuration.getLdapRoot());
+                contextSource.root(configuration.getLdapRoot());
             }
             if (!configuration.getLdapLdif().isEmpty()) {
-                contextSource = contextSource.ldif(configuration.getLdapLdif());
+                contextSource.ldif(configuration.getLdapLdif());
             }
             if (!configuration.getLdapManagerDN().isEmpty()) {
-                contextSource = contextSource.managerDn(configuration.getLdapManagerDN());
+                contextSource.managerDn(configuration.getLdapManagerDN());
             }
             if (!configuration.getLdapManagerPassword().isEmpty()) {
-                contextSource = contextSource.managerPassword(configuration.getLdapManagerPassword());
+                contextSource.managerPassword(configuration.getLdapManagerPassword());
             }
         }
     }

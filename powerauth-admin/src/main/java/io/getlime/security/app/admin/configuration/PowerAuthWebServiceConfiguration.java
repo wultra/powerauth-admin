@@ -36,7 +36,7 @@ public class PowerAuthWebServiceConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(PowerAuthWebServiceConfiguration.class);
 
-    private ApplicationConfiguration configuration;
+    private final ApplicationConfiguration configuration;
 
     @Autowired
     public PowerAuthWebServiceConfiguration(ApplicationConfiguration configuration) {
