@@ -80,8 +80,8 @@ Use the `logback.xml` file to configure logging, for example:
 
 The `application-ext.properties` file is used to override default configuration properties, for example:
 ```
-# PowerAuth 2.0 Client configuration
-powerauth.service.url=http://[host]:[port]/powerauth-java-server/soap
+# PowerAuth Client configuration
+powerauth.service.url=http://[host]:[port]/powerauth-java-server/rest
 
 # Application Service Configuration
 powerauth.admin.service.applicationEnvironment=TEST

@@ -21,7 +21,7 @@
   --%>
 
 <jsp:include page="header.jsp">
-    <jsp:param name="pageTitle" value="PowerAuth 2.0 Admin - Error"/>
+    <jsp:param name="pageTitle" value="PowerAuth Admin - Error"/>
 </jsp:include>
 
 <div class="panel panel-danger">

@@ -16,11 +16,14 @@
 
 package io.getlime.security.app.admin.controller;
 
+import com.wultra.security.powerauth.client.PowerAuthClient;
+import com.wultra.security.powerauth.client.model.error.PowerAuthClientException;
+import com.wultra.security.powerauth.client.v3.*;
 import io.getlime.security.app.admin.converter.SignatureAuditItemConverter;
 import io.getlime.security.app.admin.model.SignatureAuditItem;
 import io.getlime.security.app.admin.util.QRUtil;
-import io.getlime.powerauth.soap.v3.*;
-import io.getlime.security.powerauth.soap.spring.client.PowerAuthServiceClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,7 +31,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.ws.soap.client.SoapFaultClientException;
 
 import java.security.Principal;
 import java.text.DateFormat;
@@ -44,10 +46,12 @@ import java.util.*;
 @Controller
 public class ActivationController {
 
-    private final PowerAuthServiceClient client;
+    private static final Logger logger = LoggerFactory.getLogger(ActivationController.class);
+
+    private final PowerAuthClient client;
 
     @Autowired
-    public ActivationController(PowerAuthServiceClient client) {
+    public ActivationController(PowerAuthClient client) {
         this.client = client;
     }
 
@@ -65,29 +69,27 @@ public class ActivationController {
     @RequestMapping(value = "/activation/list")
     public String activationList(@RequestParam(value = "userId", required = false) String userId, @RequestParam(value = "showAllActivations", required = false) Boolean showAllActivations,
                                  @RequestParam(value = "showAllRecoveryCodes", required = false) Boolean showAllRecoveryCodes, Map<String, Object> model) {
-        if (userId != null) {
-            List<GetActivationListForUserResponse.Activations> activationList = client.getActivationListForUser(userId);
-            Collections.sort(activationList, new Comparator<GetActivationListForUserResponse.Activations>() {
+        try {
+            if (userId != null) {
+                List<GetActivationListForUserResponse.Activations> activationList = client.getActivationListForUser(userId);
+                activationList.sort((o1, o2) -> o2.getTimestampLastUsed().compare(o1.getTimestampLastUsed()));
 
-                @Override
-                public int compare(GetActivationListForUserResponse.Activations o1, GetActivationListForUserResponse.Activations o2) {
-                    return o2.getTimestampLastUsed().compare(o1.getTimestampLastUsed());
-                }
+                model.put("activations", activationList);
+                model.put("userId", userId);
+                model.put("showAllActivations", showAllActivations);
+                model.put("showAllRecoveryCodes", showAllRecoveryCodes);
 
-            });
+                List<GetApplicationListResponse.Applications> applications = client.getApplicationList();
+                model.put("applications", applications);
 
-            model.put("activations", activationList);
-            model.put("userId", userId);
-            model.put("showAllActivations", showAllActivations);
-            model.put("showAllRecoveryCodes", showAllRecoveryCodes);
-
-            List<GetApplicationListResponse.Applications> applications = client.getApplicationList();
-            model.put("applications", applications);
-
-            LookupRecoveryCodesResponse response = client.lookupRecoveryCodes(userId, null, null, null, null);
-            model.put("recoveryCodes", response.getRecoveryCodes());
+                LookupRecoveryCodesResponse response = client.lookupRecoveryCodes(userId, null, null, null, null);
+                model.put("recoveryCodes", response.getRecoveryCodes());
+            }
+            return "activations";
+        } catch (PowerAuthClientException ex) {
+            logger.warn(ex.getMessage(), ex);
+            return "error";
         }
-        return "activations";
     }
 
     /**
@@ -105,94 +107,100 @@ public class ActivationController {
             @RequestParam(value = "fromDate", required = false) String fromDate,
             @RequestParam(value = "toDate", required = false) String toDate,
             Map<String, Object> model) {
-
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        Date startingDate;
-        Date endingDate;
-        Date currentTimePlusOneSecond;
-        Calendar cal = Calendar.getInstance();
-        // Add one second to avoid filtering out the most recent signatures and activation changes.
-        cal.add(Calendar.SECOND, 1);
-        currentTimePlusOneSecond = cal.getTime();
         try {
-            if (toDate != null) {
-                endingDate = dateFormat.parse(toDate);
-            } else {
+
+            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+            Date startingDate;
+            Date endingDate;
+            Date currentTimePlusOneSecond;
+            Calendar cal = Calendar.getInstance();
+            // Add one second to avoid filtering out the most recent signatures and activation changes.
+            cal.add(Calendar.SECOND, 1);
+            currentTimePlusOneSecond = cal.getTime();
+            try {
+                if (toDate != null) {
+                    endingDate = dateFormat.parse(toDate);
+                } else {
+                    endingDate = currentTimePlusOneSecond;
+                    toDate = dateFormat.format(endingDate);
+                }
+                model.put("toDate", toDate);
+                if (fromDate != null) {
+                    startingDate = dateFormat.parse(fromDate);
+                } else {
+                    startingDate = new Date(endingDate.getTime() - (30L * 24L * 60L * 60L * 1000L));
+                    fromDate = dateFormat.format(startingDate);
+                }
+                model.put("fromDate", fromDate);
+            } catch (ParseException e) {
+                // Date parsing didn't work, OK - clear the values...
                 endingDate = currentTimePlusOneSecond;
-                toDate = dateFormat.format(endingDate);
-            }
-            model.put("toDate", toDate);
-            if (fromDate != null) {
-                startingDate = dateFormat.parse(fromDate);
-            } else {
                 startingDate = new Date(endingDate.getTime() - (30L * 24L * 60L * 60L * 1000L));
                 fromDate = dateFormat.format(startingDate);
+                toDate = dateFormat.format(endingDate);
+                model.put("fromDate", fromDate);
+                model.put("toDate", toDate);
             }
-            model.put("fromDate", fromDate);
-        } catch (ParseException e) {
-            // Date parsing didn't work, OK - clear the values...
-            endingDate = currentTimePlusOneSecond;
-            startingDate = new Date(endingDate.getTime() - (30L * 24L * 60L * 60L * 1000L));
-            fromDate = dateFormat.format(startingDate);
-            toDate = dateFormat.format(endingDate);
-            model.put("fromDate", fromDate);
-            model.put("toDate", toDate);
-        }
 
-        GetActivationStatusResponse activation = client.getActivationStatus(id);
-        model.put("activationId", activation.getActivationId());
-        model.put("activationName", activation.getActivationName());
-        model.put("status", activation.getActivationStatus());
-        model.put("blockedReason", activation.getBlockedReason());
-        model.put("timestampCreated", activation.getTimestampCreated());
-        model.put("timestampLastUsed", activation.getTimestampLastUsed());
-        model.put("activationFingerprint", activation.getDevicePublicKeyFingerprint());
-        model.put("userId", activation.getUserId());
-        model.put("version", activation.getVersion());
-        model.put("platform", activation.getPlatform());
-        model.put("deviceInfo", activation.getDeviceInfo());
-        if (activation.getActivationStatus() == ActivationStatus.PENDING_COMMIT && activation.getActivationOtpValidation() == ActivationOtpValidation.ON_COMMIT) {
-            model.put("showOtpInput", true);
-        } else {
-            model.put("showOtpInput", false);
-        }
-
-        GetApplicationDetailResponse application = client.getApplicationDetail(activation.getApplicationId());
-        model.put("applicationId", application.getApplicationId());
-        model.put("applicationName", application.getApplicationName());
-
-        LookupRecoveryCodesResponse response = client.lookupRecoveryCodes(activation.getUserId(), activation.getActivationId(), activation.getApplicationId(), null, null);
-        model.put("recoveryCodes", response.getRecoveryCodes());
-
-        List<SignatureAuditResponse.Items> auditItems = client.getSignatureAuditLog(activation.getUserId(), application.getApplicationId(), startingDate, endingDate);
-        List<SignatureAuditItem> auditItemsFixed = new ArrayList<>();
-        for (SignatureAuditResponse.Items item : auditItems) {
-            if (item.getActivationId().equals(activation.getActivationId())) {
-                auditItemsFixed.add(signatureAuditItemConverter.fromSignatureAuditResponseItem(item));
+            GetActivationStatusResponse activation = client.getActivationStatus(id);
+            model.put("activationId", activation.getActivationId());
+            model.put("activationName", activation.getActivationName());
+            model.put("status", activation.getActivationStatus());
+            model.put("blockedReason", activation.getBlockedReason());
+            model.put("timestampCreated", activation.getTimestampCreated());
+            model.put("timestampLastUsed", activation.getTimestampLastUsed());
+            model.put("activationFingerprint", activation.getDevicePublicKeyFingerprint());
+            model.put("userId", activation.getUserId());
+            model.put("version", activation.getVersion());
+            model.put("platform", activation.getPlatform());
+            model.put("deviceInfo", activation.getDeviceInfo());
+            model.put("activationFlags", activation.getActivationFlags());
+            if (activation.getActivationStatus() == ActivationStatus.PENDING_COMMIT && activation.getActivationOtpValidation() == ActivationOtpValidation.ON_COMMIT) {
+                model.put("showOtpInput", true);
+            } else {
+                model.put("showOtpInput", false);
             }
-        }
-        if (auditItemsFixed.size() > 100) {
-            auditItemsFixed = auditItemsFixed.subList(0, 100);
-        }
-        model.put("signatures", auditItemsFixed);
 
-        List<ActivationHistoryResponse.Items> activationHistoryItems = client.getActivationHistory(activation.getActivationId(), startingDate, endingDate);
-        List<ActivationHistoryResponse.Items> trimmedActivationHistoryItems = new ArrayList<>();
-        if (activationHistoryItems.size() > 100) {
-            trimmedActivationHistoryItems = activationHistoryItems.subList(0, 100);
-        } else {
-            trimmedActivationHistoryItems = activationHistoryItems;
-        }
-        model.put("history", trimmedActivationHistoryItems);
+            GetApplicationDetailResponse application = client.getApplicationDetail(activation.getApplicationId());
+            model.put("applicationId", application.getApplicationId());
+            model.put("applicationName", application.getApplicationName());
 
-        if (activation.getActivationStatus().equals(ActivationStatus.CREATED)) {
-            String activationSignature = activation.getActivationSignature();
-            model.put("activationCode", activation.getActivationCode());
-            model.put("activationSignature", activationSignature);
-            model.put("activationQR", QRUtil.encode(activation.getActivationCode() + "#" + activationSignature, 400));
-        }
+            LookupRecoveryCodesResponse response = client.lookupRecoveryCodes(activation.getUserId(), activation.getActivationId(), activation.getApplicationId(), null, null);
+            model.put("recoveryCodes", response.getRecoveryCodes());
 
-        return "activationDetail";
+            List<SignatureAuditResponse.Items> auditItems = client.getSignatureAuditLog(activation.getUserId(), application.getApplicationId(), startingDate, endingDate);
+            List<SignatureAuditItem> auditItemsFixed = new ArrayList<>();
+            for (SignatureAuditResponse.Items item : auditItems) {
+                if (item.getActivationId().equals(activation.getActivationId())) {
+                    auditItemsFixed.add(signatureAuditItemConverter.fromSignatureAuditResponseItem(item));
+                }
+            }
+            if (auditItemsFixed.size() > 100) {
+                auditItemsFixed = auditItemsFixed.subList(0, 100);
+            }
+            model.put("signatures", auditItemsFixed);
+
+            List<ActivationHistoryResponse.Items> activationHistoryItems = client.getActivationHistory(activation.getActivationId(), startingDate, endingDate);
+            List<ActivationHistoryResponse.Items> trimmedActivationHistoryItems;
+            if (activationHistoryItems.size() > 100) {
+                trimmedActivationHistoryItems = activationHistoryItems.subList(0, 100);
+            } else {
+                trimmedActivationHistoryItems = activationHistoryItems;
+            }
+            model.put("history", trimmedActivationHistoryItems);
+
+            if (activation.getActivationStatus().equals(ActivationStatus.CREATED)) {
+                String activationSignature = activation.getActivationSignature();
+                model.put("activationCode", activation.getActivationCode());
+                model.put("activationSignature", activationSignature);
+                model.put("activationQR", QRUtil.encode(activation.getActivationCode() + "#" + activationSignature, 400));
+            }
+
+            return "activationDetail";
+        } catch (PowerAuthClientException ex) {
+            logger.warn(ex.getMessage(), ex);
+            return "error";
+        }
     }
 
     /**
@@ -211,36 +219,41 @@ public class ActivationController {
                                    @RequestParam(value = "activationOtpValidation") String activationOtpValidation,
                                    @RequestParam(value = "activationOtp") String activationOtp,
                                    Map<String, Object> model, RedirectAttributes redirectAttributes) {
-        InitActivationResponse response;
+        try {
+            InitActivationResponse response;
 
-        if (!"NONE".equals(activationOtpValidation) && (activationOtp == null || activationOtp.isEmpty())) {
-            redirectAttributes.addFlashAttribute("error", "Please specify the OTP validation code.");
-            return "redirect:/activation/list?userId=" + userId;
-        }
-        switch (activationOtpValidation) {
-            case "NONE":
-                response = client.initActivation(userId, applicationId);
-                break;
-
-            case "ON_KEY_EXCHANGE":
-                response = client.initActivation(userId, applicationId, ActivationOtpValidation.ON_KEY_EXCHANGE, activationOtp);
-                break;
-
-            case "ON_COMMIT":
-                response = client.initActivation(userId, applicationId, ActivationOtpValidation.ON_COMMIT, activationOtp);
-                break;
-
-            default:
-                redirectAttributes.addFlashAttribute("error", "Invalid OTP validation mode.");
+            if (!"NONE".equals(activationOtpValidation) && (activationOtp == null || activationOtp.isEmpty())) {
+                redirectAttributes.addFlashAttribute("error", "Please specify the OTP validation code.");
                 return "redirect:/activation/list?userId=" + userId;
+            }
+            switch (activationOtpValidation) {
+                case "NONE":
+                    response = client.initActivation(userId, applicationId);
+                    break;
+
+                case "ON_KEY_EXCHANGE":
+                    response = client.initActivation(userId, applicationId, ActivationOtpValidation.ON_KEY_EXCHANGE, activationOtp);
+                    break;
+
+                case "ON_COMMIT":
+                    response = client.initActivation(userId, applicationId, ActivationOtpValidation.ON_COMMIT, activationOtp);
+                    break;
+
+                default:
+                    redirectAttributes.addFlashAttribute("error", "Invalid OTP validation mode.");
+                    return "redirect:/activation/list?userId=" + userId;
+            }
+
+
+            model.put("activationCode", response.getActivationCode());
+            model.put("activationId", response.getActivationId());
+            model.put("activationSignature", response.getActivationSignature());
+
+            return "redirect:/activation/detail/" + response.getActivationId();
+        } catch (PowerAuthClientException ex) {
+            logger.warn(ex.getMessage(), ex);
+            return "error";
         }
-
-
-        model.put("activationCode", response.getActivationCode());
-        model.put("activationId", response.getActivationId());
-        model.put("activationSignature", response.getActivationSignature());
-
-        return "redirect:/activation/detail/" + response.getActivationId();
     }
 
     /**
@@ -253,9 +266,14 @@ public class ActivationController {
      */
     @RequestMapping(value = "/activation/create/do.submit", method = RequestMethod.POST)
     public String activationCreateCommitAction(@RequestParam(value = "activationId") String activationId, Map<String, Object> model, Principal principal) {
-        String username = extractUsername(principal);
-        CommitActivationResponse commitActivation = client.commitActivation(activationId, username);
-        return "redirect:/activation/detail/" + commitActivation.getActivationId();
+        try {
+            String username = extractUsername(principal);
+            CommitActivationResponse commitActivation = client.commitActivation(activationId, username);
+            return "redirect:/activation/detail/" + commitActivation.getActivationId();
+        } catch (PowerAuthClientException ex) {
+            logger.warn(ex.getMessage(), ex);
+            return "error";
+        }
     }
 
     /**
@@ -269,12 +287,17 @@ public class ActivationController {
      */
     @RequestMapping(value = "/activation/block/do.submit", method = RequestMethod.POST)
     public String blockActivation(@RequestParam(value = "activationId") String activationId, @RequestParam(value = "redirectUserId") String userId, Map<String, Object> model, Principal principal) {
-        String username = extractUsername(principal);
-        BlockActivationResponse blockActivation = client.blockActivation(activationId, null, username);
-        if (userId != null && !userId.trim().isEmpty()) {
-            return "redirect:/activation/list?userId=" + userId;
+        try {
+            String username = extractUsername(principal);
+            BlockActivationResponse blockActivation = client.blockActivation(activationId, null, username);
+            if (userId != null && !userId.trim().isEmpty()) {
+                return "redirect:/activation/list?userId=" + userId;
+            }
+            return "redirect:/activation/detail/" + blockActivation.getActivationId();
+        } catch (PowerAuthClientException ex) {
+            logger.warn(ex.getMessage(), ex);
+            return "error";
         }
-        return "redirect:/activation/detail/" + blockActivation.getActivationId();
     }
 
     /**
@@ -288,12 +311,17 @@ public class ActivationController {
      */
     @RequestMapping(value = "/activation/unblock/do.submit", method = RequestMethod.POST)
     public String unblockActivation(@RequestParam(value = "activationId") String activationId, @RequestParam(value = "redirectUserId") String userId, Map<String, Object> model, Principal principal) {
-        String username = extractUsername(principal);
-        UnblockActivationResponse unblockActivation = client.unblockActivation(activationId, username);
-        if (userId != null && !userId.trim().isEmpty()) {
-            return "redirect:/activation/list?userId=" + userId;
+        try {
+            String username = extractUsername(principal);
+            UnblockActivationResponse unblockActivation = client.unblockActivation(activationId, username);
+            if (userId != null && !userId.trim().isEmpty()) {
+                return "redirect:/activation/list?userId=" + userId;
+            }
+            return "redirect:/activation/detail/" + unblockActivation.getActivationId();
+        } catch (PowerAuthClientException ex) {
+            logger.warn(ex.getMessage(), ex);
+            return "error";
         }
-        return "redirect:/activation/detail/" + unblockActivation.getActivationId();
     }
 
     /**
@@ -326,7 +354,8 @@ public class ActivationController {
                 return "redirect:/activation/list?userId=" + userId;
             }
             return "redirect:/activation/detail/" + commitActivation.getActivationId();
-        } catch (SoapFaultClientException ex) {
+        } catch (PowerAuthClientException ex) {
+            logger.warn(ex.getMessage(), ex);
             redirectAttributes.addFlashAttribute("error", "Activation commit failed.");
             return "redirect:/activation/detail/" + activationId;
         }
@@ -343,12 +372,77 @@ public class ActivationController {
      */
     @RequestMapping(value = "/activation/remove/do.submit", method = RequestMethod.POST)
     public String removeActivation(@RequestParam(value = "activationId") String activationId, @RequestParam(value = "redirectUserId") String userId, Map<String, Object> model, Principal principal) {
-        String username = extractUsername(principal);
-        RemoveActivationResponse removeActivation = client.removeActivation(activationId, username);
-        if (userId != null && !userId.trim().isEmpty()) {
-            return "redirect:/activation/list?userId=" + userId;
+        try {
+            String username = extractUsername(principal);
+            RemoveActivationResponse removeActivation = client.removeActivation(activationId, username);
+            if (userId != null && !userId.trim().isEmpty()) {
+                return "redirect:/activation/list?userId=" + userId;
+            }
+            return "redirect:/activation/detail/" + removeActivation.getActivationId() + "#versions";
+        } catch (PowerAuthClientException ex) {
+            logger.warn(ex.getMessage(), ex);
+            return "error";
         }
-        return "redirect:/activation/detail/" + removeActivation.getActivationId() + "#versions";
+    }
+
+    /**
+     * Show activation flag create form.
+     *
+     * @param activationId Activation ID
+     * @param model Model with passed parameters.
+     * @return The "activationFlagCreate" view.
+     */
+    @RequestMapping(value = "/activation/detail/{activationId}/flag/create")
+    public String applicationCreateFlag(@PathVariable(value = "activationId") String activationId, Map<String, Object> model) {
+        model.put("activationId", activationId);
+        return "activationFlagCreate";
+    }
+
+    /**
+     * Add an activation flag.
+     *
+     * @param activationId Activation ID.
+     * @param name Activation flag name.
+     * @param redirectAttributes Redirect attributes.
+     * @return Redirect the user to activation detail.
+     */
+    @RequestMapping(value = "/activation/detail/{activationId}/flag/create/do.submit", method = RequestMethod.POST)
+    public String activationCreateFlagAction(@PathVariable(value = "activationId") String activationId, @RequestParam(value = "name") String name,
+                                             RedirectAttributes redirectAttributes) {
+        String error = null;
+        if (name == null || name.trim().isEmpty()) {
+            error = "Flag name must not be empty.";
+        }
+        if (error != null) {
+            redirectAttributes.addFlashAttribute("error", error);
+            redirectAttributes.addFlashAttribute("name", name);
+            return "redirect:/activation/detail/" + activationId + "/flag/create";
+        }
+        try {
+            client.addActivationFlags(activationId, Collections.singletonList(name));
+            return "redirect:/activation/detail/" + activationId;
+        } catch (Exception ex) {
+            logger.warn(ex.getMessage(), ex);
+            return "error";
+        }
+    }
+
+    /**
+     * Remove activation flag.
+     *
+     * @param activationId Activation ID.
+     * @param name Activation flag name.
+     * @return Redirect user to given URL or to activation detail.
+     */
+    @RequestMapping(value = "/activation/detail/{activationId}/flag/remove/do.submit", method = RequestMethod.POST)
+    public String activationRemoveFlagAction(@PathVariable(value = "activationId") String activationId, @RequestParam(value = "name") String name) {
+        try {
+            client.removeActivationFlags(activationId, Collections.singletonList(name));
+            return "redirect:/activation/detail/" + activationId;
+        } catch (PowerAuthClientException ex) {
+            logger.warn(ex.getMessage(), ex);
+            return "error";
+        }
     }
 
     /**
@@ -362,13 +456,18 @@ public class ActivationController {
     @RequestMapping(value = "/activation/recovery/revoke/do.submit", method = RequestMethod.POST)
     public String revokeRecoveryCode(@RequestParam(value = "recoveryCodeId") Long recoveryCodeId, @RequestParam(value = "activationId", required = false) String activationId,
                                      @RequestParam(value = "userId", required = false) String userId, Map<String, Object> model) {
-        List<Long> recoveryCodeIds = new ArrayList<>();
-        recoveryCodeIds.add(recoveryCodeId);
-        client.revokeRecoveryCodes(recoveryCodeIds);
-        if (activationId != null) {
-            return "redirect:/activation/detail/" + activationId + "#recovery";
-        } else {
-            return "redirect:/activation/list?userId=" + userId;
+        try {
+            List<Long> recoveryCodeIds = new ArrayList<>();
+            recoveryCodeIds.add(recoveryCodeId);
+            client.revokeRecoveryCodes(recoveryCodeIds);
+            if (activationId != null) {
+                return "redirect:/activation/detail/" + activationId + "#recovery";
+            } else {
+                return "redirect:/activation/list?userId=" + userId;
+            }
+        } catch (PowerAuthClientException ex) {
+            logger.warn(ex.getMessage(), ex);
+            return "error";
         }
     }
 

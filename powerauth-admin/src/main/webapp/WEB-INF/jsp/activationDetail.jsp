@@ -5,7 +5,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <jsp:include page="header.jsp">
-    <jsp:param name="pageTitle" value="PowerAuth 2.0 - Activation Details"/>
+    <jsp:param name="pageTitle" value="PowerAuth - Activation Details"/>
 </jsp:include>
 
 <ol class="breadcrumb">
@@ -202,6 +202,47 @@
                     </jsp:include>
                 </div>
             </c:if>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title button-sm pull-left">Activation Flags</h3>
+                <a href="${pageContext.request.contextPath}/activation/detail/${activationId}/flag/create" class="btn btn-sm btn-default pull-right">Add Flag</a>
+                <div class="clearfix"></div>
+            </div>
+            <c:choose>
+                <c:when test="${fn:length(activationFlags) == 0}">
+                    <div class="panel-body">
+                        <p class="gray text-center">
+                            No activation flags are configured
+                        </p>
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>&nbsp;</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <c:forEach items="${activationFlags}" var="item">
+                            <tr class="code">
+                                <td><c:out value="${item}"/></td>
+                                <td>
+                                    <form action="${pageContext.request.contextPath}/activation/detail/${activationId}/flag/remove/do.submit" method="POST" class="action-remove">
+                                        <input type="hidden" name="name" value="${item}"/>
+                                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                        <input type="submit" value="Remove" class="btn btn-sm btn-danger pull-right btn-table"/>
+                                    </form>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                        </tbody>
+                    </table>
+                </c:otherwise>
+            </c:choose>
         </div>
 
         <c:if test="${not empty recoveryCodes}">

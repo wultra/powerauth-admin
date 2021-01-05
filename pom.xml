@@ -8,28 +8,28 @@
 
     <groupId>io.getlime.security</groupId>
     <artifactId>powerauth-admin-parent</artifactId>
-    <version>0.24.0</version>
+    <version>1.0.0</version>
     <packaging>pom</packaging>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.2.6.RELEASE</version>
+        <version>2.3.7.RELEASE</version>
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
 
     <inceptionYear>2016</inceptionYear>
-    <url>http://powerauth.com/</url>
+    <url>https://powerauth.com/</url>
 
     <organization>
         <name>Wultra s.r.o.</name>
-        <url>http://wultra.com/</url>
+        <url>https://wultra.com/</url>
     </organization>
 
     <licenses>
         <license>
             <name>Apache 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
         </license>
     </licenses>
 
@@ -141,13 +141,26 @@
         </profile>
     </profiles>
 
+    <repositories>
+        <repository>
+            <id>ossrh-snapshots</id>
+            <url>http://oss.sonatype.org/content/repositories/snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <distributionManagement>
         <snapshotRepository>
-            <id>ossrh</id>
+            <id>ossrh-snapshots-distribution</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </snapshotRepository>
         <repository>
-            <id>ossrh</id>
+            <id>ossrh-staging-distribution</id>
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
