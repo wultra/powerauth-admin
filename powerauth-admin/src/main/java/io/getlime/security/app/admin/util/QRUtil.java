@@ -27,6 +27,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Utility class for generating QR codes.
@@ -46,7 +47,7 @@ public class QRUtil {
     public static String encode(String qrCodeData, int qrCodeSize) {
         try {
             BitMatrix matrix = new MultiFormatWriter().encode(
-                    new String(qrCodeData.getBytes("UTF-8"), "ISO-8859-1"),
+                    new String(qrCodeData.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1),
                     BarcodeFormat.QR_CODE,
                     qrCodeSize,
                     qrCodeSize);

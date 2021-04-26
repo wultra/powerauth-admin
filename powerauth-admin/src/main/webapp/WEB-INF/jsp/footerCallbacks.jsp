@@ -15,7 +15,7 @@
             callback_json.innerText+=',\n    "platform": "$PLATFORM"';
         }
         if (document.getElementById('attr_activationFlags').checked) {
-            callback_json.innerText+=',\n    "activationFlags": "$ACTIVATION_FLAGS"';
+            callback_json.innerText+=',\n    "activationFlags": [\n        "$ACTIVATION_FLAGS"\n    ]';
         }
         if (document.getElementById('attr_activationStatus').checked) {
             callback_json.innerText+=',\n    "activationStatus": "$ACTIVATION_STATUS"';

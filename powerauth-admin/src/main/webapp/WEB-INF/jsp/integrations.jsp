@@ -83,7 +83,7 @@
                                   class="pull-right action-remove">
                                 <input type="hidden" name="integrationId" value="<c:out value="${item.id}"/>"/>
                                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-                                <input class="btn btn-danger" type="submit" value="Remove">
+                                <input class="btn btn-sm btn-table btn-danger" type="submit" value="Remove">
                             </form>
                         </td>
                     </tr>
