@@ -18,6 +18,7 @@ package io.getlime.security.app.admin.controller;
 
 import com.google.common.collect.Lists;
 import com.wultra.security.powerauth.client.PowerAuthClient;
+import com.wultra.security.powerauth.client.model.enumeration.CallbackUrlType;
 import com.wultra.security.powerauth.client.model.error.PowerAuthClientException;
 import com.wultra.security.powerauth.client.v3.*;
 import org.slf4j.Logger;
@@ -325,7 +326,7 @@ public class ApplicationController {
                     attributes.add(attribute.replace("attr_", ""));
                 }
             }
-            client.createCallbackUrl(applicationId, name, callbackUrl, attributes);
+            client.createCallbackUrl(applicationId, name, CallbackUrlType.ACTIVATION_STATUS_CHANGE, callbackUrl, attributes);
             return "redirect:/application/detail/" + applicationId + "#callbacks";
         } catch (PowerAuthClientException ex) {
             logger.warn(ex.getMessage(), ex);
