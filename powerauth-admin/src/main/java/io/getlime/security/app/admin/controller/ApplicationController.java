@@ -21,6 +21,7 @@ import com.wultra.security.powerauth.client.PowerAuthClient;
 import com.wultra.security.powerauth.client.model.enumeration.CallbackUrlType;
 import com.wultra.security.powerauth.client.model.error.PowerAuthClientException;
 import com.wultra.security.powerauth.client.v3.*;
+import io.micrometer.core.instrument.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -333,6 +334,10 @@ public class ApplicationController {
                     error = "Callback URL is not in a valid format";
                 }
             }
+            String errorAuth = getErrorForAuthentication(allParams);
+            if (errorAuth != null) {
+                error = errorAuth;
+            }
             if (error != null) {
                 for (String attribute: CALLBACK_ATTRIBUTES_OPTIONAL) {
                     if (allParams.get(attribute) != null) {
@@ -389,6 +394,10 @@ public class ApplicationController {
                     error = "Callback URL is not in a valid format";
                 }
             }
+            String errorAuth = getErrorForAuthentication(allParams);
+            if (errorAuth != null) {
+                error = errorAuth;
+            }
             if (error != null) {
                 redirectAttributes.addAttribute("callbackId", callbackId);
                 redirectAttributes.addFlashAttribute("error", error);
@@ -412,6 +421,37 @@ public class ApplicationController {
         }
     }
 
+    private String getErrorForAuthentication(Map<String, String> allParams) {
+        String error = null;
+        if ("on".equals(allParams.get("auth_useCustomKeyStore"))) {
+            if (StringUtils.isBlank(allParams.get("auth_keyStoreLocation"))
+                        || StringUtils.isBlank(allParams.get("auth_keyAlias"))) {
+                error = "Invalid keystore configuration";
+            } else {
+                try {
+                    new URL(allParams.get("auth_keyStoreLocation"));
+                } catch (MalformedURLException ex) {
+                    error = "Invalid keystore location format";
+                }
+            }
+        }
+        if ("on".equals(allParams.get("auth_useCustomTrustStore"))) {
+            if (StringUtils.isBlank(allParams.get("auth_trustStoreLocation"))) {
+                error = "Invalid truststore configuration";
+            } else {
+                try {
+                    new URL(allParams.get("auth_trustStoreLocation"));
+                } catch (MalformedURLException ex) {
+                    error = "Invalid truststore location format";
+                }
+            }
+        }
+        if ("on".equals(allParams.get("auth_httpBasicEnabled")) &&
+                StringUtils.isBlank(allParams.get("auth_httpBasicUsername"))) {
+            error = "Invalid HTTP Basic authentication configuration";
+        }
+        return error;
+    }
 
     /**
      * Execute the action that removes a callback with given ID.
