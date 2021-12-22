@@ -224,7 +224,7 @@
                                 <td>
                                     <c:if test="${item.status != 'REVOKED'}">
                                         <form action="${pageContext.request.contextPath}/activation/recovery/revoke/do.submit"
-                                              method="POST" class="pull-right">
+                                              method="POST" class="pull-right action-revoke">
                                             <input type="hidden" name="userId" value="<c:out value="${item.userId}"/>"/>
                                             <input type="hidden" name="recoveryCodeId"
                                                    value="<c:out value="${item.recoveryCodeId}"/>"/>
