@@ -21,6 +21,7 @@ import com.wultra.security.powerauth.client.PowerAuthClient;
 import com.wultra.security.powerauth.client.model.enumeration.CallbackUrlType;
 import com.wultra.security.powerauth.client.model.error.PowerAuthClientException;
 import com.wultra.security.powerauth.client.v3.*;
+import io.micrometer.core.instrument.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -186,6 +187,31 @@ public class ApplicationController {
                     for (String attribute: callback.getAttributes()) {
                         model.put("attr_" + attribute, true);
                     }
+                    HttpAuthenticationPublic httpAuthentication = callback.getAuthentication();
+                    if (httpAuthentication != null) {
+                        if (httpAuthentication.getCertificate() == null) {
+                            model.put("auth_certificateEnabled", false);
+                        } else {
+                            HttpAuthenticationPublic.Certificate certificateAuth = httpAuthentication.getCertificate();
+                            model.put("auth_certificateEnabled", certificateAuth.isEnabled());
+                            model.put("auth_useCustomKeyStore", certificateAuth.isUseCustomKeyStore());
+                            model.put("auth_keyStoreLocation", certificateAuth.getKeyStoreLocation());
+                            model.put("auth_keyStorePasswordSet", certificateAuth.isKeyStorePasswordSet());
+                            model.put("auth_keyAlias", certificateAuth.getKeyAlias());
+                            model.put("auth_keyPasswordSet", certificateAuth.isKeyPasswordSet());
+                            model.put("auth_useCustomTrustStore", certificateAuth.isUseCustomTrustStore());
+                            model.put("auth_trustStoreLocation", certificateAuth.getTrustStoreLocation());
+                            model.put("auth_trustStorePasswordSet", certificateAuth.isTrustStorePasswordSet());
+                        }
+                        if (httpAuthentication.getHttpBasic() == null) {
+                            model.put("auth_httpBasicEnabled", false);
+                        } else {
+                            HttpAuthenticationPublic.HttpBasic httpBasicAuth = httpAuthentication.getHttpBasic();
+                            model.put("auth_httpBasicEnabled", httpBasicAuth.isEnabled());
+                            model.put("auth_httpBasicUsername", httpBasicAuth.getUsername());
+                            model.put("auth_httpBasicPasswordSet", httpBasicAuth.isPasswordSet());
+                        }
+                    }
                     return "callbackUpdate";
                 }
             }
@@ -308,6 +334,10 @@ public class ApplicationController {
                     error = "Callback URL is not in a valid format";
                 }
             }
+            String errorAuth = getErrorForAuthentication(allParams);
+            if (errorAuth != null) {
+                error = errorAuth;
+            }
             if (error != null) {
                 for (String attribute: CALLBACK_ATTRIBUTES_OPTIONAL) {
                     if (allParams.get(attribute) != null) {
@@ -326,7 +356,8 @@ public class ApplicationController {
                     attributes.add(attribute.replace("attr_", ""));
                 }
             }
-            client.createCallbackUrl(applicationId, name, CallbackUrlType.ACTIVATION_STATUS_CHANGE, callbackUrl, attributes);
+            HttpAuthenticationPrivate httpAuthentication = prepareHttpAuthentication(allParams);
+            client.createCallbackUrl(applicationId, name, CallbackUrlType.ACTIVATION_STATUS_CHANGE, callbackUrl, attributes, httpAuthentication);
             return "redirect:/application/detail/" + applicationId + "#callbacks";
         } catch (PowerAuthClientException ex) {
             logger.warn(ex.getMessage(), ex);
@@ -363,6 +394,10 @@ public class ApplicationController {
                     error = "Callback URL is not in a valid format";
                 }
             }
+            String errorAuth = getErrorForAuthentication(allParams);
+            if (errorAuth != null) {
+                error = errorAuth;
+            }
             if (error != null) {
                 redirectAttributes.addAttribute("callbackId", callbackId);
                 redirectAttributes.addFlashAttribute("error", error);
@@ -377,7 +412,8 @@ public class ApplicationController {
                     attributes.add(attribute.replace("attr_", ""));
                 }
             }
-            client.updateCallbackUrl(callbackId, applicationId, name, callbackUrl, attributes);
+            HttpAuthenticationPrivate httpAuthentication = prepareHttpAuthentication(allParams);
+            client.updateCallbackUrl(callbackId, applicationId, name, callbackUrl, attributes, httpAuthentication);
             return "redirect:/application/detail/" + applicationId + "#callbacks";
         } catch (PowerAuthClientException ex) {
             logger.warn(ex.getMessage(), ex);
@@ -385,6 +421,37 @@ public class ApplicationController {
         }
     }
 
+    private String getErrorForAuthentication(Map<String, String> allParams) {
+        String error = null;
+        if ("on".equals(allParams.get("auth_useCustomKeyStore"))) {
+            if (StringUtils.isBlank(allParams.get("auth_keyStoreLocation"))
+                        || StringUtils.isBlank(allParams.get("auth_keyAlias"))) {
+                error = "Invalid keystore configuration";
+            } else {
+                try {
+                    new URL(allParams.get("auth_keyStoreLocation"));
+                } catch (MalformedURLException ex) {
+                    error = "Invalid keystore location format";
+                }
+            }
+        }
+        if ("on".equals(allParams.get("auth_useCustomTrustStore"))) {
+            if (StringUtils.isBlank(allParams.get("auth_trustStoreLocation"))) {
+                error = "Invalid truststore configuration";
+            } else {
+                try {
+                    new URL(allParams.get("auth_trustStoreLocation"));
+                } catch (MalformedURLException ex) {
+                    error = "Invalid truststore location format";
+                }
+            }
+        }
+        if ("on".equals(allParams.get("auth_httpBasicEnabled")) &&
+                StringUtils.isBlank(allParams.get("auth_httpBasicUsername"))) {
+            error = "Invalid HTTP Basic authentication configuration";
+        }
+        return error;
+    }
 
     /**
      * Execute the action that removes a callback with given ID.
@@ -483,6 +550,44 @@ public class ApplicationController {
             logger.warn(ex.getMessage(), ex);
             return "error";
         }
+    }
+
+    /**
+     * Prepare HTTP authentication based on request parameters.
+     * @param allParams Request parameters.
+     * @return HTTP authentication.
+     */
+    private HttpAuthenticationPrivate prepareHttpAuthentication(Map<String, String> allParams) {
+        HttpAuthenticationPrivate httpAuthentication = new HttpAuthenticationPrivate();
+        if ("on".equals(allParams.get("auth_certificateEnabled"))) {
+            HttpAuthenticationPrivate.Certificate certificateAuth = new HttpAuthenticationPrivate.Certificate();
+            certificateAuth.setEnabled(true);
+            certificateAuth.setUseCustomKeyStore("on".equals(allParams.get("auth_useCustomKeyStore")));
+            certificateAuth.setKeyStoreLocation(allParams.get("auth_keyStoreLocation"));
+            if ("true".equals(allParams.get("auth_keyStorePasswordChanged"))) {
+                certificateAuth.setKeyStorePassword(allParams.get("auth_keyStorePassword"));
+            }
+            certificateAuth.setKeyAlias(allParams.get("auth_keyAlias"));
+            if ("true".equals(allParams.get("auth_keyPasswordChanged"))) {
+                certificateAuth.setKeyPassword(allParams.get("auth_keyPassword"));
+            }
+            certificateAuth.setUseCustomTrustStore("on".equals(allParams.get("auth_useCustomTrustStore")));
+            certificateAuth.setTrustStoreLocation(allParams.get("auth_trustStoreLocation"));
+            if ("true".equals(allParams.get("auth_trustStorePasswordChanged"))) {
+                certificateAuth.setTrustStorePassword(allParams.get("auth_trustStorePassword"));
+            }
+            httpAuthentication.setCertificate(certificateAuth);
+        }
+        if ("on".equals(allParams.get("auth_httpBasicEnabled"))) {
+            HttpAuthenticationPrivate.HttpBasic httpBasicAuth = new HttpAuthenticationPrivate.HttpBasic();
+            httpBasicAuth.setEnabled(true);
+            httpBasicAuth.setUsername(allParams.get("auth_httpBasicUsername"));
+            if ("true".equals(allParams.get("auth_httpBasicPasswordChanged"))) {
+                httpBasicAuth.setPassword(allParams.get("auth_httpBasicPassword"));
+            }
+            httpAuthentication.setHttpBasic(httpBasicAuth);
+        }
+        return httpAuthentication;
     }
 
 }
