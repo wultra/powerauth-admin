@@ -15,8 +15,8 @@ The PowerAuth Admin uses the following public configuration properties:
 
 | Property | Default | Note |
 |---|---|---|
-| `powerauth.admin.service.applicationName` | `powerauth-server` | Application name exposed in status endpoint. |
-| `powerauth.admin.service.applicationDisplayName` | `PowerAuth Server` | Application display name exposed in status endpoint. |
+| `powerauth.admin.service.applicationName` | `powerauth-admin` | Application name exposed in status endpoint. |
+| `powerauth.admin.service.applicationDisplayName` | `PowerAuth Admin` | Application display name exposed in status endpoint. |
 | `powerauth.admin.service.applicationEnvironment` | `_empty_` | Application environment exposed in status endpoint. |
 
 ## PowerAuth Admin LDAP Configuration
