@@ -1,6 +1,6 @@
 # Configuration Properties
 
-The PowerAuth Admin uses the following public configuration properties:
+The PowerAuth Admin application uses the following public configuration properties:
 
 ## PowerAuth Service Configuration
 

@@ -53,7 +53,7 @@ The default configuration works best with Apache Tomcat server running on defaul
 
 To deploy PowerAuth Admin to Apache Tomcat, simply copy the WAR file in your `webapps` folder or deploy it using the "Tomcat Web Application Manager" application (usually deployed on default Tomcat address `http://localhost:8080/manager`).
 
-Running PowerAuth server from console using the `java -jar` command is not supported.
+Running PowerAuth Admin application from console using the `java -jar` command is not supported.
 
 *__Important note: Since PowerAuth Admin is a very simple application with direct access to the PowerAuth Server REST services, it must not be under any circumstances published publicly and must be constrained to the in-house closed infrastructure.__*
 
