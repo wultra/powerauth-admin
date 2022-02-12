@@ -1,7 +1,7 @@
 <script type="application/javascript">
-    function refreshCallbackJson(){
+    function refreshActivationCallbackJson(){
         const callback_json = document.getElementById('callback_json');
-        callback_json.innerText='{\n    "activationId": "$ACTIVATION_ID"';
+        callback_json.innerText='{\n    "type": "ACTIVATION",\n    "activationId": "$ACTIVATION_ID"';
         if (document.getElementById('attr_userId').checked) {
             callback_json.innerText+=',\n    "userId": "$USER_ID"';
         }
@@ -29,5 +29,5 @@
         callback_json.innerText+='\n}';
         hljs.highlightBlock(callback_json);
     }
-    refreshCallbackJson();
+    refreshActivationCallbackJson();
 </script>
