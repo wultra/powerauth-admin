@@ -56,14 +56,14 @@
         <dependency>
             <groupId>io.getlime.security</groupId>
             <artifactId>powerauth-rest-client-spring</artifactId>
-            <version>1.2.0</version>
+            <version>1.2.5</version>
         </dependency>
 
         <!-- Other Libraries -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>31.0.1-jre</version>
+            <version>31.1-jre</version>
         </dependency>
 
         <!-- JSTL -->
